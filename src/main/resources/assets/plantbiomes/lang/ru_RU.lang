@@ -1,0 +1,19 @@
+﻿pb.command.err.debugMode=Необходимо активировать режим конфигурации.
+pb.command.enable=Режим конфигурации активирован.
+pb.command.list=Растения:
+pb.command.list.empty=Пусто
+pb.command.plant=Растение/биом
+pb.command.plant.notExist=Нет недавнего растения.
+pb.command.deny=Запрещен биом
+pb.command.allow=Разрешен биом
+pb.command.allow.absent=Растение отсутствует в списке.
+pb.command.nodataplant=Нет данных для растения.
+pb.command.noData=Нет данных.
+pb.command.clear.latest=Все данные для последнего растения удалены.
+pb.command.clear.all=Все данные удалены.
+pb.command.save=Изменения сохранены.
+pb.command.disable=Режим конфигурации отключён.
+
+pb.update.newVersion=Доступна новая версия!
+pb.update.projectPage=Ссылка
+

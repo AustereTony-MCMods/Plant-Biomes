@@ -1,0 +1,18 @@
+pb.command.err.debugMode=Configuration mode must be enabled.
+pb.command.enable=Configuration mode enabled.
+pb.command.list=Plants:
+pb.command.list.empty=Empty
+pb.command.plant=Plant/biome
+pb.command.plant.notExist=No latest plant.
+pb.command.deny=Denied
+pb.command.allow=Allowed
+pb.command.allow.absent=Plant is absent in list.
+pb.command.nodataplant=No data for this plant.
+pb.command.noData=No data.
+pb.command.clear.latest=All data for latest plant was removed.
+pb.command.clear.all=All data was removed.
+pb.command.save=Changes saved.
+pb.command.disable=Configuration mode disabled.
+
+pb.update.newVersion=New version available!
+pb.update.projectPage=Link
