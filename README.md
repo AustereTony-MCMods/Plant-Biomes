@@ -1,2 +1,2 @@
 # Plant-Biomes
-Control crops and saplings grow in specified biomes.
+Control crops and saplings growth in specified biomes. Project page: https://minecraft.curseforge.com/projects/plant-biomes
