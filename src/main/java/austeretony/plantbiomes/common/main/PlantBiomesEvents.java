@@ -22,11 +22,12 @@ public class PlantBiomesEvents {
                 if (blockState != null) {
                     Block block = blockState.getBlock();
                     if (block instanceof BlockSapling || block instanceof BlockCrops || block instanceof BlockStem) {
-                        PBDataLoader.latestPlantKey = PBDataLoader.createPlantKey(block, blockState);
-                        PBDataLoader.latestBlockPos = event.getPos();
-                        PBDataLoader.latestPlantUnlocalizedName = new ItemStack(Item.getItemFromBlock(block), 1, block.getMetaFromState(blockState)).getUnlocalizedName();
-                        EnumPBChatMessages.showMessage(event.getEntityPlayer(), EnumPBChatMessages.LATEST_PLANT, PBDataLoader.latestPlantKey, 
-                                PBDataLoader.getBiomeRegistryName(event.getWorld(), event.getPos()), PBDataLoader.latestPlantUnlocalizedName);
+                        PBDataLoader.lpRegistryName = block.getRegistryName();
+                        PBDataLoader.lpMeta = block.getMetaFromState(blockState);
+                        PBDataLoader.biomeRegistryName = PBDataLoader.getBiomeRegistryName(event.getWorld(), event.getPos());
+                        PBDataLoader.lpBlockPos = event.getPos();
+                        PBDataLoader.lpUnlocalizedName = new ItemStack(Item.getItemFromBlock(block), 1, PBDataLoader.lpMeta).getUnlocalizedName();
+                        EnumPBChatMessages.showMessage(event.getEntityPlayer(), EnumPBChatMessages.LATEST_PLANT);
                     }
                 }
             }

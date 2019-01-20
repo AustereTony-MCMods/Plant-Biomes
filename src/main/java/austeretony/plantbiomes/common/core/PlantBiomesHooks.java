@@ -13,9 +13,8 @@ import net.minecraft.world.World;
 public class PlantBiomesHooks {
 
     public static boolean isGrowthAllowedTick(World world, BlockPos pos, Block block, IBlockState blockState) {
-        String key = PBDataLoader.createPlantKey(block, blockState);
-        if (PBDataLoader.map().containsKey(key)) {
-            if (PBDataLoader.get(key).isValidBiome(PBDataLoader.getBiomeRegistryName(world, pos))) {
+        if (PBDataLoader.exist(block, blockState)) {
+            if (PBDataLoader.get(block, blockState).isValidBiome(world, pos)) {
                 return true;
             } else {
                 return false;
@@ -25,9 +24,8 @@ public class PlantBiomesHooks {
     }
 
     public static boolean isGrowthAllowedBonemeal(World world, BlockPos pos) {
-        String key = PBDataLoader.createPlantKey(world.getBlockState(pos).getBlock(), world.getBlockState(pos));
-        if (PBDataLoader.map().containsKey(key)) {
-            if (PBDataLoader.get(key).isValidBiome(PBDataLoader.getBiomeRegistryName(world, pos))) {
+        if (PBDataLoader.exist(world.getBlockState(pos).getBlock(), world.getBlockState(pos))) {
+            if (PBDataLoader.get(world.getBlockState(pos).getBlock(), world.getBlockState(pos)).isValidBiome(world, pos)) {
                 return true;
             } else {
                 world.playEvent(900, pos, 0);

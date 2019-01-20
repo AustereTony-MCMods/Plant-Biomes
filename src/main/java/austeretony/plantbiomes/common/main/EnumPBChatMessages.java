@@ -72,12 +72,13 @@ public enum EnumPBChatMessages {
             msg3 = new TextComponentString(" / ");
             msg4 = new TextComponentString(", ");
             msg4.getStyle().setColor(TextFormatting.AQUA);
-            plantKey = new TextComponentString(args[0]);				
+            plantKey = new TextComponentString(PBDataLoader.createDisplayKey(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta));				
             plantKey.getStyle().setColor(TextFormatting.WHITE);  
-            plantName = new TextComponentTranslation((args[2] + ".name").trim());                           
+            plantName = new TextComponentTranslation((PBDataLoader.lpUnlocalizedName + ".name").trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);  
-            biomeName = new TextComponentString(args[1]); 
-            boolean deniedBiome = PBDataLoader.exist(args[0]) && !PBDataLoader.get(args[0]).isValidBiome(args[1]);
+            biomeName = new TextComponentString(PBDataLoader.biomeRegistryName.toString()); 
+            boolean deniedBiome = PBDataLoader.exist(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta) && 
+                    !PBDataLoader.get(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta).isValidBiome(PBDataLoader.biomeRegistryName);
             biomeName.getStyle().setColor(deniedBiome ? TextFormatting.RED : TextFormatting.GREEN);  
             message = modPrefix.appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName).appendSibling(msg4).appendSibling(biomeName);
             break;
@@ -122,11 +123,11 @@ public enum EnumPBChatMessages {
             msg3 = new TextComponentString(" -> "); 
             msg4 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
-            plantKey = new TextComponentString(args[0]);
+            plantKey = new TextComponentString(PBDataLoader.createDisplayKey(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta));
             plantKey.getStyle().setColor(TextFormatting.WHITE); 
-            plantName = new TextComponentTranslation((args[2] + ".name").trim());                           
+            plantName = new TextComponentTranslation((PBDataLoader.lpUnlocalizedName + ".name").trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);  
-            biomeName = new TextComponentString(args[1]);
+            biomeName = new TextComponentString(PBDataLoader.biomeRegistryName.toString());
             biomeName.getStyle().setColor(TextFormatting.WHITE);  
             message = modPrefix.appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName);
             break;
@@ -135,9 +136,9 @@ public enum EnumPBChatMessages {
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" -> "); 
             msg3.getStyle().setColor(TextFormatting.AQUA);
-            plantKey = new TextComponentString(args[0]);
+            plantKey = new TextComponentString(PBDataLoader.createDisplayKey(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta));
             plantKey.getStyle().setColor(TextFormatting.WHITE);  
-            biomeName = new TextComponentString(args[1]);
+            biomeName = new TextComponentString(PBDataLoader.biomeRegistryName.toString());
             biomeName.getStyle().setColor(TextFormatting.WHITE);  
             message = modPrefix.appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey);
             break;

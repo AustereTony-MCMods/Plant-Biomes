@@ -17,12 +17,12 @@ public class PlantBiomesMain {
 
     public static final String 
     MODID = "plantbiomes",
-    NAME = "Plant Biomes",
-    VERSION = "1.0.0",
+    NAME = "Restrictions: Plant Biomes",
+    VERSION = "1.0.1",
     GAME_VERSION = "1.12.2",
-    VERSIONS_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/NMQM/info/versions.json",//edit
+    VERSIONS_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/versions.json",
     PROJECT_LOCATION = "minecraft.curseforge.com",
-    PROJECT_URL = "https://minecraft.curseforge.com/projects/nmqm";//edit
+    PROJECT_URL = "https://minecraft.curseforge.com/projects/plant-biomes";
 
     public static final Logger LOGGER = LogManager.getLogger("Plant Biomes");
 

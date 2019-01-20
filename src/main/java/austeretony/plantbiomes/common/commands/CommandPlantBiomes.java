@@ -1,7 +1,9 @@
 package austeretony.plantbiomes.common.commands;
 
 import austeretony.plantbiomes.common.main.EnumPBChatMessages;
+import austeretony.plantbiomes.common.main.MetaPlant;
 import austeretony.plantbiomes.common.main.PBDataLoader;
+import austeretony.plantbiomes.common.main.PlantData;
 import austeretony.plantbiomes.common.origin.CommonReference;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -10,6 +12,7 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 
 public class CommandPlantBiomes extends CommandBase {
 
@@ -46,9 +49,6 @@ public class CommandPlantBiomes extends CommandBase {
                 args[0].equals("disable")))             
             throw new WrongUsageException(this.getUsage(sender));   
         EntityPlayer player = getCommandSenderAsPlayer(sender);  
-        String biomeName = null;
-        if (PBDataLoader.latestBlockPos != null)
-            biomeName = PBDataLoader.getBiomeRegistryName(player.world, PBDataLoader.latestBlockPos);
         switch(args[0]) {
         case "enable":
             PBDataLoader.setConfigModeEnabled(true);
@@ -56,64 +56,58 @@ public class CommandPlantBiomes extends CommandBase {
             break;
         case "disable":
             PBDataLoader.setConfigModeEnabled(false);
-            PBDataLoader.latestPlantKey = "";
+            PBDataLoader.lpRegistryName = null;
             EnumPBChatMessages.showMessage(player, EnumPBChatMessages.CONFIGURATION_DISABLED);
             break;  
         case "list":
             EnumPBChatMessages.showMessage(player, EnumPBChatMessages.CONTAINERS_LIST);
             if (PBDataLoader.map().isEmpty())
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.EMPTY);
-            for (String plantKey : PBDataLoader.map().keySet()) {
-                EnumPBChatMessages.showMessage(player, EnumPBChatMessages.PLANT, plantKey, PBDataLoader.get(plantKey).getUnlocalizedName());
-                for (String b : PBDataLoader.get(plantKey).getDeniedBiomesSet())
-                    EnumPBChatMessages.showMessage(player, EnumPBChatMessages.DENIED_BIOME, b);
+            for (PlantData plantData : PBDataLoader.map().values()) {
+                for (MetaPlant metaPlant : plantData.getData().values()) {
+                    EnumPBChatMessages.showMessage(player, EnumPBChatMessages.PLANT, PBDataLoader.createDisplayKey(plantData.registryName, metaPlant.meta), metaPlant.unlocalizedName);
+                    for (ResourceLocation l : metaPlant.getDeniedBiomes())
+                        EnumPBChatMessages.showMessage(player, EnumPBChatMessages.DENIED_BIOME, l.toString());
+                }
             }
             break;
         case "plant":
             if (!PBDataLoader.isConfigModeEnabled()) {
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NEED_ENABLE_CONFIGURATION);   
                 return;
-            } else if (PBDataLoader.latestPlantKey.isEmpty()) {                  
+            } else if (PBDataLoader.lpRegistryName == null) {                  
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NO_LATEST_PLANT);                 
                 return;
             }
-            EnumPBChatMessages.showMessage(player, EnumPBChatMessages.LATEST_PLANT, PBDataLoader.latestPlantKey, biomeName, PBDataLoader.latestPlantUnlocalizedName);
+            EnumPBChatMessages.showMessage(player, EnumPBChatMessages.LATEST_PLANT);
             break;
         case "deny":
             if (!PBDataLoader.isConfigModeEnabled()) {
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NEED_ENABLE_CONFIGURATION);                   
                 return;
-            } else if (PBDataLoader.latestPlantKey.isEmpty()) {                  
+            } else if (PBDataLoader.lpRegistryName == null) {                  
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NO_LATEST_PLANT);                                 
                 return;
             }
-            if (!PBDataLoader.exist(PBDataLoader.latestPlantKey)) {
-                PBDataLoader.create(PBDataLoader.latestPlantKey);
+            if (!PBDataLoader.exist(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta)) {
+                PBDataLoader.create(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta, PBDataLoader.lpUnlocalizedName);
             }
-            PBDataLoader.get(PBDataLoader.latestPlantKey).denyBiome(biomeName);
-            PBDataLoader.get(PBDataLoader.latestPlantKey).setUnlocalizedName(PBDataLoader.latestPlantUnlocalizedName);
-            EnumPBChatMessages.showMessage(player, EnumPBChatMessages.DENIED, PBDataLoader.latestPlantKey, biomeName, PBDataLoader.latestPlantUnlocalizedName);                                    
+            PBDataLoader.get(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta).denyBiome(PBDataLoader.biomeRegistryName);
+            EnumPBChatMessages.showMessage(player, EnumPBChatMessages.DENIED);                                    
             break;
         case "allow":
             if (!PBDataLoader.isConfigModeEnabled()) {
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NEED_ENABLE_CONFIGURATION);                                   
                 return;
-            } else if (PBDataLoader.latestPlantKey.isEmpty()) {                  
+            } else if (PBDataLoader.lpRegistryName == null) {                  
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NO_LATEST_PLANT);                                                 
                 return;
-            }
-            if (!PBDataLoader.exist(PBDataLoader.latestPlantKey)) {
-                PBDataLoader.create(PBDataLoader.latestPlantKey);
-            }
-            if (PBDataLoader.get(PBDataLoader.latestPlantKey).isValidBiome(biomeName)) {
-                EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NO_DATA_FOR_PLANT);                                                                    
-                return;
-            } else if (PBDataLoader.get(PBDataLoader.latestPlantKey).isValidBiome(biomeName)) {
-                EnumPBChatMessages.showMessage(player, EnumPBChatMessages.PLANT_ABSENT);                                                                    
+            } else if (!PBDataLoader.exist(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta)) {
+                EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NO_DATA_FOR_PLANT);    
                 return;
             }
-            PBDataLoader.get(PBDataLoader.latestPlantKey).allowBiome(biomeName);
-            EnumPBChatMessages.showMessage(player, EnumPBChatMessages.ALLOWED, PBDataLoader.latestPlantKey, biomeName);                                
+            PBDataLoader.get(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta).allowBiome(PBDataLoader.biomeRegistryName);
+            EnumPBChatMessages.showMessage(player, EnumPBChatMessages.ALLOWED);                                
             break;
         case "save":
             if (!PBDataLoader.isConfigModeEnabled()) {
@@ -128,11 +122,11 @@ public class CommandPlantBiomes extends CommandBase {
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NEED_ENABLE_CONFIGURATION);                                                   
                 return;
             } 
-            if (!PBDataLoader.exist(PBDataLoader.latestPlantKey) || !PBDataLoader.get(PBDataLoader.latestPlantKey).hasDeniedBiomes()) {
+            if (!PBDataLoader.exist(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta)) {
                 EnumPBChatMessages.showMessage(player, EnumPBChatMessages.NO_DATA_FOR_PLANT);  
                 return;
             }
-            PBDataLoader.remove(PBDataLoader.latestPlantKey);
+            PBDataLoader.remove(PBDataLoader.lpRegistryName, PBDataLoader.lpMeta);
             PBDataLoader.saveData();
             EnumPBChatMessages.showMessage(player, EnumPBChatMessages.PLANT_BIOMES_CLEARED);                                                     
             break;
