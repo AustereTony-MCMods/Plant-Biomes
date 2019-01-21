@@ -28,20 +28,27 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
     public byte[] transform(String name, String transformedName, byte[] basicClass) {   
         switch (transformedName) {   	
         case "net.minecraft.block.BlockSapling":   			
-            return patchBlockSapling(basicClass);   			 			
+            return patchBlockSapling(basicClass, "BlockSapling");   			 			
         case "net.minecraft.block.BlockCrops":							
-            return patchBlockCrops(basicClass, true);	
+            return patchBlockCrops(basicClass, "BlockCrops");	
         case "net.minecraft.block.BlockStem":                                                      
-            return patchBlockCrops(basicClass, false); 
+            return patchBlockStem(basicClass, "BlockStem"); 
+        case "net.minecraft.block.BlockGrass":                                                      
+            return patchBlockGrass(basicClass, "BlockGrass"); 
         case "net.minecraft.item.ItemDye":
             return patchItemDye(basicClass);
         case "net.minecraft.client.renderer.RenderGlobal":
             return patchRenderGlobal(basicClass);
+            //***non-vanilla plants support***
+        case "twilightforest.block.BlockTFSapling"://twilight forest saplings
+            return patchBlockTFSapling(basicClass, "BlockTFSapling");
+        case "biomesoplenty.common.block.BlockBOPSapling"://biomes o plenty saplings
+            return patchBlockBOPSapling(basicClass, "BlockBOPSapling");
         }   	
         return basicClass;
     }
 
-    private byte[] patchBlockSapling(byte[] basicClass) {              
+    private byte[] patchBlockSapling(byte[] basicClass, String clazz) {              
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(basicClass);
         classReader.accept(classNode, 0);
@@ -82,58 +89,21 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         classNode.accept(writer);
 
         if (isSuccessful)
-            LOGGER.info("<BlockSapling.class> patched!");   
+            LOGGER.info("<" + clazz + ".class> patched!");   
 
         return writer.toByteArray();    
     }
 
-    private byte[] patchBlockCrops(byte[] basicClass, boolean flag) {              
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(basicClass);
-        classReader.accept(classNode, 0);
+    private byte[] patchBlockCrops(byte[] basicClass, String clazz) {              
+        return patchBlockSapling(basicClass, clazz);
+    }
 
-        String
-        updateTickMethodName = PlantBiomesCorePlugin.isObfuscated() ? "b" : "updateTick",
-                worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
-                        blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
-                                blockClassName = PlantBiomesCorePlugin.isObfuscated() ? "aow" : "net/minecraft/block/Block",
-                                        iBlockStateClassName = PlantBiomesCorePlugin.isObfuscated() ? "awt" : "net/minecraft/block/state/IBlockState",
-                                                randomClassName = "java/util/Random";
-        boolean isSuccessful = false;        
-        AbstractInsnNode currentInsn;
+    private byte[] patchBlockStem(byte[] basicClass, String clazz) {              
+        return patchBlockSapling(basicClass, clazz);
+    }
 
-        for (MethodNode methodNode : classNode.methods) {               
-            if (methodNode.name.equals(updateTickMethodName) && methodNode.desc.equals("(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";L" + randomClassName + ";)V")) {                         
-                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
-                while (insnIterator.hasNext()) {                        
-                    currentInsn = insnIterator.next();                  
-                    if (currentInsn.getOpcode() == Opcodes.IF_ICMPLT) {                             
-                        InsnList nodesList = new InsnList();   
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
-                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
-                        methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious().getPrevious(), nodesList); 
-                        isSuccessful = true;                        
-                        break;
-                    }
-                }                                           
-                break;
-            }
-        }
-
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);        
-        classNode.accept(writer);
-
-        if (isSuccessful)
-            if (flag)
-                LOGGER.info("<BlockCrops.class> patched!");   
-            else
-                LOGGER.info("<BlockStem.class> patched!");   
-
-        return writer.toByteArray();    
+    private byte[] patchBlockGrass(byte[] basicClass, String clazz) {              
+        return patchBlockSapling(basicClass, clazz);
     }
 
     private byte[] patchItemDye(byte[] basicClass) {              
@@ -232,6 +202,57 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             LOGGER.info("<RenderGlobal.class> patched!");   
 
         return writer.toByteArray();    
+    }
+
+    private byte[] patchBlockTFSapling(byte[] basicClass, String clazz) {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(basicClass);
+        classReader.accept(classNode, 0);
+
+        String
+        updateTickMethodName = "func_180650_b",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        iBlockStateClassName = "net/minecraft/block/state/IBlockState",
+        blockClassName = "net/minecraft/block/Block",
+        randomClassName = "java/util/Random";
+        boolean isSuccessful = false;        
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {               
+            if (methodNode.name.equals(updateTickMethodName) && methodNode.desc.equals("(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";L" + randomClassName + ";)V")) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IF_ICMPLT) {                             
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious().getPrevious(), nodesList); 
+                        isSuccessful = true;                        
+                        break;
+                    }
+                }                                           
+                break;
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(/*ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES*/0);        
+        classNode.accept(writer);
+
+        if (isSuccessful)
+            LOGGER.info("<" + clazz + ".class> patched!");   
+
+        return writer.toByteArray();    
+    }
+
+
+    private byte[] patchBlockBOPSapling(byte[] basicClass, String clazz) {
+        return patchBlockTFSapling(basicClass, clazz);
     }
 }
 

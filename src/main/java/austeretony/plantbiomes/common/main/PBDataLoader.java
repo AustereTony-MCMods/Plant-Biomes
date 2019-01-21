@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -39,7 +38,7 @@ public class PBDataLoader {
 
     public static BlockPos lpBlockPos;
 
-    private static final Map<ResourceLocation, PlantData> PLANTS_DATA = new LinkedHashMap<ResourceLocation, PlantData>();
+    private static final Map<ResourceLocation, PlantData> PLANTS_DATA = new HashMap<ResourceLocation, PlantData>();
 
     private static boolean 
     showUpdateMessages, 
@@ -82,8 +81,6 @@ public class PBDataLoader {
 
     public static void remove(ResourceLocation registryKey, int meta) {
         get(registryKey).remove(meta);
-        if (!get(registryKey).get(meta).hasDeniedBiomes())
-            get(registryKey).remove(meta);
         if (!get(registryKey).hasData())
             PLANTS_DATA.remove(registryKey);
     }

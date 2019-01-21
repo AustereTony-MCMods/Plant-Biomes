@@ -1,6 +1,6 @@
 package austeretony.plantbiomes.common.main;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.util.ResourceLocation;
@@ -9,7 +9,7 @@ public class PlantData {
 
     public final ResourceLocation registryName;
 
-    private final Map<Integer, MetaPlant> data = new LinkedHashMap<Integer, MetaPlant>();
+    private final Map<Integer, MetaPlant> data = new HashMap<Integer, MetaPlant>();
 
     public PlantData(ResourceLocation registryName) {
         this.registryName = registryName;

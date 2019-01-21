@@ -1,6 +1,6 @@
 package austeretony.plantbiomes.common.main;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
@@ -13,7 +13,7 @@ public class MetaPlant {
 
     public final String unlocalizedName;
 
-    private final Set<ResourceLocation> denied = new LinkedHashSet<ResourceLocation>();
+    private final Set<ResourceLocation> denied = new HashSet<ResourceLocation>();
 
     public MetaPlant(int meta, String unlocalizedName) {
         this.meta = meta;
