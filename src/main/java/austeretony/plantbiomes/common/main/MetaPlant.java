@@ -15,6 +15,8 @@ public class MetaPlant {
 
     private final Set<ResourceLocation> denied = new HashSet<ResourceLocation>();
 
+    private boolean deniedGlobal;
+
     public MetaPlant(int meta, String unlocalizedName) {
         this.meta = meta;
         this.unlocalizedName = unlocalizedName;
@@ -32,15 +34,27 @@ public class MetaPlant {
         this.denied.add(biomeRegistryName);
     }
 
+    public void denyGlobal() {
+        this.deniedGlobal = true;
+    }
+
     public void allowBiome(ResourceLocation biomeRegistryName) {
         this.denied.remove(biomeRegistryName);
     }
 
+    public void allowGlobal() {
+        this.deniedGlobal = false;
+    }
+
+    public boolean isDeniedGlobal() {
+        return this.deniedGlobal;
+    }
+
     public boolean isValidBiome(ResourceLocation biomeRegistryName) {
-        return !this.denied.contains(biomeRegistryName);
+        return DataLoader.isSettingsDisabled() ? true : !this.deniedGlobal && !this.denied.contains(biomeRegistryName);
     }
 
     public boolean isValidBiome(World world, BlockPos pos) {
-        return !this.denied.contains(PBDataLoader.getBiomeRegistryName(world, pos));
+        return DataLoader.isSettingsDisabled() ? true : !this.deniedGlobal && !this.denied.contains(DataLoader.getBiomeRegistryName(world, pos));
     }
 }

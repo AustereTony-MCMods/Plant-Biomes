@@ -1,19 +1,49 @@
-﻿pb.command.err.debugMode=Необходимо активировать режим конфигурации.
-pb.command.enable=Режим конфигурации активирован.
-pb.command.list=Растения:
-pb.command.list.empty=Пусто
-pb.command.plant=Растение/биом
-pb.command.plant.notExist=Нет недавнего растения.
-pb.command.deny=Запрещен биом
-pb.command.allow=Разрешен биом
+﻿pb.command.help.title=Доступные команды:
+pb.command.help.disable=отключить настройки (ограничения).
+pb.command.help.enable=включить настройки.
+pb.command.help.status=проверить ствтус настроек.
+pb.command.help.enable-conf=активировать режим конфигурации.
+pb.command.help.disable-conf=отключить режим конфигурации.
+pb.command.help.settings=список настроек.
+pb.command.help.biome=текущий биом.
+pb.command.help.latest=последние растение, с которым взаимодействовал игрок.
+pb.command.help.deny=запретить рост в данном биоме.
+pb.command.help.deny-global=запретить рост повсеместно.
+pb.command.help.allow=разрешить рост в данном биоме.
+pb.command.help.allow-global=разрешить рост повсеместно.
+pb.command.help.clear-latest=удалить настройки для последнего растения.
+pb.command.help.clear-all=удалить все настройки.
+pb.command.help.save=сохранить текущие настройки.
+pb.command.help.backup=сделать бэкап настроек (в файл).
+
+pb.command.err.debugMode=Необходимо активировать режим конфигурации.
+pb.command.enable=Настройки активированы.
+pb.command.disable=Настройки отключены.
+pb.command.status=Настройки
+pb.command.enable.conf=Режим конфигурации включён.
+pb.command.disable.conf=Режим конфигурации отключён.
+pb.command.settings=Настройки:
+pb.command.settings.empty=Пусто
+pb.command.biome=Текущий биом: %s.
+pb.command.latest=Растение/биом
+pb.command.latest.notExist=Нет данных о недавнем растении.
+pb.command.deny=Запрещено
+pb.command.deny.global=Запрещено повсеместно
+pb.command.allow=Разрешено
+pb.command.allow.global=Разрешено повсеместно
 pb.command.allow.absent=Растение отсутствует в списке.
-pb.command.nodataplant=Нет данных для растения.
+pb.command.nodataplant=Нет данных для этого растения.
 pb.command.noData=Нет данных.
 pb.command.clear.latest=Все данные для последнего растения удалены.
 pb.command.clear.all=Все данные удалены.
-pb.command.save=Изменения сохранены.
-pb.command.disable=Режим конфигурации отключён.
+pb.command.save=Настройки сохранены.
+pb.command.backup=Произведено резервное копирование настроек.
+
+pb.status.deniedGlobal=повсеместный запрет
+pb.status.enabled=активны
+pb.status.disabled=неактивны
 
 pb.update.newVersion=Доступна новая версия!
 pb.update.projectPage=Ссылка
+
 

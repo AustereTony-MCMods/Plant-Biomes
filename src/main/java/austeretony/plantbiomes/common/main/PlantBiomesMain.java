@@ -5,8 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.JsonSyntaxException;
 
-import austeretony.plantbiomes.common.commands.CommandPlantBiomes;
-import austeretony.plantbiomes.common.origin.CommonReference;
+import austeretony.plantbiomes.common.commands.CommandPB;
+import austeretony.plantbiomes.common.reference.CommonReference;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,7 +18,7 @@ public class PlantBiomesMain {
     public static final String 
     MODID = "plantbiomes",
     NAME = "Restrictions: Plant Biomes",
-    VERSION = "1.0.4",
+    VERSION = "1.1.0",
     GAME_VERSION = "1.12.2",
     VERSIONS_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/versions.json",
     PROJECT_LOCATION = "minecraft.curseforge.com",
@@ -29,12 +29,12 @@ public class PlantBiomesMain {
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {  
         try {                   
-            PBDataLoader.load();
+            DataLoader.load();
         } catch (JsonSyntaxException exception) {                       
             LOGGER.error("Config parsing failure! Fix syntax errors!");                     
             exception.printStackTrace();
         }
-        CommonReference.registerCommand(event, new CommandPlantBiomes());
+        CommonReference.registerCommand(event, new CommandPB());
     }
 
     @EventHandler

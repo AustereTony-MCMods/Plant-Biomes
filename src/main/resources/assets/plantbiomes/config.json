@@ -1,0 +1,6 @@
+{
+  "main": {
+    "external_config": true,  
+    "update_checker": true
+  }
+}

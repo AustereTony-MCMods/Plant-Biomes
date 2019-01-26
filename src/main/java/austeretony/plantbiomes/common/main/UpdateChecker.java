@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import austeretony.plantbiomes.common.origin.CommonReference;
+import austeretony.plantbiomes.common.reference.CommonReference;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
@@ -21,11 +21,9 @@ public class UpdateChecker implements Runnable {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
-        if (PBDataLoader.isUpdateMessagesEnabled() && CommonReference.isOpped(event.player)) {
-            if (this.compareVersions(PlantBiomesMain.VERSION, availableVersion)) {	
-                EnumPBChatMessages.showMessage(event.player, EnumPBChatMessages.UPDATE_MESSAGE_HEAD, availableVersion);
-                EnumPBChatMessages.showMessage(event.player, EnumPBChatMessages.UPDATE_MESSAGE_LINK);
-            }
+        if (DataLoader.isUpdateMessagesEnabled() && CommonReference.isOpped(event.player)) {
+            if (this.compareVersions(PlantBiomesMain.VERSION, availableVersion))	
+                EnumChatMessages.UPDATE_MESSAGE.sendMessage(event.player, availableVersion);
         }
     }
 
