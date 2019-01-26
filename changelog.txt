@@ -6,5 +6,12 @@
 +Added ability to disable vanilla grass spreading
 +Added support for Twilight Forest saplings
 +Added support for Biomes O' Plenty saplings
+1.1.0
++Setting can be applied globally now.
++Ability to simple disable/enable settings.
++Added new actions to chat command.
++Ability to disable tall grass and flowers (individually) growth with bonemeal.
++Support for ic2 rubber tree sapling.
++Support for Thaumcraft saplings.
 
 
