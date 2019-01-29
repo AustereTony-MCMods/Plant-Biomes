@@ -30,7 +30,7 @@ public class PlantData {
     public MetaPlant get(int meta) {
         return this.data.get(meta);
     }
-    
+
     public void add(int meta, MetaPlant metaPlant) {
         this.data.put(meta, metaPlant);
     }

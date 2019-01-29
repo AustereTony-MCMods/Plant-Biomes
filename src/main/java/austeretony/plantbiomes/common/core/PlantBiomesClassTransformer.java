@@ -35,6 +35,8 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             return patchBlockStem(basicClass, "BlockStem"); 
         case "net.minecraft.block.BlockGrass":                                                      
             return patchBlockGrass(basicClass, "BlockGrass"); 
+        case "net.minecraft.block.BlockVine":                                                      
+            return patchBlockVine(basicClass); 
         case "net.minecraft.world.biome.Biome":                                                      
             return patchBiome(basicClass); 
         case "net.minecraft.item.ItemDye":
@@ -48,7 +50,7 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             return patchBlockBOPSapling(basicClass, "BlockBOPSapling");
         case "ic2.core.block.Ic2Sapling"://ic2 sapling
             return patchIC2Sapling(basicClass, "Ic2Sapling");
-        //case "forestry.arboriculture.blocks.BlockTreeContainer"://forestry saplings
+            //case "forestry.arboriculture.blocks.BlockTreeContainer"://forestry saplings
             //return patchBlockTreeContainer(basicClass);
         case "thaumcraft.common.blocks.world.plants.BlockSaplingTC"://thaumcraft saplings
             return patchBlockSaplingTC(basicClass, "BlockSaplingTC");
@@ -137,6 +139,53 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
 
     private byte[] patchBlockGrass(byte[] basicClass, String clazz) {              
         return patchBlockSapling(basicClass, clazz);
+    }
+
+    private byte[] patchBlockVine(byte[] basicClass) {              
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(basicClass);
+        classReader.accept(classNode, 0);
+
+        String
+        updateTickMethodName = PlantBiomesCorePlugin.isObfuscated() ? "b" : "updateTick",
+                worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
+                        blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
+                                iBlockStateClassName = PlantBiomesCorePlugin.isObfuscated() ? "awt" : "net/minecraft/block/state/IBlockState",
+                                        blockClassName = PlantBiomesCorePlugin.isObfuscated() ? "aow" : "net/minecraft/block/Block",
+                                                randomClassName = "java/util/Random";
+        boolean isSuccessful = false;   
+        int ifeqCount = 0;
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {               
+            if (methodNode.name.equals(updateTickMethodName) && methodNode.desc.equals("(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";L" + randomClassName + ";)V")) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IFNE) {                             
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious(), nodesList); 
+                        isSuccessful = true;                        
+                        break;
+                    }
+                }    
+                break;
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);        
+        classNode.accept(writer);
+
+        if (isSuccessful)
+            LOGGER.info("<BlockVine.class> patched!");   
+
+        return writer.toByteArray();    
     }
 
     private byte[] patchBiome(byte[] basicClass) {              

@@ -13,48 +13,81 @@ public class MetaPlant {
 
     public final String unlocalizedName;
 
-    private final Set<ResourceLocation> denied = new HashSet<ResourceLocation>();
+    private final Set<ResourceLocation> 
+    denied = new HashSet<ResourceLocation>(),
+    valid = new HashSet<ResourceLocation>();
 
-    private boolean deniedGlobal;
+    private boolean deniedGlobal, 
+    validEmpty = true;
 
     public MetaPlant(int meta, String unlocalizedName) {
         this.meta = meta;
         this.unlocalizedName = unlocalizedName;
     }
 
-    public boolean hasDeniedBiomes() {
-        return !this.denied.isEmpty();
-    }
-
     public Set<ResourceLocation> getDeniedBiomes() {
         return this.denied;
+    }
+
+    public boolean isDeniedBiome(ResourceLocation biomeRegistryName) {
+        return this.denied.contains(biomeRegistryName);
     }
 
     public void denyBiome(ResourceLocation biomeRegistryName) {
         this.denied.add(biomeRegistryName);
     }
 
-    public void denyGlobal() {
-        this.deniedGlobal = true;
-    }
-
     public void allowBiome(ResourceLocation biomeRegistryName) {
         this.denied.remove(biomeRegistryName);
     }
 
-    public void allowGlobal() {
-        this.deniedGlobal = false;
+    public void clearDeniedBiomes() {
+        this.denied.clear();
     }
 
     public boolean isDeniedGlobal() {
         return this.deniedGlobal;
     }
 
-    public boolean isValidBiome(ResourceLocation biomeRegistryName) {
-        return DataLoader.isSettingsDisabled() ? true : !this.deniedGlobal && !this.denied.contains(biomeRegistryName);
+    public void denyGlobal() {
+        this.deniedGlobal = true;
     }
 
-    public boolean isValidBiome(World world, BlockPos pos) {
-        return DataLoader.isSettingsDisabled() ? true : !this.deniedGlobal && !this.denied.contains(DataLoader.getBiomeRegistryName(world, pos));
+    public void allowGlobal() {
+        this.deniedGlobal = false;
+    }
+
+    public Set<ResourceLocation> getValidBiomes() {
+        return this.valid;
+    }
+
+    public boolean isValidBiome(ResourceLocation biomeRegistryName) {
+        return this.valid.contains(biomeRegistryName);
+    }
+
+    public boolean isValidBiomesExist() {
+        return !this.validEmpty;
+    }
+
+    public void addValidBiome(ResourceLocation biomeRegistryName) {
+        this.valid.add(biomeRegistryName);
+        this.validEmpty = false;
+    }
+
+    public void removeValidBiome(ResourceLocation biomeRegistryName) {
+        this.valid.remove(biomeRegistryName);
+        this.validEmpty = this.valid.isEmpty();
+    }
+
+    public void clearValidBiomes() {
+        this.valid.clear();
+    }
+
+    public boolean isPermittedBiome(ResourceLocation biomeRegistryName) {
+        return DataLoader.isSettingsEnabled() ? (this.validEmpty ? !this.deniedGlobal && !this.denied.contains(biomeRegistryName) : this.valid.contains(biomeRegistryName)) : true;
+    }
+
+    public boolean isPermittedBiome(World world, BlockPos pos) {
+        return isPermittedBiome(DataLoader.getBiomeRegistryName(world, pos));
     }
 }

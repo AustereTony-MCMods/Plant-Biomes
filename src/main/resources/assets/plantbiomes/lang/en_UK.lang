@@ -8,9 +8,13 @@ pb.command.help.settings=settings list.
 pb.command.help.biome=current biome.
 pb.command.help.latest=latest interacted plant.
 pb.command.help.deny=deny latest plant growth in current biome.
-pb.command.help.deny-global=deny latest plant growth global.
 pb.command.help.allow=allow latest plant growth in current biome.
+pb.command.help.deny-global=deny latest plant growth global.
 pb.command.help.allow-global=allow latest plant growth global.
+pb.command.help.add-valid=add biome to permitted biomes whitelist.
+pb.command.help.rem-valid=remove biome from permitted biomes whitelist.
+pb.command.help.clear-denied=clear denied biomes list for latest plant.
+pb.command.help.clear-valid=clear valid biomes list for latest plant.
 pb.command.help.clear-latest=clear settings for latest plant.
 pb.command.help.clear-all=clear all settings.
 pb.command.help.save=save settings.
@@ -28,20 +32,29 @@ pb.command.biome=Current biome: %s.
 pb.command.latest=Plant/biome
 pb.command.latest.notExist=No latest plant.
 pb.command.deny=Denied
-pb.command.deny.global=Denied global
 pb.command.allow=Allowed
+pb.command.deny.global=Denied global
 pb.command.allow.global=Allowed global
+pb.command.addValid=Added valid biome
+pb.command.removeValid=Remove valid biome
 pb.command.allow.absent=Plant is absent in list.
 pb.command.nodataplant=No data for this plant.
 pb.command.noData=No data.
+pb.command.clear.denied=Denied biomes list cleared for latest plant.
+pb.command.clear.valid=Valid biomes list cleared for latest plant.
 pb.command.clear.latest=All data for latest plant was removed.
 pb.command.clear.all=All data was removed.
 pb.command.save=Settings saved.
 pb.command.backup=Settings backup created.
 
+pb.undefined.name=Undefined
+
 pb.status.deniedGlobal=denied global
 pb.status.enabled=enabled
 pb.status.disabled=disabled
+
+pb.autosave.enabled=Settings autosave enabled.
+pb.autosave.disabled=Settings autosave disabled.
 
 pb.update.newVersion=New version available!
 pb.update.projectPage=Link

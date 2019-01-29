@@ -8,9 +8,13 @@ pb.command.help.settings=список настроек.
 pb.command.help.biome=текущий биом.
 pb.command.help.latest=последние растение, с которым взаимодействовал игрок.
 pb.command.help.deny=запретить рост в данном биоме.
-pb.command.help.deny-global=запретить рост повсеместно.
 pb.command.help.allow=разрешить рост в данном биоме.
+pb.command.help.deny-global=запретить рост повсеместно.
 pb.command.help.allow-global=разрешить рост повсеместно.
+pb.command.help.add-valid=добавить биом в список разрешенных.
+pb.command.help.rem-valid=удалить биом из списка разрешенных.
+pb.command.help.clear-denied=очистить список запрещённых биомов.
+pb.command.help.clear-valid=очистить список разрешённых биомов.
 pb.command.help.clear-latest=удалить настройки для последнего растения.
 pb.command.help.clear-all=удалить все настройки.
 pb.command.help.save=сохранить текущие настройки.
@@ -39,9 +43,14 @@ pb.command.clear.all=Все данные удалены.
 pb.command.save=Настройки сохранены.
 pb.command.backup=Произведено резервное копирование настроек.
 
+pb.undefined.name=Неизвестно
+
 pb.status.deniedGlobal=повсеместный запрет
 pb.status.enabled=активны
 pb.status.disabled=неактивны
+
+pb.autosave.enabled=Автосохранение настроек включено.
+pb.autosave.disabled=Автосохранение настроек отключено.
 
 pb.update.newVersion=Доступна новая версия!
 pb.update.projectPage=Ссылка

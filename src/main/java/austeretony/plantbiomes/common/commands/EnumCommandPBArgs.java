@@ -12,9 +12,13 @@ public enum EnumCommandPBArgs {
     BIOME("biome"),
     LATEST("latest"),
     DENY("deny"),
-    DENY_GLOBAL("deny-global"),
     ALLOW("allow"),
+    DENY_GLOBAL("deny-global"),
     ALLOW_GLOBAL("allow-global"),
+    ADD_VALID("add-valid"),
+    REMOVE_VALID("rem-valid"),
+    CLEAR_DENIED("clear-denied"),
+    CLEAR_VALID("clear-valid"),
     CLEAR_LATEST("clear-latest"),
     CLEAR_ALL("clear-all"),
     SAVE("save"),
@@ -25,13 +29,6 @@ public enum EnumCommandPBArgs {
     EnumCommandPBArgs(String arg) {
         this.arg = arg;
     }
-    
-    public static boolean isValid(String strArg) {
-        for (EnumCommandPBArgs arg : values())
-            if (arg.arg.equals(strArg))
-                return true;
-        return false;
-    }
 
     public static EnumCommandPBArgs get(String strArg) {
         for (EnumCommandPBArgs arg : values())
@@ -39,7 +36,7 @@ public enum EnumCommandPBArgs {
                 return arg;
         return null;
     }
-    
+
     @Override
     public String toString() {
         return this.arg;

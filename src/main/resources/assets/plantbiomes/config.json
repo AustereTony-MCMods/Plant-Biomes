@@ -1,6 +1,8 @@
 {
+  "ver": "1.2.0",
   "main": {
     "external_config": true,  
+    "autosave": true,  
     "update_checker": true
   }
 }

@@ -2,6 +2,7 @@ package austeretony.plantbiomes.common.main;
 
 import austeretony.plantbiomes.common.reference.CommonReference;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockVine;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
@@ -20,12 +21,14 @@ public class PlantBiomesEvents {
                 IBlockState blockState = event.getWorld().getBlockState(event.getPos());       
                 if (blockState != null) {
                     Block block = blockState.getBlock();
-                    if (block instanceof IGrowable || block instanceof IPlantable) {
+                    if (block instanceof IGrowable || block instanceof IPlantable || block instanceof BlockVine) {
                         DataLoader.lpRegistryName = block.getRegistryName();
                         DataLoader.lpMeta = block.getMetaFromState(blockState);
-                        DataLoader.biomeRegistryName = DataLoader.getBiomeRegistryName(event.getWorld(), event.getPos());
+                        DataLoader.lpBiomeRegistryName = DataLoader.getBiomeRegistryName(event.getWorld(), event.getPos());
                         DataLoader.lpBlockPos = event.getPos();
                         DataLoader.lpUnlocalizedName = new ItemStack(Item.getItemFromBlock(block), 1, DataLoader.lpMeta).getUnlocalizedName();
+                        if (DataLoader.lpUnlocalizedName.equals("tile.air"))
+                            DataLoader.lpUnlocalizedName = "pb.undefined";
                         EnumChatMessages.LATEST_PLANT.sendMessage(event.getEntityPlayer());
                     }
                 }
