@@ -10,8 +10,24 @@
 +Setting can be applied globally now.
 +Ability to simple disable/enable settings.
 +Added new actions to chat command.
-+Ability to disable tall grass and flowers (individually) growth with bonemeal.
++Ability to disable tall grass and flowers (individually) 
+growth with bonemeal.
 +Support for ic2 rubber tree sapling.
 +Support for Thaumcraft saplings.
+1.2.0
++Added "autosave" flag to config ("true" by default). 
+If true, any changes (with command "/pb") will be saved automatically.
++Settings status (disabled or enabled) now will be saved 
+and applied after game restart.
++Added ability to create biome whitelists for plants.
+Plants will only grow in whitelisted biomes, any other
+settings will be ignored (if whitelist isn't empty).
++Added support for vanilla vines.
++Improved plants display names used in chat logs.
+If block hasn't name (e.g. crops and saplings stage),
+its name will be displayed as "Undefined" instead "Air".
+
+
+
 
 
