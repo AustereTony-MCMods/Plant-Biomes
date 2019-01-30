@@ -15,47 +15,57 @@ import net.minecraft.world.biome.Biome.FlowerEntry;
 public class PlantBiomesHooks {
 
     public static boolean isGrowthAllowedTick(World world, BlockPos pos, Block block, IBlockState blockState) {
-        if (DataLoader.exist(block, blockState)) {
-            if (DataLoader.get(block, blockState).isPermittedBiome(world, pos)) {
+        if (DataLoader.exist(block)) {
+            if (DataLoader.get(block).isPermittedBiome(block, blockState, world, pos))
                 return true;
-            }
             return false;           
         }
         return true;
     }
 
     public static boolean isGrowthAllowedBonemeal(World world, BlockPos pos) {
-        if (DataLoader.exist(world.getBlockState(pos).getBlock(), world.getBlockState(pos))) {
-            if (DataLoader.get(world.getBlockState(pos).getBlock(), world.getBlockState(pos)).isPermittedBiome(world, pos)) {
+        IBlockState blockState = world.getBlockState(pos);
+        Block block = blockState.getBlock();
+        if (DataLoader.exist(block)) {
+            if (DataLoader.get(block).isPermittedBiome(block, blockState, world, pos))
                 return true;
-            }
-            if (world.getBlockState(pos).getBlock() instanceof BlockGrass) return true;
-            world.playEvent(900, pos, 15);
+            if (block instanceof BlockGrass) return true;
+            world.playEvent(900, pos, 0);
             return false;
         }
         return true;
     }
 
     public static boolean isGrowthAllowedTallgrass(World world, BlockPos pos, IBlockState blockState) {
-        if (DataLoader.exist(blockState.getBlock(), blockState)) {
-            if (DataLoader.get(blockState.getBlock(), blockState).isPermittedBiome(world, pos)) {
+        Block block = blockState.getBlock();
+        if (DataLoader.exist(block)) {
+            if (DataLoader.get(block).isPermittedBiome(block, blockState, world, pos))
                 return true;
-            }
             return false;
         }
         return true;
     }
 
     public static boolean isGrowthAllowedFlower(World world, BlockPos pos, FlowerEntry flowerEntry) {
-        if (DataLoader.exist(flowerEntry.state.getBlock(), flowerEntry.state)) {
-            if (DataLoader.get(flowerEntry.state.getBlock(), flowerEntry.state).isPermittedBiome(world, pos)) {
+        Block block = flowerEntry.state.getBlock();
+        if (DataLoader.exist(block)) {
+            if (DataLoader.get(block).isPermittedBiome(block, flowerEntry.state, world, pos))
                 return true;
-            }
             return false;
         }
         return true;
     }
 
+    public static boolean isGrowthAllowedIC2Crop(World world, BlockPos pos, String propId) {
+        if (DataLoader.existIC2(propId)) {
+            if (DataLoader.getIC2(propId).isPermittedBiome(0, DataLoader.getBiomeRegistryName(world, pos)))
+                return true;
+            return false;           
+        }
+        return true;
+    }
+
+    //TODO Update
     /*public static float isGrowthAllowedForestrySapling(World world, BlockPos pos, Block block, IBlockState blockState) {
         if (DataLoader.exist(block, blockState)) {
             if (DataLoader.get(block, blockState).isValidBiome(world, pos)) {
@@ -66,20 +76,19 @@ public class PlantBiomesHooks {
         return 1.0F;
     }*/
 
-    public static void spawnParticles(World world, BlockPos pos, int amount, int type, Random random) {
+    public static void spawnParticles(World world, BlockPos pos, int type, Random random) {
         if (type == 900) {
-            IBlockState iBlockState = world.getBlockState(pos);
-            if (iBlockState.getMaterial() != Material.AIR) {
-                double d0, d1, d2;
-                for (int i = 0; i < amount; ++i) {
+            IBlockState blockState = world.getBlockState(pos);
+            double d0, d1, d2;
+            if (blockState.getMaterial() != Material.AIR) {
+                for (int i = 0; i < 15; ++i) {
                     d0 = random.nextGaussian() * 0.02D;
                     d1 = random.nextGaussian() * 0.02D;
                     d2 = random.nextGaussian() * 0.02D;
-                    world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, (double) ((float) pos.getX() + random.nextFloat()), (double) pos.getY() + (double) random.nextFloat() * iBlockState.getBoundingBox(world, pos).maxY, (double) ((float) pos.getZ() + random.nextFloat()), d0, d1, d2);
+                    world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, (double) ((float) pos.getX() + random.nextFloat()), (double) pos.getY() + (double) random.nextFloat() * blockState.getBoundingBox(world, pos).maxY, (double) ((float) pos.getZ() + random.nextFloat()), d0, d1, d2);
                 }
             } else {
-                double d0, d1, d2;
-                for (int i1 = 0; i1 < amount; ++i1) {
+                for (int i1 = 0; i1 < 15; ++i1) {
                     d0 = random.nextGaussian() * 0.02D;
                     d1 = random.nextGaussian() * 0.02D;
                     d2 = random.nextGaussian() * 0.02D;

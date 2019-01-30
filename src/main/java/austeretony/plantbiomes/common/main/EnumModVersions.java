@@ -2,7 +2,8 @@ package austeretony.plantbiomes.common.main;
 
 public enum EnumModVersions {
 
-    VER_1_2_0("1.2.0", false);
+    VER_1_2_0("1.2.0", false),
+    VER_1_3_0("1.3.0", false);
 
     public final String version;
 

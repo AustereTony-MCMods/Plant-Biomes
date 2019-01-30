@@ -57,13 +57,13 @@ public class CommandPB extends CommandBase {
         case STATUS:
             EnumChatMessages.STATUS.sendMessage(player);
             break;  
-        case ENABLE_CONFIG:
+        case ENABLE_CONFIG_MODE:
             DataLoader.setConfigModeEnabled(true);
             EnumChatMessages.CONFIGURATION_ENABLED.sendMessage(player);
             break;
-        case DISABLE_CONFIG:
+        case DISABLE_CONFIG_MODE:
             DataLoader.setConfigModeEnabled(false);
-            DataLoader.lpRegistryName = null;
+            DataLoader.latestPlant = null;
             EnumChatMessages.CONFIGURATION_DISABLED.sendMessage(player);
             break;  
         case SETTINGS:
@@ -73,175 +73,137 @@ public class CommandPB extends CommandBase {
             EnumChatMessages.CURRENT_BIOME.sendMessage(player, DataLoader.getBiomeRegistryName(player.world, player.getPosition()).toString());
             break;
         case LATEST:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, true, false, false))
                 return;
-            } else if (DataLoader.lpRegistryName == null) {   
-                EnumChatMessages.NO_LATEST_PLANT.sendMessage(player);
-                return;
-            }
             EnumChatMessages.LATEST_PLANT.sendMessage(player);
             break;
         case DENY:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, true, false, false))
                 return;
-            } else if (DataLoader.lpRegistryName == null) {   
-                EnumChatMessages.NO_LATEST_PLANT.sendMessage(player);
-                return;
-            }
-            if (!DataLoader.existLatest()) {
-                DataLoader.createLatest();
-            }
-            DataLoader.getLatest().denyBiome(DataLoader.lpBiomeRegistryName);
+            if (!DataLoader.existMetaLatest())
+                DataLoader.createMetaLatest();
+            DataLoader.getMetaLatest().denyBiome(DataLoader.latestPlant.biomeRegistryName);
             if (DataLoader.isAutosaveEnabled())
                 DataLoader.saveSettings();
             EnumChatMessages.DENIED.sendMessage(player);
             break;
         case ALLOW:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, true, true, false))
                 return;
-            } else if (DataLoader.lpRegistryName == null) {   
-                EnumChatMessages.NO_LATEST_PLANT.sendMessage(player);
-                return;
-            } else if (!DataLoader.existLatest()) {
-                EnumChatMessages.NO_DATA_FOR_PLANT.sendMessage(player);
-                return;
-            }
-            DataLoader.getLatest().allowBiome(DataLoader.lpBiomeRegistryName);
+            DataLoader.getMetaLatest().allowBiome(DataLoader.latestPlant.biomeRegistryName);
             if (DataLoader.isAutosaveEnabled())
                 DataLoader.saveSettings();
             EnumChatMessages.ALLOWED.sendMessage(player);
             break;
         case DENY_GLOBAL:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, true, false, false))
                 return;
-            } else if (DataLoader.lpRegistryName == null) {   
-                EnumChatMessages.NO_LATEST_PLANT.sendMessage(player);
-                return;
-            }
-            if (!DataLoader.existLatest()) {
-                DataLoader.createLatest();
-            }
-            DataLoader.getLatest().denyGlobal();
+            if (!DataLoader.existMetaLatest())
+                DataLoader.createMetaLatest();
+            DataLoader.getMetaLatest().denyGlobal();
             if (DataLoader.isAutosaveEnabled())
                 DataLoader.saveSettings();
             EnumChatMessages.DENIED_GLOBAL.sendMessage(player);
             break;
         case ALLOW_GLOBAL:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, true, true, false))
                 return;
-            } else if (DataLoader.lpRegistryName == null) {   
-                EnumChatMessages.NO_LATEST_PLANT.sendMessage(player);
-                return;
-            } else if (!DataLoader.existLatest()) {
-                EnumChatMessages.NO_DATA_FOR_PLANT.sendMessage(player);
-                return;
-            }
-            DataLoader.getLatest().allowGlobal();
+            DataLoader.getMetaLatest().allowGlobal();
             if (DataLoader.isAutosaveEnabled())
                 DataLoader.saveSettings();
             EnumChatMessages.ALLOWED_GLOBAL.sendMessage(player);
             break;
         case ADD_VALID:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, true, false, false))
                 return;
-            } else if (DataLoader.lpRegistryName == null) {   
-                EnumChatMessages.NO_LATEST_PLANT.sendMessage(player);
-                return;
-            }
-            if (!DataLoader.existLatest()) {
-                DataLoader.createLatest();
-            }
-            DataLoader.getLatest().addValidBiome(DataLoader.lpBiomeRegistryName);
+            if (!DataLoader.existMetaLatest())
+                DataLoader.createMetaLatest();
+            DataLoader.getMetaLatest().addValidBiome(DataLoader.latestPlant.biomeRegistryName);
             if (DataLoader.isAutosaveEnabled())
                 DataLoader.saveSettings();
             EnumChatMessages.VALID_BIOME_ADDED.sendMessage(player);
             break;
         case REMOVE_VALID:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, true, true, false))
                 return;
-            } else if (DataLoader.lpRegistryName == null) {   
-                EnumChatMessages.NO_LATEST_PLANT.sendMessage(player);
-                return;
-            } else if (!DataLoader.existLatest()) {
-                EnumChatMessages.NO_DATA_FOR_PLANT.sendMessage(player);
-                return;
-            }
-            DataLoader.getLatest().removeValidBiome(DataLoader.lpBiomeRegistryName);
+            DataLoader.getMetaLatest().removeValidBiome(DataLoader.latestPlant.biomeRegistryName);
             if (DataLoader.isAutosaveEnabled())
                 DataLoader.saveSettings();
             EnumChatMessages.VALID_BIOME_REMOVED.sendMessage(player);
             break;
+        case SET_MAIN:
+            if (!this.validAction(player, true, true, true, false))
+                return;
+            DataLoader.getLatest().setMainMeta(DataLoader.latestPlant.meta);
+            if (DataLoader.isAutosaveEnabled())
+                DataLoader.saveSettings();
+            EnumChatMessages.MAIN_META_SET.sendMessage(player);
+            break;
+        case RESET_MAIN:
+            if (!this.validAction(player, true, true, false, false))
+                return;
+            DataLoader.getLatest().resetMainMeta();
+            if (DataLoader.isAutosaveEnabled())
+                DataLoader.saveSettings();
+            EnumChatMessages.MAIN_META_RESET.sendMessage(player);
+            break;
         case CLEAR_DENIED:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, false, true, false))
                 return;
-            } else if (!DataLoader.existLatest()) {
-                EnumChatMessages.NO_DATA_FOR_PLANT.sendMessage(player);
-                return;
-            }
-            DataLoader.getLatest().clearDeniedBiomes();
+            DataLoader.getMetaLatest().clearDeniedBiomes();
             DataLoader.saveSettings();
             EnumChatMessages.DENIED_BIOMES_CLEARED.sendMessage(player);                                                   
             break;
         case CLEAR_VALID:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, false, true, false))
                 return;
-            } else if (!DataLoader.existLatest()) {
-                EnumChatMessages.NO_DATA_FOR_PLANT.sendMessage(player);
-                return;
-            }
-            DataLoader.getLatest().clearValidBiomes();
+            DataLoader.getMetaLatest().clearValidBiomes();
             DataLoader.saveSettings();
             EnumChatMessages.VALID_BIOMES_CLEARED.sendMessage(player);                                                   
             break;
         case CLEAR_LATEST:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, false, true, false))
                 return;
-            } else if (!DataLoader.existLatest()) {
-                EnumChatMessages.NO_DATA_FOR_PLANT.sendMessage(player);
-                return;
-            }
-            DataLoader.removeLatest();
+            DataLoader.removeMetaLatest();
             DataLoader.saveSettings();
             EnumChatMessages.PLANT_BIOMES_CLEARED.sendMessage(player);                                                   
             break;
         case CLEAR_ALL:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, false, false, true))
                 return;
-            } else if (DataLoader.map().isEmpty()) {
-                EnumChatMessages.NO_DATA.sendMessage(player);
-                return;
-            }
-            DataLoader.map().clear();
+            DataLoader.clear();
             DataLoader.saveSettings();
             EnumChatMessages.PLANTS_LIST_CLEARED.sendMessage(player);
             break;
         case SAVE:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, false, false, false))
                 return;
-            }
             DataLoader.saveSettings();
             EnumChatMessages.SETTINGS_SAVED.sendMessage(player);
             break;
         case BACKUP:
-            if (!DataLoader.isConfigModeEnabled()) {
-                EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            if (!this.validAction(player, true, false, false, false))
                 return;
-            }
             DataLoader.backupSettings();
             EnumChatMessages.BACKUP_CREATED.sendMessage(player);
             break;
         }
+    }
+
+    private boolean validAction(EntityPlayer player, boolean checkMode, boolean checkLatest, boolean checkDataLatest, boolean checkDataAll) {
+        if (checkMode && !DataLoader.isConfigModeEnabled()) {
+            EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
+            return false;
+        } else if (checkLatest && DataLoader.latestPlant == null) {   
+            EnumChatMessages.NO_LATEST_PLANT.sendMessage(player);
+            return false;
+        } else if (checkDataLatest && !DataLoader.existMetaLatest()) {
+            EnumChatMessages.NO_DATA_FOR_PLANT.sendMessage(player);
+            return false;
+        } else if (checkDataAll && DataLoader.map().isEmpty()) {
+            EnumChatMessages.NO_DATA.sendMessage(player);
+            return false;
+        }
+        return true;
     }
 }

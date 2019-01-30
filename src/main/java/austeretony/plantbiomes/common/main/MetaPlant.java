@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 public class MetaPlant {
 
@@ -81,13 +79,10 @@ public class MetaPlant {
 
     public void clearValidBiomes() {
         this.valid.clear();
+        this.validEmpty = true;
     }
 
     public boolean isPermittedBiome(ResourceLocation biomeRegistryName) {
         return DataLoader.isSettingsEnabled() ? (this.validEmpty ? !this.deniedGlobal && !this.denied.contains(biomeRegistryName) : this.valid.contains(biomeRegistryName)) : true;
-    }
-
-    public boolean isPermittedBiome(World world, BlockPos pos) {
-        return isPermittedBiome(DataLoader.getBiomeRegistryName(world, pos));
     }
 }

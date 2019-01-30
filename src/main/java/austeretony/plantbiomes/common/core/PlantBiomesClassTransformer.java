@@ -37,6 +37,8 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             return patchBlockGrass(basicClass, "BlockGrass"); 
         case "net.minecraft.block.BlockVine":                                                      
             return patchBlockVine(basicClass); 
+        case "net.minecraft.block.BlockCocoa":                                                      
+            return patchBlockCocoa(basicClass); 
         case "net.minecraft.world.biome.Biome":                                                      
             return patchBiome(basicClass); 
         case "net.minecraft.item.ItemDye":
@@ -49,7 +51,31 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         case "biomesoplenty.common.block.BlockBOPSapling"://biomes o plenty saplings
             return patchBlockBOPSapling(basicClass, "BlockBOPSapling");
         case "ic2.core.block.Ic2Sapling"://ic2 sapling
-            return patchIC2Sapling(basicClass, "Ic2Sapling");
+            return patchSaplingIC2(basicClass, "Ic2Sapling");
+        case "ic2.core.crop.CropVanilla"://ic2 vanilla crops
+            return patchCropVanillaIC2(basicClass, "CropVanilla");
+        case "ic2.api.crops.CropCard"://ic2 crops
+            return patchCropCardIC2(basicClass, "CropCard");
+        case "ic2.core.crop.cropcard.CropPotato"://ic2 potato crop
+            return patchCropPotatoIC2(basicClass, "CropPotato");
+        case "ic2.core.crop.cropcard.CropStickreed"://ic2 stickreed crop
+            return patchCropStickreedIC2(basicClass, "CropStickreed");
+        case "ic2.core.crop.cropcard.CropVenomilia"://ic2 venomilla crop
+            return patchCropVenomiliaIC2(basicClass, "CropVenomilia");
+        case "ic2.core.crop.cropcard.CropBaseMushroom"://ic2 mushroom crop
+            return patchCropBaseMushroomIC2(basicClass, "CropBaseMushroom");
+        case "ic2.core.crop.cropcard.CropBaseMetalCommon"://ic2 metal plant crop
+            return patchCropBaseMetalCommonIC2(basicClass, "CropBaseMetalCommon");
+        case "ic2.core.crop.cropcard.CropBaseMetalUncommon"://ic2 metal plant crop
+            return patchCropBaseMetalUncommonIC2(basicClass, "CropBaseMetalUncommon");
+        case "ic2.core.crop.cropcard.CropEating"://ic2 eating crop
+            return patchCropEatingIC2(basicClass, "CropEating");
+        case "ic2.core.crop.cropcard.CropHops"://ic2 hops crop
+            return patchCropHopsIC2(basicClass, "CropHops");
+        case "ic2.core.crop.cropcard.CropColorFlower"://ic2 flower crops
+            return patchCropColorFlowerIC2(basicClass, "CropColorFlower");
+        case "ic2.core.crop.cropcard.CropRedWheat"://ic2 red wheat crop
+            return patchCropRedWheatIC2(basicClass, "CropRedWheat");
             //case "forestry.arboriculture.blocks.BlockTreeContainer"://forestry saplings
             //return patchBlockTreeContainer(basicClass);
         case "thaumcraft.common.blocks.world.plants.BlockSaplingTC"://thaumcraft saplings
@@ -188,6 +214,54 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         return writer.toByteArray();    
     }
 
+
+    private byte[] patchBlockCocoa(byte[] basicClass) {              
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(basicClass);
+        classReader.accept(classNode, 0);
+
+        String
+        updateTickMethodName = PlantBiomesCorePlugin.isObfuscated() ? "b" : "updateTick",
+                worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
+                        blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
+                                iBlockStateClassName = PlantBiomesCorePlugin.isObfuscated() ? "awt" : "net/minecraft/block/state/IBlockState",
+                                        blockClassName = PlantBiomesCorePlugin.isObfuscated() ? "aow" : "net/minecraft/block/Block",
+                                                randomClassName = "java/util/Random";
+        boolean isSuccessful = false;   
+        int ifeqCount = 0;
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {               
+            if (methodNode.name.equals(updateTickMethodName) && methodNode.desc.equals("(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";L" + randomClassName + ";)V")) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IF_ICMPGE) {                             
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious(), nodesList); 
+                        isSuccessful = true;                        
+                        break;
+                    }
+                }    
+                break;
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);        
+        classNode.accept(writer);
+
+        if (isSuccessful)
+            LOGGER.info("<BlockCocoa.class> patched!");   
+
+        return writer.toByteArray();    
+    }
+
     private byte[] patchBiome(byte[] basicClass) {              
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(basicClass);
@@ -307,10 +381,9 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
                         nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, renderGlobalClassName, worldFieldName, "L" + worldClientClassName + ";"));
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
-                        nodesList.add(new VarInsnNode(Opcodes.ILOAD, 4));
                         nodesList.add(new VarInsnNode(Opcodes.ILOAD, 2));
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "spawnParticles", "(L" + worldClassName + ";L" + blockPosClassName + ";IIL" + randomClassName + ";)V", false));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "spawnParticles", "(L" + worldClassName + ";L" + blockPosClassName + ";IL" + randomClassName + ";)V", false));
                         methodNode.instructions.insert(currentInsn, nodesList); 
                         isSuccessful = true;                        
                         break;
@@ -379,8 +452,186 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         return patchBlockTFSapling(basicClass, clazz);
     }
 
-    private byte[] patchIC2Sapling(byte[] basicClass, String clazz) {
+    private byte[] patchSaplingIC2(byte[] basicClass, String clazz) {
         return patchBlockTFSapling(basicClass, clazz);
+    }
+
+    //TODO ic2 crops 
+    private byte[] patchCropVanillaIC2(byte[] basicClass, String clazz) {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(basicClass);
+        classReader.accept(classNode, 0);
+
+        String
+        canGrowMethodName = "canGrow",
+        getWorldObjMethodName = "getWorldObj",
+        getPositionMethodName = "getPosition",
+        getCropMethodName = "getCrop",
+        getIdMethodName = "getId",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        iCropTileClassName = "ic2/api/crops/ICropTile",
+        iLocatableClassName = "ic2/api/info/ILocatable",
+        cropCardClassName = "ic2/api/crops/CropCard",
+        stringClassName = "java/lang/String";
+        boolean isSuccessful = false;   
+        int ifeqCount = 0;
+        AbstractInsnNode currentInsn;
+        int pointOpcode = Opcodes.IF_ICMPGE;
+        if (clazz.equals("CropVenomilia") 
+                || clazz.equals("CropColorFlower"))
+            pointOpcode = Opcodes.IF_ICMPGT;
+
+        for (MethodNode methodNode : classNode.methods) {               
+            if (methodNode.name.equals(canGrowMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == pointOpcode) {                             
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getWorldObjMethodName, "()L" + worldClassName + ";", true));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getPositionMethodName, "()L" + blockPosClassName + ";", true));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                        if (clazz.equals("CropStickreed") 
+                                || clazz.equals("CropVenomilia") 
+                                || clazz.equals("CropPotato") 
+                                || clazz.equals("CropHops")
+                                || clazz.equals("CropColorFlower")
+                                || clazz.equals("CropRedWheat"))
+                            methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
+                        else
+                            methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious(), nodesList);
+                        isSuccessful = true;                        
+                        break;
+                    }
+                }    
+                break;
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);        
+        classNode.accept(writer);
+
+        if (isSuccessful)
+            LOGGER.info("ic2 <" + clazz + ".class> patched!");   
+
+        return writer.toByteArray();  
+    }
+
+    private byte[] patchCropPotatoIC2(byte[] basicClass, String clazz) {
+        return patchCropVanillaIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropCardIC2(byte[] basicClass, String clazz) {
+        return patchCropVanillaIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropStickreedIC2(byte[] basicClass, String clazz) {
+        return patchCropVanillaIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropVenomiliaIC2(byte[] basicClass, String clazz) {
+        return patchCropVanillaIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropBaseMushroomIC2(byte[] basicClass, String clazz) {
+        return patchCropVanillaIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropBaseMetalCommonIC2(byte[] basicClass, String clazz) {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(basicClass);
+        classReader.accept(classNode, 0);
+
+        String
+        canGrowMethodName = "canGrow",
+        getWorldObjMethodName = "getWorldObj",
+        getPositionMethodName = "getPosition",
+        getCropMethodName = "getCrop",
+        getIdMethodName = "getId",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        iCropTileClassName = "ic2/api/crops/ICropTile",
+        iLocatableClassName = "ic2/api/info/ILocatable",
+        cropCardClassName = "ic2/api/crops/CropCard",
+        stringClassName = "java/lang/String";
+        boolean isSuccessful = false;   
+        int ifeqCount = 0;
+        AbstractInsnNode currentInsn;
+        int pointOpcodeSecond = Opcodes.IF_ICMPNE;
+        if (clazz.equals("CropEating"))
+            pointOpcodeSecond = Opcodes.IF_ICMPLE;
+
+        for (MethodNode methodNode : classNode.methods) {               
+            if (methodNode.name.equals(canGrowMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IF_ICMPGE) {                             
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getWorldObjMethodName, "()L" + worldClassName + ";", true));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getPositionMethodName, "()L" + blockPosClassName + ";", true));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
+                    } else if (currentInsn.getOpcode() == pointOpcodeSecond) {                             
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getWorldObjMethodName, "()L" + worldClassName + ";", true));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getPositionMethodName, "()L" + blockPosClassName + ";", true));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
+                        isSuccessful = true;                        
+                        break;
+                    }
+                }    
+                break;
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);        
+        classNode.accept(writer);
+
+        if (isSuccessful)
+            LOGGER.info("ic2 <" + clazz + ".class> patched!");   
+
+        return writer.toByteArray();  
+    }
+
+    private byte[] patchCropBaseMetalUncommonIC2(byte[] basicClass, String clazz) {
+        return patchCropBaseMetalCommonIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropEatingIC2(byte[] basicClass, String clazz) {
+        return patchCropBaseMetalCommonIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropHopsIC2(byte[] basicClass, String clazz) {
+        return patchCropVanillaIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropColorFlowerIC2(byte[] basicClass, String clazz) {
+        return patchCropVanillaIC2(basicClass, clazz);
+    }
+
+    private byte[] patchCropRedWheatIC2(byte[] basicClass, String clazz) {
+        return patchCropVanillaIC2(basicClass, clazz);
     }
 
     //TODO Fix Forestry BlockTreeContainer.class hook

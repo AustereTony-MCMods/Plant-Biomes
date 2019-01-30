@@ -21,10 +21,9 @@ public class UpdateChecker implements Runnable {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
-        if (DataLoader.isUpdateMessagesEnabled() && CommonReference.isOpped(event.player)) {
+        if (DataLoader.isUpdateMessagesEnabled() && CommonReference.isOpped(event.player))
             if (this.compareVersions(PlantBiomesMain.VERSION, availableVersion))	
                 EnumChatMessages.UPDATE_MESSAGE.sendMessage(event.player, availableVersion);
-        }
     }
 
     @Override

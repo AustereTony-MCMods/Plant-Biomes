@@ -27,6 +27,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 
 public class DataLoader {
 
@@ -36,15 +37,11 @@ public class DataLoader {
 
     private static final DateFormat BACKUP_DATE_FORMAT = new SimpleDateFormat("yy_MM_dd-HH-mm-ss");
 
-    public static ResourceLocation lpRegistryName, lpBiomeRegistryName;
-
-    public static String lpUnlocalizedName;
-
-    public static int lpMeta;
-
-    public static BlockPos lpBlockPos;
+    public static LatestPlant latestPlant;
 
     private static final Map<ResourceLocation, PlantData> PLANTS_DATA = new HashMap<ResourceLocation, PlantData>();
+
+    public static Map<String, ResourceLocation> ic2Crops;
 
     private static boolean 
     showUpdateMessages, 
@@ -53,60 +50,86 @@ public class DataLoader {
     isSettingsEnabled = true,
     isConfigModeEnabled;
 
-    public static boolean exist(ResourceLocation registryName, int meta) {
-        return PLANTS_DATA.containsKey(registryName) && get(registryName).hasData(meta);
+    public static boolean exist(ResourceLocation registryName) {
+        return PLANTS_DATA.containsKey(registryName);
     }
 
-    public static boolean exist(Block block, IBlockState blockState) {
-        return exist(block.getRegistryName(), block.getMetaFromState(blockState));
+    public static boolean exist(Block block) {
+        return exist(block.getRegistryName());
     }
 
     public static boolean existLatest() {
-        return exist(lpRegistryName, lpMeta);
+        return exist(latestPlant.registryName);
     }
 
-    public static void create(ResourceLocation registryName, int meta, String unlocalizedName) {
-        if (!PLANTS_DATA.containsKey(registryName)) {
-            PlantData plantData = new PlantData(registryName);
-            plantData.create(meta, unlocalizedName);
-            PLANTS_DATA.put(registryName, plantData);    
+    public static boolean existIC2(String cropId) {
+        return ic2Crops.containsKey(cropId) && exist(ic2Crops.get(cropId));
+    }
+
+    public static boolean existMetaLatest() {
+        return PLANTS_DATA.containsKey(latestPlant.registryName) && get(latestPlant.registryName).hasMetaData(latestPlant.meta);
+    }
+
+    public static void createMetaLatest() {
+        if (!PLANTS_DATA.containsKey(latestPlant.registryName)) {
+            PlantData plantData = new PlantData(latestPlant.registryName);
+            plantData.createMeta(latestPlant.meta, latestPlant.unlocalizedName);
+            PLANTS_DATA.put(latestPlant.registryName, plantData);  
+            if (latestPlant.isIC2Crop())
+                ic2Crops.put(latestPlant.getIC2CropId(), latestPlant.registryName);
         } else {
-            get(registryName).create(meta, unlocalizedName); 
+            get(latestPlant.registryName).createMeta(latestPlant.meta, latestPlant.unlocalizedName); 
         }
-    }
-
-    public static void createLatest() {
-        create(lpRegistryName, lpMeta, lpUnlocalizedName);
     }
 
     public static Map<ResourceLocation, PlantData> map() {
         return PLANTS_DATA;
     }
 
+    public static void clear() {
+        PLANTS_DATA.clear();
+        if (ic2Crops != null)
+            ic2Crops.clear();
+    }
+
     private static PlantData get(ResourceLocation registryName) {
         return PLANTS_DATA.get(registryName);
     }
 
-    public static MetaPlant get(ResourceLocation registryName, int meta) {
-        return get(registryName).get(meta);
+    public static PlantData get(Block block) {
+        return get(block.getRegistryName());
     }
 
-    public static MetaPlant get(Block block, IBlockState blockState) {
-        return get(block.getRegistryName(), block.getMetaFromState(blockState));
+    public static PlantData getLatest() {
+        return get(latestPlant.registryName);
     }
 
-    public static MetaPlant getLatest() {
-        return get(lpRegistryName, lpMeta);
+    public static PlantData getIC2(String cropId) {
+        return get(ic2Crops.get(cropId));
     }
 
-    public static void remove(ResourceLocation registryKey, int meta) {
-        get(registryKey).remove(meta);
+    public static MetaPlant getMeta(ResourceLocation registryName, int meta) {
+        return get(registryName).getMeta(meta);
+    }
+
+    public static MetaPlant getMeta(Block block, IBlockState blockState) {
+        return getMeta(block.getRegistryName(), block.getMetaFromState(blockState));
+    }
+
+    public static MetaPlant getMetaLatest() {
+        return getMeta(latestPlant.registryName, latestPlant.meta);
+    }
+
+    public static void removeMeta(ResourceLocation registryKey, int meta) {
+        get(registryKey).removeMeta(meta);
+        if (latestPlant.isIC2Crop())
+            ic2Crops.remove(latestPlant.getIC2CropId());
         if (!get(registryKey).hasData())
             PLANTS_DATA.remove(registryKey);
     }
 
-    public static void removeLatest() {
-        remove(lpRegistryName, lpMeta);
+    public static void removeMetaLatest() {
+        removeMeta(latestPlant.registryName, latestPlant.meta);
     }
 
     public static ResourceLocation getBiomeRegistryName(World world, BlockPos pos) {
@@ -232,12 +255,15 @@ public class DataLoader {
         autosave = mainSettings.get("autosave").getAsBoolean();     
         showUpdateMessages = mainSettings.get("update_checker").getAsBoolean();     
         JsonObject plantObject, metaObject;
-        String plantRegistryName;
-        String[] plantRegistryNameSplitted, biomeNameSplitted;
+        String plantRegistryName, plantUnlocalizedName;
+        String[] plantRegistryNameSplitted, biomeNameSplitted, unlocNameSplitted;
         ResourceLocation registryName;
         int meta;
         PlantData plantData;
         MetaPlant metaPlant;
+        boolean ic2Loaded = Loader.isModLoaded("ic2");
+        if (ic2Loaded)
+            ic2Crops = new HashMap<String, ResourceLocation>();
         for (Map.Entry<String, JsonElement> plantEntry : data.entrySet()) {
             if (plantEntry.getKey().equals("enabled")) {
                 isSettingsEnabled = data.get("enabled").getAsBoolean();
@@ -248,24 +274,36 @@ public class DataLoader {
             plantRegistryNameSplitted = plantRegistryName.split("[:]");
             registryName = new ResourceLocation(plantRegistryNameSplitted[0], plantRegistryNameSplitted[1]);
             plantData = new PlantData(registryName);
+            if (plantObject.get("main_meta") != null)//for compatibility (till 1.3.0) 
+                plantData.setMainMeta(plantObject.get("main_meta").getAsInt());
             for (Map.Entry<String, JsonElement> metaEntry : plantObject.entrySet()) {  
+                if (metaEntry.getKey().equals("main_meta")) continue;
                 meta = Integer.parseInt(metaEntry.getKey());
                 metaObject = metaEntry.getValue().getAsJsonObject();
-                metaPlant = new MetaPlant(meta, metaObject.get("name").getAsString());
+                plantUnlocalizedName = metaObject.get("name").getAsString();
+                unlocNameSplitted = plantUnlocalizedName.split("[.]");
+                if (unlocNameSplitted.length > 1 && !unlocNameSplitted[1].equals("crop") && !unlocNameSplitted[unlocNameSplitted.length - 1].equals("name"))//for compatibility (till 1.3.0) 
+                    plantUnlocalizedName = plantUnlocalizedName + ".name";
+                metaPlant = new MetaPlant(meta, plantUnlocalizedName);
                 if (metaObject.get("denied_global").getAsBoolean())
                     metaPlant.denyGlobal();
                 for (JsonElement b : metaObject.get("deny").getAsJsonArray()) {
                     biomeNameSplitted = b.getAsString().split("[:]");
                     metaPlant.denyBiome(new ResourceLocation(biomeNameSplitted[0], biomeNameSplitted[1]));
                 }
-                if (metaObject.get("valid") != null)//For previous versions compatibility
+                if (metaObject.get("valid") != null)//for compatibility (till 1.2.0)
                     for (JsonElement b : metaObject.get("valid").getAsJsonArray()) {
                         biomeNameSplitted = b.getAsString().split("[:]");
                         metaPlant.addValidBiome(new ResourceLocation(biomeNameSplitted[0], biomeNameSplitted[1]));
                     }
-                plantData.add(meta, metaPlant);
+                plantData.addMeta(meta, metaPlant);
             }
             PLANTS_DATA.put(registryName, plantData);
+            if (ic2Loaded && plantData.hasMetaData(0)) {
+                String[] splitted = plantData.getMeta(0).unlocalizedName.split("[.]");
+                if (splitted.length == 3 && splitted[1].equals("crop"))
+                    ic2Crops.put(splitted[2], plantData.registryName);
+            }
         }
     }
 
@@ -280,6 +318,7 @@ public class DataLoader {
         dataObject.add("enabled", new JsonPrimitive(isSettingsEnabled));
         for (PlantData plantData : PLANTS_DATA.values()) {
             plantObject = new JsonObject();
+            plantObject.add("main_meta", new JsonPrimitive(plantData.getMainMeta()));
             for (MetaPlant metaPlant : plantData.getData().values()) {
                 metaObject = new JsonObject();
                 deniedArray = new JsonArray();
