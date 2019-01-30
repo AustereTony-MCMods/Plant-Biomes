@@ -26,6 +26,12 @@ settings will be ignored (if whitelist isn't empty).
 +Improved plants display names used in chat logs.
 If block hasn't name (e.g. crops and saplings stage),
 its name will be displayed as "Undefined" instead "Air".
+1.3.0
++Settings of any subtype can be marked as global and 
+will be applied for every subtype (e.g all crop stages will use
+settings from marked subtype).
++Added support for vanilla cocoa beans.
++Added support for IndustrialCraft 2 crops support.
 
 
 
