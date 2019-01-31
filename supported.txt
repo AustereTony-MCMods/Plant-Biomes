@@ -1,0 +1,10 @@
+***supported mods***
++Twilight Forest:
+ - saplings 
++Biomes O' Plenty
+ - saplings 
++Industrial Craft 2
+ - rubber tree sapling 
+ - crops
++Thaumcraft 
+ - saplings

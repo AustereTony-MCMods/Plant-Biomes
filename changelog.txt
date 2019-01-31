@@ -31,7 +31,11 @@ its name will be displayed as "Undefined" instead "Air".
 will be applied for every subtype (e.g all crop stages will use
 settings from marked subtype).
 +Added support for vanilla cocoa beans.
-+Added support for IndustrialCraft 2 crops support.
++Added support for ic2 crops.
+1.3.2
++Added way to check biome for ic2 crops. Bonemeal 
+usage will reveal denied biome with gray particles.
++Performance optimizations.
 
 
 
