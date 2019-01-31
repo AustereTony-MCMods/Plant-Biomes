@@ -23,7 +23,6 @@ import com.google.gson.JsonPrimitive;
 import austeretony.plantbiomes.common.reference.CommonReference;
 import austeretony.plantbiomes.util.PBUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -48,10 +47,13 @@ public class DataLoader {
     useExternalConfig, 
     autosave,
     isSettingsEnabled = true,
-    isConfigModeEnabled;
+    isConfigModeEnabled,
+    ic2Loaded,
+    hasPlantsData,
+    hasIC2Crops;
 
     public static boolean exist(ResourceLocation registryName) {
-        return PLANTS_DATA.containsKey(registryName);
+        return hasPlantsData && PLANTS_DATA.containsKey(registryName);
     }
 
     public static boolean exist(Block block) {
@@ -63,11 +65,11 @@ public class DataLoader {
     }
 
     public static boolean existIC2(String cropId) {
-        return ic2Crops.containsKey(cropId) && exist(ic2Crops.get(cropId));
+        return hasIC2Crops && ic2Crops.containsKey(cropId) && exist(ic2Crops.get(cropId));
     }
 
     public static boolean existMetaLatest() {
-        return PLANTS_DATA.containsKey(latestPlant.registryName) && get(latestPlant.registryName).hasMetaData(latestPlant.meta);
+        return exist(latestPlant.registryName) && get(latestPlant.registryName).hasMetaData(latestPlant.meta);
     }
 
     public static void createMetaLatest() {
@@ -75,11 +77,14 @@ public class DataLoader {
             PlantData plantData = new PlantData(latestPlant.registryName);
             plantData.createMeta(latestPlant.meta, latestPlant.unlocalizedName);
             PLANTS_DATA.put(latestPlant.registryName, plantData);  
-            if (latestPlant.isIC2Crop())
+            if (latestPlant.isIC2Crop()) {
                 ic2Crops.put(latestPlant.getIC2CropId(), latestPlant.registryName);
+                hasIC2Crops = true;
+            }
         } else {
             get(latestPlant.registryName).createMeta(latestPlant.meta, latestPlant.unlocalizedName); 
         }
+        hasPlantsData = true;
     }
 
     public static Map<ResourceLocation, PlantData> map() {
@@ -88,8 +93,11 @@ public class DataLoader {
 
     public static void clear() {
         PLANTS_DATA.clear();
-        if (ic2Crops != null)
+        hasPlantsData = false;
+        if (ic2Crops != null) {
             ic2Crops.clear();
+            hasIC2Crops = false;
+        }
     }
 
     private static PlantData get(ResourceLocation registryName) {
@@ -108,28 +116,19 @@ public class DataLoader {
         return get(ic2Crops.get(cropId));
     }
 
-    public static MetaPlant getMeta(ResourceLocation registryName, int meta) {
-        return get(registryName).getMeta(meta);
-    }
-
-    public static MetaPlant getMeta(Block block, IBlockState blockState) {
-        return getMeta(block.getRegistryName(), block.getMetaFromState(blockState));
-    }
-
     public static MetaPlant getMetaLatest() {
-        return getMeta(latestPlant.registryName, latestPlant.meta);
-    }
-
-    public static void removeMeta(ResourceLocation registryKey, int meta) {
-        get(registryKey).removeMeta(meta);
-        if (latestPlant.isIC2Crop())
-            ic2Crops.remove(latestPlant.getIC2CropId());
-        if (!get(registryKey).hasData())
-            PLANTS_DATA.remove(registryKey);
+        return get(latestPlant.registryName).getMeta(latestPlant.meta);
     }
 
     public static void removeMetaLatest() {
-        removeMeta(latestPlant.registryName, latestPlant.meta);
+        get(latestPlant.registryName).removeMeta(latestPlant.meta);
+        if (latestPlant.isIC2Crop()) {
+            ic2Crops.remove(latestPlant.getIC2CropId());
+            hasIC2Crops = ic2Crops.isEmpty();
+        }
+        if (!get(latestPlant.registryName).hasData())
+            PLANTS_DATA.remove(latestPlant.registryName);
+        hasPlantsData = PLANTS_DATA.isEmpty();
     }
 
     public static ResourceLocation getBiomeRegistryName(World world, BlockPos pos) {
@@ -140,7 +139,8 @@ public class DataLoader {
         return registryName.toString() + "-" + meta;
     }
 
-    public static void load() {             
+    public static void load() {
+        ic2Loaded = Loader.isModLoaded("ic2");
         JsonObject internalConfig, internalSettings;
         try {       
             internalConfig = (JsonObject) PBUtils.getInternalJsonData("assets/plantbiomes/config.json");  
@@ -299,10 +299,13 @@ public class DataLoader {
                 plantData.addMeta(meta, metaPlant);
             }
             PLANTS_DATA.put(registryName, plantData);
+            hasPlantsData = true;
             if (ic2Loaded && plantData.hasMetaData(0)) {
                 String[] splitted = plantData.getMeta(0).unlocalizedName.split("[.]");
-                if (splitted.length == 3 && splitted[1].equals("crop"))
+                if (splitted.length == 3 && splitted[1].equals("crop")) {
                     ic2Crops.put(splitted[2], plantData.registryName);
+                    hasIC2Crops = true;
+                }
             }
         }
     }

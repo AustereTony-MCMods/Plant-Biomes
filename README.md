@@ -1,3 +1,3 @@
 # Plant-Biomes
-Allows to customize any crops and saplings not to grow in specified biomes.
+Create biomes blacklists, whitelists for every plant to manage its growth.
 Project page: https://minecraft.curseforge.com/projects/plant-biomes

@@ -54,7 +54,7 @@ public class PlantBiomesEvents {
                         EnumChatMessages.LATEST_PLANT.sendMessage(event.getEntityPlayer());
                     } 
                 }
-            }
+            }   
         }
     }
 }

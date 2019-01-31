@@ -7,6 +7,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -56,13 +59,19 @@ public class PlantBiomesHooks {
         return true;
     }
 
-    public static boolean isGrowthAllowedIC2Crop(World world, BlockPos pos, String propId) {
-        if (DataLoader.existIC2(propId)) {
-            if (DataLoader.getIC2(propId).isPermittedBiome(0, DataLoader.getBiomeRegistryName(world, pos)))
+    public static boolean isGrowthAllowedIC2Crop(World world, BlockPos pos, String cropId) {
+        if (DataLoader.existIC2(cropId)) {
+            if (DataLoader.getIC2(cropId).isPermittedBiome(0, DataLoader.getBiomeRegistryName(world, pos)))
                 return true;
             return false;           
         }
         return true;
+    }
+
+    public static void showIC2CropDeniedBiome(World world, BlockPos pos, String cropId, EntityPlayer player) {
+        if (player.getHeldItemMainhand().getItem() == Items.DYE && EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getMetadata()) == EnumDyeColor.WHITE)
+            if (!isGrowthAllowedIC2Crop(world, pos, cropId))
+                world.playEvent(900, pos, 0);
     }
 
     //TODO Update

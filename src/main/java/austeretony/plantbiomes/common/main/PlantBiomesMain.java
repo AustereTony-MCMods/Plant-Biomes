@@ -17,8 +17,8 @@ public class PlantBiomesMain {
 
     public static final String 
     MODID = "plantbiomes",
-    NAME = "Restrictions: Plant Biomes",
-    VERSION = "1.3.0",
+    NAME = "Plant Biomes",
+    VERSION = "1.3.2",
     GAME_VERSION = "1.12.2",
     VERSIONS_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/versions.json",
     PROJECT_LOCATION = "minecraft.curseforge.com",

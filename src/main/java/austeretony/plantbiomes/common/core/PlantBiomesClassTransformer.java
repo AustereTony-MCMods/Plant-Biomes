@@ -464,12 +464,14 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
 
         String
         canGrowMethodName = "canGrow",
+        onRightClickMethodName = "onRightClick",
         getWorldObjMethodName = "getWorldObj",
         getPositionMethodName = "getPosition",
         getCropMethodName = "getCrop",
         getIdMethodName = "getId",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
+        entityPlayerClassName = "net/minecraft/entity/player/EntityPlayer",
         iCropTileClassName = "ic2/api/crops/ICropTile",
         iLocatableClassName = "ic2/api/info/ILocatable",
         cropCardClassName = "ic2/api/crops/CropCard",
@@ -507,12 +509,36 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
                             methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
                         else
                             methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious(), nodesList);
-                        isSuccessful = true;                        
+                        if (!clazz.equals("CropCard"))
+                            isSuccessful = true;                        
                         break;
                     }
                 }    
-                break;
+                if (!clazz.equals("CropCard"))
+                    break;
             }
+            if (clazz.equals("CropCard"))
+                if (methodNode.name.equals(onRightClickMethodName)) {
+                    Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                    while (insnIterator.hasNext()) {                        
+                        currentInsn = insnIterator.next();                  
+                        if (currentInsn.getOpcode() == Opcodes.ALOAD) {                             
+                            InsnList nodesList = new InsnList();   
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getWorldObjMethodName, "()L" + worldClassName + ";", true));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getPositionMethodName, "()L" + blockPosClassName + ";", true));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "showIC2CropDeniedBiome", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + entityPlayerClassName + ";)V", false));
+                            methodNode.instructions.insertBefore(currentInsn, nodesList);
+                            isSuccessful = true;                        
+                            break;
+                        }
+                    }
+                }
         }
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);        

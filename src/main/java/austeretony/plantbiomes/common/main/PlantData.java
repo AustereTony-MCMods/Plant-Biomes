@@ -32,7 +32,7 @@ public class PlantData {
     }
 
     public boolean hasMetaData(int meta) {
-        return this.data.containsKey(meta);
+        return this.hasData() && this.data.containsKey(meta);
     }
 
     public MetaPlant getMeta(int meta) {
@@ -58,7 +58,7 @@ public class PlantData {
     public int getMainMeta() {
         return this.mainMeta;
     }
-    
+
     public MetaPlant getMainMetaPlant() {
         return this.data.get(this.mainMeta);
     }
@@ -74,7 +74,7 @@ public class PlantData {
     }
 
     private boolean verifyMeta(int meta, ResourceLocation biomeRegistryName) {
-        return !this.data.containsKey(meta) || (this.data.containsKey(meta) && this.data.get(meta).isPermittedBiome(biomeRegistryName));
+        return !this.data.containsKey(meta) || this.data.get(meta).isPermittedBiome(biomeRegistryName);
     }
 
     public boolean isPermittedBiome(int meta, ResourceLocation biomeRegistryName) {

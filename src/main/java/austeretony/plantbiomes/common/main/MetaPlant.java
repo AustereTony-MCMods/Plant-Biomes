@@ -15,7 +15,8 @@ public class MetaPlant {
     denied = new HashSet<ResourceLocation>(),
     valid = new HashSet<ResourceLocation>();
 
-    private boolean deniedGlobal, 
+    private boolean deniedGlobal,
+    deniedEmpty = true,
     validEmpty = true;
 
     public MetaPlant(int meta, String unlocalizedName) {
@@ -27,20 +28,27 @@ public class MetaPlant {
         return this.denied;
     }
 
+    public boolean isDeniedBiomesExist() {
+        return !this.deniedEmpty;
+    }
+
     public boolean isDeniedBiome(ResourceLocation biomeRegistryName) {
         return this.denied.contains(biomeRegistryName);
     }
 
     public void denyBiome(ResourceLocation biomeRegistryName) {
         this.denied.add(biomeRegistryName);
+        this.deniedEmpty = false;
     }
 
     public void allowBiome(ResourceLocation biomeRegistryName) {
         this.denied.remove(biomeRegistryName);
+        this.deniedEmpty = this.denied.isEmpty();
     }
 
     public void clearDeniedBiomes() {
         this.denied.clear();
+        this.deniedEmpty = true;
     }
 
     public boolean isDeniedGlobal() {
@@ -83,6 +91,6 @@ public class MetaPlant {
     }
 
     public boolean isPermittedBiome(ResourceLocation biomeRegistryName) {
-        return DataLoader.isSettingsEnabled() ? (this.validEmpty ? !this.deniedGlobal && !this.denied.contains(biomeRegistryName) : this.valid.contains(biomeRegistryName)) : true;
+        return DataLoader.isSettingsEnabled() ? (this.validEmpty ? !this.deniedGlobal && (this.deniedEmpty || !this.denied.contains(biomeRegistryName)) : this.valid.contains(biomeRegistryName)) : true;
     }
 }
