@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import austeretony.plantbiomes.common.reference.CommonReference;
+import austeretony.plantbiomes.util.PBUtils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
@@ -22,7 +23,7 @@ public class UpdateChecker implements Runnable {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
         if (DataLoader.isUpdateMessagesEnabled() && CommonReference.isOpped(event.player))
-            if (this.compareVersions(PlantBiomesMain.VERSION, availableVersion))	
+            if (PBUtils.isOutdated(PlantBiomesMain.VERSION, availableVersion))	
                 EnumChatMessages.UPDATE_MESSAGE.sendMessage(event.player, availableVersion);
     }
 
@@ -56,24 +57,5 @@ public class UpdateChecker implements Runnable {
             return;
         }        
         availableVersion = data.get("available").getAsString();
-    }
-
-    private boolean compareVersions(String currentVersion, String availableVersion) {								
-        String[] 
-                cVer = currentVersion.split("[.]"),
-                aVer = availableVersion.split("[.]");				
-        int diff;		
-        for (int i = 0; i < cVer.length; i++) {					
-            try {				
-                diff = Integer.parseInt(aVer[i]) - Integer.parseInt(cVer[i]);												
-                if (diff > 0)
-                    return true;				
-                if (diff < 0)
-                    return false;
-            } catch (NumberFormatException exception) {				
-                exception.printStackTrace();
-            }
-        }		
-        return false;
     }
 }

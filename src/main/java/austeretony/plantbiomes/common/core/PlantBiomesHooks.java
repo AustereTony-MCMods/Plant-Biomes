@@ -74,16 +74,16 @@ public class PlantBiomesHooks {
                 world.playEvent(900, pos, 0);
     }
 
-    //TODO Update
-    /*public static float isGrowthAllowedForestrySapling(World world, BlockPos pos, Block block, IBlockState blockState) {
-        if (DataLoader.exist(block, blockState)) {
-            if (DataLoader.get(block, blockState).isValidBiome(world, pos)) {
-                return 0.0F;
-            }
-            return 1.0F;
+    public static boolean isGrowthAllowedForestrySapling(World world, BlockPos pos, String ident, boolean bonemealUsed) {
+        if (DataLoader.existForestry(ident)) {
+            if (DataLoader.getForestry(ident).isPermittedBiome(0, DataLoader.getBiomeRegistryName(world, pos)))
+                return true;
+            if (bonemealUsed)
+                world.playEvent(900, pos, 0);
+            return false;           
         }
-        return 1.0F;
-    }*/
+        return true;
+    }
 
     public static void spawnParticles(World world, BlockPos pos, int type, Random random) {
         if (type == 900) {

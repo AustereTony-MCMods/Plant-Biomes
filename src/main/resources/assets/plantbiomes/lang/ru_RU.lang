@@ -22,6 +22,8 @@ pb.command.help.clear-all=удалить все настройки.
 pb.command.help.save=сохранить текущие настройки.
 pb.command.help.backup=сделать бэкап настроек в новый файл.
 
+pb.config.invalidState=Внешний конфиг отключён, изменение настроек невозможно.
+
 pb.command.err.debugMode=Необходимо активировать режим конфигурации.
 pb.command.enable=Настройки активированы.
 pb.command.disable=Настройки отключены.

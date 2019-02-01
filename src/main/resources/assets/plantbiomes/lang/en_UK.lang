@@ -22,6 +22,8 @@ pb.command.help.clear-all=clear all settings.
 pb.command.help.save=save settings.
 pb.command.help.backup=backup settings to new file.
 
+pb.config.invalidState=External config disabled, settings can't be changed.
+
 pb.command.err.debugMode=Configuration mode must be enabled.
 pb.command.enable=Settings enabled.
 pb.command.disable=Settings disabled.

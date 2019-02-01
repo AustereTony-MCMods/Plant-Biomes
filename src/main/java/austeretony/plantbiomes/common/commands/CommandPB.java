@@ -58,10 +58,14 @@ public class CommandPB extends CommandBase {
             EnumChatMessages.STATUS.sendMessage(player);
             break;  
         case ENABLE_CONFIG_MODE:
+            if (!this.validAction(player, false, false, false, false))
+                return;
             DataLoader.setConfigModeEnabled(true);
             EnumChatMessages.CONFIGURATION_ENABLED.sendMessage(player);
             break;
         case DISABLE_CONFIG_MODE:
+            if (!this.validAction(player, false, false, false, false))
+                return;
             DataLoader.setConfigModeEnabled(false);
             DataLoader.latestPlant = null;
             EnumChatMessages.CONFIGURATION_DISABLED.sendMessage(player);
@@ -191,7 +195,10 @@ public class CommandPB extends CommandBase {
     }
 
     private boolean validAction(EntityPlayer player, boolean checkMode, boolean checkLatest, boolean checkDataLatest, boolean checkDataAll) {
-        if (checkMode && !DataLoader.isConfigModeEnabled()) {
+        if (!DataLoader.isExternalConfigEnabled()) {
+            EnumChatMessages.EXTERNAL_CONFIG_DISABLED.sendMessage(player);
+            return false;
+        } else if (checkMode && !DataLoader.isConfigModeEnabled()) {
             EnumChatMessages.NEED_ENABLE_CONFIGURATION.sendMessage(player);
             return false;
         } else if (checkLatest && DataLoader.latestPlant == null) {   

@@ -6,11 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.io.Writer;
-import java.util.List;
-
-import org.apache.commons.io.IOUtils;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -38,5 +34,24 @@ public class PBUtils {
         try (Writer writer = new FileWriter(path)) {    		    	        	
             new GsonBuilder().setPrettyPrinting().create().toJson(data, writer);
         }
+    }
+
+    public static boolean isOutdated(String currentVersion, String availableVersion) {                                                               
+        String[] 
+                cVer = currentVersion.split("[.]"),
+                aVer = availableVersion.split("[.]");                           
+        int diff;               
+        for (int i = 0; i < cVer.length; i++) {                                 
+            try {                               
+                diff = Integer.parseInt(aVer[i]) - Integer.parseInt(cVer[i]);                                                                                           
+                if (diff > 0)
+                    return true;                                
+                if (diff < 0)
+                    return false;
+            } catch (NumberFormatException exception) {                         
+                exception.printStackTrace();
+            }
+        }               
+        return false;
     }
 }

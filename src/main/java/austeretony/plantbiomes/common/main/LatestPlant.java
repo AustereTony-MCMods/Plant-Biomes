@@ -13,7 +13,9 @@ public class LatestPlant {
 
     public final BlockPos blockPos;
 
-    private String ic2CropId = "";
+    private String 
+    ic2CropId = "",
+    forestrySaplingIdent = "";
 
     public LatestPlant(ResourceLocation registryName, int meta, ResourceLocation biomeRegistryName, BlockPos blockPos, String unlocalizedName) {
         this.registryName = registryName;
@@ -33,5 +35,17 @@ public class LatestPlant {
 
     public void setIC2CropId(String cropId) {
         this.ic2CropId = cropId;
+    }
+
+    public boolean isForestrySapling() {
+        return !this.forestrySaplingIdent.isEmpty();
+    }
+
+    public String getForestrySaplingIdent() {
+        return this.forestrySaplingIdent;
+    }
+
+    public void setForestrySaplingIdent(String ident) {
+        this.forestrySaplingIdent = ident;
     }
 }

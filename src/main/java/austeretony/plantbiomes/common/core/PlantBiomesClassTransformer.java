@@ -11,6 +11,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -26,58 +27,71 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {   
-        switch (transformedName) {   	
-        case "net.minecraft.block.BlockSapling":   			
+        switch (transformedName) {
+        //***vanilla plants support***
+        case "net.minecraft.block.BlockSapling"://saplings   			
             return patchBlockSapling(basicClass, "BlockSapling");   			 			
-        case "net.minecraft.block.BlockCrops":							
+        case "net.minecraft.block.BlockCrops"://crops (wheat, potato, carrot, etc.)							
             return patchBlockCrops(basicClass, "BlockCrops");	
-        case "net.minecraft.block.BlockStem":                                                      
+        case "net.minecraft.block.BlockStem"://melon, pumpkin                                                      
             return patchBlockStem(basicClass, "BlockStem"); 
-        case "net.minecraft.block.BlockGrass":                                                      
+        case "net.minecraft.block.BlockGrass"://grass spreading                                                      
             return patchBlockGrass(basicClass, "BlockGrass"); 
-        case "net.minecraft.block.BlockVine":                                                      
+        case "net.minecraft.block.BlockVine"://vines spreading                                                      
             return patchBlockVine(basicClass); 
-        case "net.minecraft.block.BlockCocoa":                                                      
+        case "net.minecraft.block.BlockCocoa"://cocoa beans                                                      
             return patchBlockCocoa(basicClass); 
-        case "net.minecraft.world.biome.Biome":                                                      
+        case "net.minecraft.block.BlockReed"://reed                                                      
+            return patchBlockReed(basicClass, "BlockReed"); 
+        case "net.minecraft.block.BlockCactus"://cactus                                                      
+            return patchBlockCactus(basicClass, "BlockCactus"); 
+        case "net.minecraft.world.biome.Biome"://flowers growth with bonemeal                                                      
             return patchBiome(basicClass); 
-        case "net.minecraft.item.ItemDye":
+        case "net.minecraft.item.ItemDye"://bonemeal behavior 
             return patchItemDye(basicClass);
         case "net.minecraft.client.renderer.RenderGlobal":
-            return patchRenderGlobal(basicClass);
+            return patchRenderGlobal(basicClass);//gray particles for client
             //***non-vanilla plants support***
-        case "twilightforest.block.BlockTFSapling"://twilight forest saplings
+            //Twilight Forest (tested for 3.8.689)
+        case "twilightforest.block.BlockTFSapling"://saplings
             return patchBlockTFSapling(basicClass, "BlockTFSapling");
-        case "biomesoplenty.common.block.BlockBOPSapling"://biomes o plenty saplings
+            //Biomes O' Plenty (tested for 7.0.1.2419)
+        case "biomesoplenty.common.block.BlockBOPSapling"://saplings
             return patchBlockBOPSapling(basicClass, "BlockBOPSapling");
-        case "ic2.core.block.Ic2Sapling"://ic2 sapling
+            //IndustrialCraft 2 (tested for 2.8.108)
+            //Why different classes for every crop?
+        case "ic2.core.block.Ic2Sapling"://sapling
             return patchSaplingIC2(basicClass, "Ic2Sapling");
-        case "ic2.core.crop.CropVanilla"://ic2 vanilla crops
+        case "ic2.core.crop.CropVanilla"://vanilla crops
             return patchCropVanillaIC2(basicClass, "CropVanilla");
-        case "ic2.api.crops.CropCard"://ic2 crops
+        case "ic2.api.crops.CropCard"://crops
             return patchCropCardIC2(basicClass, "CropCard");
-        case "ic2.core.crop.cropcard.CropPotato"://ic2 potato crop
+        case "ic2.core.crop.cropcard.CropPotato"://potato crop
             return patchCropPotatoIC2(basicClass, "CropPotato");
-        case "ic2.core.crop.cropcard.CropStickreed"://ic2 stickreed crop
+        case "ic2.core.crop.cropcard.CropStickreed"://stickreed crop
             return patchCropStickreedIC2(basicClass, "CropStickreed");
-        case "ic2.core.crop.cropcard.CropVenomilia"://ic2 venomilla crop
+        case "ic2.core.crop.cropcard.CropVenomilia"://venomilla crop
             return patchCropVenomiliaIC2(basicClass, "CropVenomilia");
-        case "ic2.core.crop.cropcard.CropBaseMushroom"://ic2 mushroom crop
+        case "ic2.core.crop.cropcard.CropBaseMushroom"://mushroom crop
             return patchCropBaseMushroomIC2(basicClass, "CropBaseMushroom");
-        case "ic2.core.crop.cropcard.CropBaseMetalCommon"://ic2 metal plant crop
+        case "ic2.core.crop.cropcard.CropBaseMetalCommon"://metal plant crop
             return patchCropBaseMetalCommonIC2(basicClass, "CropBaseMetalCommon");
-        case "ic2.core.crop.cropcard.CropBaseMetalUncommon"://ic2 metal plant crop
+        case "ic2.core.crop.cropcard.CropBaseMetalUncommon"://metal plant crop
             return patchCropBaseMetalUncommonIC2(basicClass, "CropBaseMetalUncommon");
-        case "ic2.core.crop.cropcard.CropEating"://ic2 eating crop
+        case "ic2.core.crop.cropcard.CropEating"://eating crop
             return patchCropEatingIC2(basicClass, "CropEating");
-        case "ic2.core.crop.cropcard.CropHops"://ic2 hops crop
+        case "ic2.core.crop.cropcard.CropHops"://hops crop
             return patchCropHopsIC2(basicClass, "CropHops");
-        case "ic2.core.crop.cropcard.CropColorFlower"://ic2 flower crops
+        case "ic2.core.crop.cropcard.CropColorFlower"://flower crops
             return patchCropColorFlowerIC2(basicClass, "CropColorFlower");
-        case "ic2.core.crop.cropcard.CropRedWheat"://ic2 red wheat crop
+        case "ic2.core.crop.cropcard.CropRedWheat"://red wheat crop
             return patchCropRedWheatIC2(basicClass, "CropRedWheat");
-            //case "forestry.arboriculture.blocks.BlockTreeContainer"://forestry saplings
-            //return patchBlockTreeContainer(basicClass);
+            //Forestry (tested for 5.8.2.382)
+        case "forestry.arboriculture.tiles.TileSapling"://saplings
+            return patchTileSaplingForestry(basicClass, "TileSapling");
+        case "forestry.arboriculture.blocks.BlockSapling"://saplings    
+            return patchBlockSaplingForestry(basicClass);
+            //Thaumcraft (tested for 6.1.BETA26)
         case "thaumcraft.common.blocks.world.plants.BlockSaplingTC"://thaumcraft saplings
             return patchBlockSaplingTC(basicClass, "BlockSaplingTC");
         }   	
@@ -115,7 +129,8 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious().getPrevious(), nodesList); 
-                        isSuccessful = true;                        
+                        if (!clazz.equals("BlockGrass"))
+                            isSuccessful = true;                        
                         break;
                     }
                 }    
@@ -228,7 +243,6 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
                                         blockClassName = PlantBiomesCorePlugin.isObfuscated() ? "aow" : "net/minecraft/block/Block",
                                                 randomClassName = "java/util/Random";
         boolean isSuccessful = false;   
-        int ifeqCount = 0;
         AbstractInsnNode currentInsn;
 
         for (MethodNode methodNode : classNode.methods) {               
@@ -260,6 +274,63 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             LOGGER.info("<BlockCocoa.class> patched!");   
 
         return writer.toByteArray();    
+    }
+
+    private byte[] patchBlockReed(byte[] basicClass, String clazz) {              
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(basicClass);
+        classReader.accept(classNode, 0);
+
+        String
+        updateTickMethodName = PlantBiomesCorePlugin.isObfuscated() ? "b" : "updateTick",
+                worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
+                        blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
+                                iBlockStateClassName = PlantBiomesCorePlugin.isObfuscated() ? "awt" : "net/minecraft/block/state/IBlockState",
+                                        blockClassName = PlantBiomesCorePlugin.isObfuscated() ? "aow" : "net/minecraft/block/Block",
+                                                randomClassName = "java/util/Random";
+        boolean isSuccessful = false;   
+        int ifeqCount = 0;
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {               
+            if (methodNode.name.equals(updateTickMethodName) && methodNode.desc.equals("(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";L" + randomClassName + ";)V")) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IFEQ) {   
+                        ifeqCount++;
+                        if (ifeqCount == (clazz.equals("BlockCactus") ? 1 : 2)) {
+                            InsnList nodesList = new InsnList();   
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
+                            nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                            if (clazz.equals("BlockCactus"))
+                                methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList); 
+                            else
+                                methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious(), nodesList); 
+                            isSuccessful = true;                        
+                            break;
+                        }
+                    }
+                }    
+                break;
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);        
+        classNode.accept(writer);
+
+        if (isSuccessful)
+            LOGGER.info("<" + clazz + ".class> patched!");   
+
+        return writer.toByteArray();    
+    }
+
+    private byte[] patchBlockCactus(byte[] basicClass, String clazz) {              
+        return patchBlockReed(basicClass, clazz);
     }
 
     private byte[] patchBiome(byte[] basicClass) {              
@@ -660,39 +731,104 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         return patchCropVanillaIC2(basicClass, clazz);
     }
 
-    //TODO Fix Forestry BlockTreeContainer.class hook
-    /*private byte[] patchBlockTreeContainer(byte[] basicClass) {
+    //TODO Forestry saplings
+    private byte[] patchTileSaplingForestry(byte[] basicClass, String clazz) {
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(basicClass);
         classReader.accept(classNode, 0);
 
         String
-        updateTickMethodName = "func_180650_b",
+        worldFieldName = "field_145850_b",
+        posFieldName = "field_174879_c",
+        canAcceptBoneMealMethodName = "canAcceptBoneMeal",
+        tryGrowMethodName = "tryGrow",
+        getIdentMethodName = "getIdent",
+        tileSaplingClassName = "forestry/arboriculture/tiles/TileSapling",
+        iTreeClassName = "forestry/api/arboriculture/ITree",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        iBlockStateClassName = "net/minecraft/block/state/IBlockState",
         blockClassName = "net/minecraft/block/Block",
-        randomClassName = "java/util/Random";
+        stringClassName = "java/lang/String";
         boolean isSuccessful = false;        
         AbstractInsnNode currentInsn;
 
-        for (MethodNode methodNode : classNode.methods) {               
-            if (methodNode.name.equals(updateTickMethodName) && methodNode.desc.equals("(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";L" + randomClassName + ";)V")) {                         
+        for (MethodNode methodNode : classNode.methods) {
+            if (methodNode.name.equals(canAcceptBoneMealMethodName) || methodNode.name.equals(tryGrowMethodName)) {                         
                 Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
                 while (insnIterator.hasNext()) {                        
                     currentInsn = insnIterator.next();                  
-                    if (currentInsn.getOpcode() == Opcodes.IFLE) {         
-                        methodNode.instructions.remove(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious().getPrevious());
-                        methodNode.instructions.remove(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious());
+                    if (currentInsn.getOpcode() == Opcodes.IFNONNULL) {     
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileSaplingClassName, worldFieldName, "L" + worldClassName + ";"));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileSaplingClassName, posFieldName, "L" + blockPosClassName + ";"));
+                        if (methodNode.name.equals(canAcceptBoneMealMethodName))
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                        else
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
+                        if (methodNode.name.equals(canAcceptBoneMealMethodName))
+                            nodesList.add(new InsnNode(Opcodes.ICONST_1));     
+                        else
+                            nodesList.add(new InsnNode(Opcodes.ICONST_0));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestrySapling", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";Z)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFNE, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious(), nodesList); 
+                        if (methodNode.name.equals(tryGrowMethodName))
+                            isSuccessful = true;                        
+                        break;
+                    }
+                } 
+                if (methodNode.name.equals(tryGrowMethodName))
+                    break;
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);      
+        classNode.accept(writer);
+
+        if (isSuccessful)
+            LOGGER.info("Forestry <" + clazz + ".class> patched!");   
+
+        return writer.toByteArray();   
+    }
+
+    private byte[] patchBlockSaplingForestry(byte[] basicClass) {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(basicClass);
+        classReader.accept(classNode, 0);
+
+        String
+        canUseBonemealMethodName = "func_180670_a",
+        getTreeMethodName = "getTree",
+        getIdentMethodName = "getIdent",
+        tileSaplingClassName = "forestry/arboriculture/tiles/TileSapling",
+        iTreeClassName = "forestry/api/arboriculture/ITree",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        blockClassName = "net/minecraft/block/Block",
+        stringClassName = "java/lang/String";
+        boolean isSuccessful = false;        
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {
+            if (methodNode.name.equals(canUseBonemealMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();  
+                JumpInsnNode ifnullInsnNode = null      ;
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();  
+                    if (currentInsn.getOpcode() == Opcodes.ASTORE) {         
                         InsnList nodesList = new InsnList();   
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestrySapling", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)F", false));
-                        methodNode.instructions.insertBefore(currentInsn, nodesList); 
-                        isSuccessful = true;                        
-                        break;
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileSaplingClassName, getTreeMethodName, "()L" + iTreeClassName + ";", false));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
+                        nodesList.add(new InsnNode(Opcodes.ICONST_1));     
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestrySapling", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";Z)Z", false));
+                        nodesList.add(new InsnNode(Opcodes.IRETURN));
+                        methodNode.instructions.insert(currentInsn, nodesList); 
                     }
                 }                                           
                 break;
@@ -703,10 +839,9 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         classNode.accept(writer);
 
         if (isSuccessful)
-            LOGGER.info("<BlockTreeContainer.class> patched!");   
+            LOGGER.info("Forestry <BlockSapling.class> patched!");   
 
-        return writer.toByteArray();   
-    }*/
+        return writer.toByteArray();       } 
 
     private byte[] patchBlockSaplingTC(byte[] basicClass, String clazz) {
         return patchBlockTFSapling(basicClass, clazz);

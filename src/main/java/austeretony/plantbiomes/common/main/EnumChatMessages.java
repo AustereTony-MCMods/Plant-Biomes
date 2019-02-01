@@ -70,6 +70,16 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.status").appendSibling(new TextComponentString(": ")).appendSibling(msg1)));
         }   
     },
+    EXTERNAL_CONFIG_DISABLED {
+
+        @Override
+        public void sendMessage(EntityPlayer player, String... args) {
+            ITextComponent msg1;
+            msg1 = new TextComponentTranslation("pb.config.invalidState");
+            msg1.getStyle().setColor(TextFormatting.RED);        
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1));
+        }   
+    },
     CONFIGURATION_ENABLED {
 
         @Override
