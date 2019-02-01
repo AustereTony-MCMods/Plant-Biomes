@@ -1,19 +1,19 @@
-1.0.0
-+Initial release.
-1.0.1
+1.3.6
++Configs update algorithms optimization and fixes
+for internal configuration files (if enabled).
++Added support for vanilla reed.
++Added support for vanilla cactus.
++Added support for Forestry saplings.
+1.3.2
++Added way to check biome for ic2 crops. Bonemeal 
+usage will reveal denied biome with gray particles.
 +Performance optimizations.
-1.0.4
-+Added ability to disable vanilla grass spreading
-+Added support for Twilight Forest saplings
-+Added support for Biomes O' Plenty saplings
-1.1.0
-+Setting can be applied globally now.
-+Ability to simple disable/enable settings.
-+Added new actions to chat command.
-+Ability to disable tall grass and flowers (individually) 
-growth with bonemeal.
-+Support for ic2 rubber tree sapling.
-+Support for Thaumcraft saplings.
+1.3.0
++Settings of any subtype can be marked as global and 
+will be applied for every subtype (e.g all crop stages will use
+settings from marked subtype).
++Added support for vanilla cocoa beans.
++Added support for ic2 crops.
 1.2.0
 +Added "autosave" flag to config ("true" by default). 
 If true, any changes (with command "/pb") will be saved automatically.
@@ -26,16 +26,22 @@ settings will be ignored (if whitelist isn't empty).
 +Improved plants display names used in chat logs.
 If block hasn't name (e.g. crops and saplings stage),
 its name will be displayed as "Undefined" instead "Air".
-1.3.0
-+Settings of any subtype can be marked as global and 
-will be applied for every subtype (e.g all crop stages will use
-settings from marked subtype).
-+Added support for vanilla cocoa beans.
-+Added support for ic2 crops.
-1.3.2
-+Added way to check biome for ic2 crops. Bonemeal 
-usage will reveal denied biome with gray particles.
+1.0.4
++Added ability to disable vanilla grass spreading
++Added support for Twilight Forest saplings
++Added support for Biomes O' Plenty saplings
+1.1.0
++Setting can be applied globally now.
++Ability to simple disable/enable settings.
++Added new actions to chat command.
++Ability to disable tall grass and flowers (individually) 
+growth with bonemeal.
++Support for ic2 rubber tree sapling.
++Support for Thaumcraft saplings.
+1.0.1
 +Performance optimizations.
+1.0.0
++Initial release.
 
 
 
