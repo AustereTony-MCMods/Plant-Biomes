@@ -54,6 +54,7 @@ pb.command.clear.all=Все данные удалены.
 pb.command.save=Настройки сохранены.
 pb.command.backup=Произведено резервное копирование настроек.
 
+pb.plantUnsupported=Это растение не поддерживается.
 pb.undefined.name=Неизвестно
 pb.mainMetaSet=Растения использует настроки подтипа #%s.
 

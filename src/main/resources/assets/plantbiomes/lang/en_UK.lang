@@ -54,6 +54,7 @@ pb.command.clear.all=All data was removed.
 pb.command.save=Settings saved.
 pb.command.backup=Settings backup created.
 
+pb.plantUnsupported=This plant is unsupported.
 pb.undefined.name=Undefined
 pb.mainMetaSet=Plant uses subtype #%s settings.
 

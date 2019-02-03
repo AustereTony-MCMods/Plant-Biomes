@@ -61,7 +61,7 @@ public class PlantBiomesHooks {
 
     public static boolean isGrowthAllowedIC2Crop(World world, BlockPos pos, String cropId) {
         if (DataLoader.existIC2(cropId)) {
-            if (DataLoader.getIC2(cropId).isPermittedBiome(0, DataLoader.getBiomeRegistryName(world, pos)))
+            if (DataLoader.getIC2(cropId).isPermittedBiome(16, DataLoader.getBiomeRegistryName(world, pos)))
                 return true;
             return false;           
         }
@@ -76,7 +76,7 @@ public class PlantBiomesHooks {
 
     public static boolean isGrowthAllowedForestrySapling(World world, BlockPos pos, String ident, boolean bonemealUsed) {
         if (DataLoader.existForestry(ident)) {
-            if (DataLoader.getForestry(ident).isPermittedBiome(0, DataLoader.getBiomeRegistryName(world, pos)))
+            if (DataLoader.getForestry(ident).isPermittedBiome(16, DataLoader.getBiomeRegistryName(world, pos)))
                 return true;
             if (bonemealUsed)
                 world.playEvent(900, pos, 0);

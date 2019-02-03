@@ -78,7 +78,7 @@ public class PlantData {
     }
 
     public boolean isPermittedBiome(int meta, ResourceLocation biomeRegistryName) {
-        return this.hasMainMeta ? verifyMeta(this.mainMeta, biomeRegistryName) : verifyMeta(meta, biomeRegistryName);
+        return !DataLoader.isSettingsEnabled() || (this.hasMainMeta ? verifyMeta(this.mainMeta, biomeRegistryName) : verifyMeta(meta, biomeRegistryName));
     }
 
     public boolean isPermittedBiome(Block block, IBlockState blockState, ResourceLocation biomeRegistryName) {

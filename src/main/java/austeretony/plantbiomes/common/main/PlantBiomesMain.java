@@ -12,13 +12,17 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid = PlantBiomesMain.MODID, name = PlantBiomesMain.NAME, version = PlantBiomesMain.VERSION)
+@Mod(
+        modid = PlantBiomesMain.MODID, 
+        name = PlantBiomesMain.NAME, 
+        version = PlantBiomesMain.VERSION,
+        certificateFingerprint = "@FINGERPRINT@")
 public class PlantBiomesMain {
 
     public static final String 
     MODID = "plantbiomes",
     NAME = "Plant Biomes",
-    VERSION = "1.3.6",
+    VERSION = "1.3.12",
     GAME_VERSION = "1.12.2",
     VERSIONS_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/versions.json",
     PROJECT_LOCATION = "minecraft.curseforge.com",

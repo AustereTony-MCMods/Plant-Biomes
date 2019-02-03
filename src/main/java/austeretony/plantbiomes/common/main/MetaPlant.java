@@ -91,6 +91,6 @@ public class MetaPlant {
     }
 
     public boolean isPermittedBiome(ResourceLocation biomeRegistryName) {
-        return DataLoader.isSettingsEnabled() ? (this.validEmpty ? !this.deniedGlobal && (this.deniedEmpty || !this.denied.contains(biomeRegistryName)) : this.valid.contains(biomeRegistryName)) : true;
+        return this.validEmpty ? !this.deniedGlobal && (this.deniedEmpty || !this.denied.contains(biomeRegistryName)) : this.valid.contains(biomeRegistryName);
     }
 }

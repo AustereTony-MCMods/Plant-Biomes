@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -26,6 +27,10 @@ public class CommonReference {
 
     public static boolean isOpped(EntityPlayer player) {
         return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().canSendCommands(player.getGameProfile());
+    }
+
+    public static boolean isMainHandEmpty(EntityPlayer player) {
+        return player.getHeldItemMainhand().getItem() == Items.AIR;
     }
 
     public static void sendMessage(EntityPlayer player, ITextComponent textComponent) {

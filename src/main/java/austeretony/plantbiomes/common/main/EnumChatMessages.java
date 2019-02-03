@@ -149,6 +149,16 @@ public enum EnumChatMessages {
             }
         }    
     },
+    UNSUPPORTED_PLANT {
+        
+        @Override
+        public void sendMessage(EntityPlayer player, String... args) {
+            ITextComponent msg1;
+            msg1 = new TextComponentTranslation("pb.plantUnsupported");
+            msg1.getStyle().setColor(TextFormatting.RED);        
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1));
+        }   
+    },
     LATEST_PLANT {
 
         @Override

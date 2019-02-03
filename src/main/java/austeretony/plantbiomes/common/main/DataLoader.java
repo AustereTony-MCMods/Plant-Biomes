@@ -295,6 +295,7 @@ public class DataLoader {
             plantRegistryName = plantEntry.getKey();
             plantObject = plantEntry.getValue().getAsJsonObject();
             plantRegistryNameSplitted = plantRegistryName.split("[:]");
+            if (plantRegistryNameSplitted.length != 2) continue;
             registryName = new ResourceLocation(plantRegistryNameSplitted[0], plantRegistryNameSplitted[1]);
             plantData = new PlantData(registryName);
             if (plantObject.get("main_meta") != null)//for compatibility (till 1.3.0) 
@@ -323,9 +324,9 @@ public class DataLoader {
             }
             PLANTS_DATA.put(registryName, plantData);
             hasPlantsData = true;
-            if (plantData.hasMetaData(0)) {
+            if (plantData.hasMetaData(16)) {
                 if (ic2Loaded || forestryLoaded) {
-                    String[] splitted = plantData.getMeta(0).unlocalizedName.split("[.]");
+                    String[] splitted = plantData.getMeta(16).unlocalizedName.split("[.]");
                     if (splitted.length == 3) {
                         if (splitted[1].equals("crop")) {
                             ic2Crops.put(splitted[2], plantData.registryName);
