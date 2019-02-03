@@ -1,12 +1,16 @@
 ***supported mods***
+Plant Biomes settings will affect:
 +Biomes O' Plenty
- - saplings 
+ - saplings growth
+ - vines spreading
+ - grass spreading
+ - bamboo growth
 +Forestry
- - saplings
+ - saplings growth
 +Industrial Craft 2
- - rubber tree sapling 
- - crops
+ - rubber tree sapling growth 
+ - crops growth
 +Thaumcraft 
- - saplings
+ - saplings growth
 +Twilight Forest:
- - saplings 
+ - saplings growth

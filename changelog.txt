@@ -1,3 +1,11 @@
+1.3.12
++Code improvements. Coremod rewritten and signed. 
++Improved plants identification. Unsupported plants will not be 
+identified now.
++Added support for vanilla mushrooms.
++Added support for vanilla nether wart identify.
++Added support for Biomes O' Plenty grass block.
++Added support for Biomes O' Plenty bamboo.
 1.3.6
 +Configs update algorithms optimization and fixes
 for internal configuration files (if enabled).
