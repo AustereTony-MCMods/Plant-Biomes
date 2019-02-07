@@ -1,16 +1,23 @@
-***supported mods***
-Plant Biomes settings will affect:
-+Biomes O' Plenty
- - saplings growth
- - vines spreading
- - grass spreading
- - bamboo growth
-+Forestry
- - saplings growth
-+Industrial Craft 2
- - rubber tree sapling growth 
- - crops growth
-+Thaumcraft 
- - saplings growth
-+Twilight Forest:
- - saplings growth
+Plant Biomes settings can be applied for plants from various mods.
+If you want support for some modded plants, leave request.
+Supported modded plants:
++AgriCraft (tested for 2.12.0-1.12.0-a6)
+ - crops
++Biomes O' Plenty (tested for 7.0.1.2419)
+ - saplings 
+ - vines (spreading)
+ - grass (spreading)
+ - bamboo 
++Forestry (tested for 5.8.2.382)
+ - saplings
++Industrial Craft 2 (tested for 2.8.108)
+ - rubber tree sapling  
+ - crops 
++Pam's HarvestCraft (tested for 1.12.2zb)
+ - crops
+ - saplings
+ - fruits
++Thaumcraft (tested for 6.1.BETA26)
+ - saplings 
++Twilight Forest (tested for 3.8.689)
+ - saplings 
