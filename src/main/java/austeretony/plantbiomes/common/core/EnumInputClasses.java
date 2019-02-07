@@ -451,7 +451,106 @@ public enum EnumInputClasses {
             return isSuccessful;
         }
     },
-    BOP_SAPLING("Biomes O' Plenty", "BlockBOPSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+    //TODO
+    AC_TILE_ENTITY_CROP("AgriCraft", "TileEntityCrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+
+        @Override
+        public boolean patch(ClassNode classNode) {   
+            String
+            worldFieldName = "field_145850_b",
+            posFieldName = "field_174879_c",
+            seedFieldName = "seed",
+            applyGrowthTickMethodName = "applyGrowthTick",
+            getPlantMethodName = "getPlant",
+            getIdMethodName = "getId",
+            tileCropClassName = "com/infinityraider/agricraft/tiles/TileEntityCrop",
+            iAgriSeedClassName = "com/infinityraider/agricraft/api/v1/seed/AgriSeed",
+            iAgriPlantClassName = "com/infinityraider/agricraft/api/v1/plant/IAgriPlant",
+            worldClassName = "net/minecraft/world/World",
+            blockPosClassName = "net/minecraft/util/math/BlockPos",
+            stringClassName = "java/lang/String";
+            boolean isSuccessful = false;
+            AbstractInsnNode currentInsn;
+
+            for (MethodNode methodNode : classNode.methods) {               
+                if (methodNode.name.equals(applyGrowthTickMethodName)) {                         
+                    Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                    while (insnIterator.hasNext()) {                        
+                        currentInsn = insnIterator.next();                  
+                        if (currentInsn.getOpcode() == Opcodes.ICONST_1) {   
+                            InsnList nodesList = new InsnList();   
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                            nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileCropClassName, worldFieldName, "L" + worldClassName + ";"));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                            nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileCropClassName, posFieldName, "L" + blockPosClassName + ";"));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                            nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileCropClassName, seedFieldName, "L" + iAgriSeedClassName + ";"));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, iAgriSeedClassName, getPlantMethodName, "()L" + iAgriPlantClassName + ";", false));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iAgriPlantClassName, getIdMethodName, "()L" + stringClassName + ";", true));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedAgriCraftCrop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)I", false));
+                            methodNode.instructions.insertBefore(currentInsn, nodesList); 
+                            methodNode.instructions.remove(currentInsn);
+                            isSuccessful = true;                        
+                            break;
+                        }
+                    }                                           
+                    break;
+                }
+            }
+            return isSuccessful;
+        }
+    },
+    AC_BLOCK_CROP("AgriCraft", "BlockCrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+
+        @Override
+        public boolean patch(ClassNode classNode) {          
+            String
+            seedFieldName = "seed",
+            onBlockActivatedMethodName = "func_180639_a",
+            getSeedMethodName = "getSeed",
+            getPlantMethodName = "getPlant",
+            getIdMethodName = "getId",
+            tileCropClassName = "com/infinityraider/agricraft/tiles/TileEntityCrop",
+            iAgriSeedClassName = "com/infinityraider/agricraft/api/v1/seed/AgriSeed",
+            iAgriPlantClassName = "com/infinityraider/agricraft/api/v1/plant/IAgriPlant",
+            worldClassName = "net/minecraft/world/World",
+            blockPosClassName = "net/minecraft/util/math/BlockPos",
+            entityPlayerClassName = "net/minecraft/entity/player/EntityPlayer",
+            stringClassName = "java/lang/String";
+            boolean isSuccessful = false;        
+            int astoreCount = 0;
+            AbstractInsnNode currentInsn;
+
+            for (MethodNode methodNode : classNode.methods) {               
+                if (methodNode.name.equals(onBlockActivatedMethodName)) {                         
+                    Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                    while (insnIterator.hasNext()) {                        
+                        currentInsn = insnIterator.next();                  
+                        if (currentInsn.getOpcode() == Opcodes.ASTORE) {    
+                            astoreCount++;
+                            if (astoreCount == 2) {
+                                InsnList nodesList = new InsnList();   
+                                nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                                nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                                nodesList.add(new VarInsnNode(Opcodes.ALOAD, 11));
+                                nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileCropClassName, getSeedMethodName, "()L" + iAgriSeedClassName + ";", false));
+                                nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, iAgriSeedClassName, getPlantMethodName, "()L" + iAgriPlantClassName + ";", false));
+                                nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iAgriPlantClassName, getIdMethodName, "()L" + stringClassName + ";", true));
+                                nodesList.add(new VarInsnNode(Opcodes.ALOAD, 4));
+                                nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "showAgriCraftCropDeniedBiome", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + entityPlayerClassName + ";)V", false));
+                                methodNode.instructions.insert(currentInsn, nodesList); 
+                                isSuccessful = true;                        
+                                break;
+                            }
+                        }
+                    }                                           
+                    break;
+                }
+            }
+            return isSuccessful;
+        }
+    },
+    BOP_BLOCK_SAPLING("Biomes O' Plenty", "BlockBOPSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 
         @Override
         public boolean patch(ClassNode classNode) {          
@@ -489,7 +588,7 @@ public enum EnumInputClasses {
             return isSuccessful;
         }
     },
-    BOP_GRASS_BLOCK("Biomes O' Plenty", "BlockBOPGrass", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+    BOP_BLOCK_GRASS("Biomes O' Plenty", "BlockBOPGrass", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 
         @Override
         public boolean patch(ClassNode classNode) {          
@@ -607,7 +706,7 @@ public enum EnumInputClasses {
             return isSuccessful;
         }
     },
-    FORESTRY_TILE_SAPLING("Forestry", "TileSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+    FORESTRY_TILE_ENTITY_SAPLING("Forestry", "TileSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 
         @Override
         public boolean patch(ClassNode classNode) {          
@@ -661,11 +760,29 @@ public enum EnumInputClasses {
             return isSuccessful;
         }
     },
+    HC_BLOCK_SAPLING("Pam's HarvestCraft", "BlockPamSapling", 0, 0) {
+        @Override
+        public boolean patch(ClassNode classNode) {          
+            return BOP_BLOCK_SAPLING.patch(classNode);
+        }
+    },
+    HC_BLOCK_CROP("Pam's HarvestCraft", "BlockPamCrop", 0, 0) {
+        @Override
+        public boolean patch(ClassNode classNode) {          
+            return BOP_BLOCK_SAPLING.patch(classNode);
+        }
+    },
+    HC_BLOCK_FRUIT("Pam's HarvestCraft", "BlockPamFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+        @Override
+        public boolean patch(ClassNode classNode) {          
+            return BOP_BLOCK_BAMBOO.patch(classNode);
+        }
+    },
     IC2_BLOCK_SAPLING("IndustrialCraft 2", "Ic2Sapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 
         @Override
         public boolean patch(ClassNode classNode) {          
-            return BOP_SAPLING.patch(classNode);
+            return BOP_BLOCK_SAPLING.patch(classNode);
         }
     },
     IC2_CROP_VANILLA("IndustrialCraft 2", "CropVanilla", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
@@ -1078,14 +1195,14 @@ public enum EnumInputClasses {
 
         @Override
         public boolean patch(ClassNode classNode) {          
-            return BOP_SAPLING.patch(classNode);
+            return BOP_BLOCK_SAPLING.patch(classNode);
         }
     },
     TF_BLOCK_SAPLING("Twilight Forest", "BlockTFSapling", 0, 0) {
 
         @Override
         public boolean patch(ClassNode classNode) {          
-            return BOP_SAPLING.patch(classNode);
+            return BOP_BLOCK_SAPLING.patch(classNode);
         }
     };
 

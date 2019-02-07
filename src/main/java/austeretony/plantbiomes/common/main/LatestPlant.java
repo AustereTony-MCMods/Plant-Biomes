@@ -5,47 +5,23 @@ import net.minecraft.util.math.BlockPos;
 
 public class LatestPlant {
 
+    public final EnumPBPlantType enumType;
+
     public final ResourceLocation registryName, biomeRegistryName;
 
-    public final String unlocalizedName;
+    public final String specialName, unlocalizedName;
 
     public final int meta;
 
     public final BlockPos blockPos;
 
-    private String 
-    ic2CropId = "",
-    forestrySaplingIdent = "";
-
-    public LatestPlant(ResourceLocation registryName, int meta, ResourceLocation biomeRegistryName, BlockPos blockPos, String unlocalizedName) {
+    public LatestPlant(EnumPBPlantType enumType, ResourceLocation registryName, int meta, String specialName, String unlocalizedName, ResourceLocation biomeRegistryName, BlockPos blockPos) {
+        this.enumType = enumType;
         this.registryName = registryName;
         this.meta = meta;
+        this.specialName = specialName;
+        this.unlocalizedName = unlocalizedName.equals("tile.air.name") ? "pb.undefined.name" : unlocalizedName;
         this.biomeRegistryName = biomeRegistryName;
         this.blockPos = blockPos;
-        this.unlocalizedName = unlocalizedName.equals("tile.air.name") ? "pb.undefined.name" : unlocalizedName;
-    }
-
-    public boolean isIC2Crop() {
-        return !this.ic2CropId.isEmpty();
-    }
-
-    public String getIC2CropId() {
-        return this.ic2CropId;
-    }
-
-    public void setIC2CropId(String cropId) {
-        this.ic2CropId = cropId;
-    }
-
-    public boolean isForestrySapling() {
-        return !this.forestrySaplingIdent.isEmpty();
-    }
-
-    public String getForestrySaplingIdent() {
-        return this.forestrySaplingIdent;
-    }
-
-    public void setForestrySaplingIdent(String ident) {
-        this.forestrySaplingIdent = ident;
     }
 }

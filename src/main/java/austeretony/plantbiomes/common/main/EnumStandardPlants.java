@@ -7,6 +7,8 @@ public enum EnumStandardPlants {
     //Vanilla
     MC_SAPLING("net.minecraft.block.BlockSapling"),
     MC_CROP("net.minecraft.block.BlockCrops"),
+    MC_CARROT("net.minecraft.block.BlockCarrot"),
+    MC_POTATO("net.minecraft.block.BlockPotato"),
     MC_BEETROOT("net.minecraft.block.BlockBeetroot"),
     MC_MELON("net.minecraft.block.BlockStem"),
     MC_GRASS_BLOCK("net.minecraft.block.BlockGrass"),
@@ -23,11 +25,15 @@ public enum EnumStandardPlants {
     MC_CACTUS("net.minecraft.block.BlockCactus"),
     //Biomes O' Plenty
     BOP_SAPLING("biomesoplenty.common.block.BlockBOPSapling"),
-    BOP_GRASS_BLOCK("biomesoplenty.common.block.BlockBOPGrass"),
+    BOP_BLOCK_GRASS("biomesoplenty.common.block.BlockBOPGrass"),
     BOP_VINE("biomesoplenty.common.block.BlockBOPVine"),
     BOP_BAMBOO("biomesoplenty.common.block.BlockBOPBamboo"),
     //IndustrialCraft 2
     IC2_SAPLING("ic2.core.block.Ic2Sapling"),
+    //Pam's HarvestCraft
+    HC_SAPLING("com.pam.harvestcraft.blocks.growables.BlockPamSapling"),
+    HC_CROP("com.pam.harvestcraft.blocks.growables.BlockPamCrop"),
+    HC_FRUIT("com.pam.harvestcraft.blocks.growables.BlockPamFruit"),
     //Thaumcraft
     TC_SAPLING("thaumcraft.common.blocks.world.plants.BlockSaplingTC"),
     //Twilight Forest

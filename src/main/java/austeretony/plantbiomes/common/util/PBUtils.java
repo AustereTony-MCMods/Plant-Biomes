@@ -1,4 +1,4 @@
-package austeretony.plantbiomes.util;
+package austeretony.plantbiomes.common.util;
 
 import java.io.File;
 import java.io.FileInputStream;

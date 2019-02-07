@@ -8,6 +8,8 @@ public enum EnumCommandPBArgs {
     STATUS("status"),
     ENABLE_CONFIG_MODE("enable-conf"),
     DISABLE_CONFIG_MODE("disable-conf"),
+    ENABLE_OVERLAY("enable-overlay"),
+    DISABLE_OVERLAY("disable-overlay"),
     SETTINGS("settings"),
     BIOME("biome"),
     LATEST("latest"),
@@ -24,6 +26,7 @@ public enum EnumCommandPBArgs {
     CLEAR_LATEST("clear-latest"),
     CLEAR_ALL("clear-all"),
     SAVE("save"),
+    RELOAD("reload"),
     BACKUP("backup");
 
     public final String arg;

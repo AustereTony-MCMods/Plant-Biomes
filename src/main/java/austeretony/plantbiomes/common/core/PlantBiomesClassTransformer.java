@@ -45,20 +45,24 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         case "net.minecraft.client.renderer.RenderGlobal"://gray particles for client
             return patch(basicClass, EnumInputClasses.MC_RENDER_GLOBAL);   
             //***non-vanilla plants support***
+            //AgriCraft (tested for 2.12.0-1.12.0-a6)
+        case "com.infinityraider.agricraft.tiles.TileEntityCrop"://crops
+            return patch(basicClass, EnumInputClasses.AC_TILE_ENTITY_CROP);
+        case "com.infinityraider.agricraft.blocks.BlockCrop"://fertilizer behavior
+            return patch(basicClass, EnumInputClasses.AC_BLOCK_CROP);
             //Biomes O' Plenty (tested for 7.0.1.2419)
         case "biomesoplenty.common.block.BlockBOPSapling"://saplings
-            return patch(basicClass, EnumInputClasses.BOP_SAPLING);
+            return patch(basicClass, EnumInputClasses.BOP_BLOCK_SAPLING);
         case "biomesoplenty.common.block.BlockBOPGrass"://grass spreading
-            return patch(basicClass, EnumInputClasses.BOP_GRASS_BLOCK);
+            return patch(basicClass, EnumInputClasses.BOP_BLOCK_GRASS);
         case "biomesoplenty.common.block.BlockBOPBamboo"://bamboo
             return patch(basicClass, EnumInputClasses.BOP_BLOCK_BAMBOO);
             //Forestry (tested for 5.8.2.382)
         case "forestry.arboriculture.tiles.TileSapling"://saplings
-            return patch(basicClass, EnumInputClasses.FORESTRY_TILE_SAPLING);
-        case "forestry.arboriculture.blocks.BlockSapling"://saplings    
+            return patch(basicClass, EnumInputClasses.FORESTRY_TILE_ENTITY_SAPLING);
+        case "forestry.arboriculture.blocks.BlockSapling"://bonemeal behavior  
             return patch(basicClass, EnumInputClasses.FORESTRY_BLOCK_SAPLING);
             //IndustrialCraft 2 (tested for 2.8.108)
-            //Why different classes for every crop?
         case "ic2.core.block.Ic2Sapling"://sapling
             return patch(basicClass, EnumInputClasses.IC2_BLOCK_SAPLING);
         case "ic2.core.crop.CropVanilla"://vanilla crops
@@ -85,8 +89,15 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             return patch(basicClass, EnumInputClasses.IC2_CROP_COLOR_FLOWER);
         case "ic2.core.crop.cropcard.CropRedWheat"://red wheat crop
             return patch(basicClass, EnumInputClasses.IC2_CROP_RED_WHEAT);
+            //Pam's HarvestCraft (tested for 1.12.2zb)
+        case "com.pam.harvestcraft.blocks.growables.BlockPamSapling"://saplings
+            return patch(basicClass, EnumInputClasses.HC_BLOCK_SAPLING);
+        case "com.pam.harvestcraft.blocks.growables.BlockPamCrop"://crops
+            return patch(basicClass, EnumInputClasses.HC_BLOCK_CROP);
+        case "com.pam.harvestcraft.blocks.growables.BlockPamFruit"://fruits
+            return patch(basicClass, EnumInputClasses.HC_BLOCK_FRUIT);
             //Thaumcraft (tested for 6.1.BETA26)
-        case "thaumcraft.common.blocks.world.plants.BlockSaplingTC"://thaumcraft saplings
+        case "thaumcraft.common.blocks.world.plants.BlockSaplingTC"://saplings
             return patch(basicClass, EnumInputClasses.TC_BLOCK_SAPLING);
             //Twilight Forest (tested for 3.8.689)
         case "twilightforest.block.BlockTFSapling"://saplings

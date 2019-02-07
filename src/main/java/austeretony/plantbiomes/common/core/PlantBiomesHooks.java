@@ -2,7 +2,9 @@ package austeretony.plantbiomes.common.core;
 
 import java.util.Random;
 
-import austeretony.plantbiomes.common.main.DataLoader;
+import austeretony.plantbiomes.common.main.EnumPBPlantType;
+import austeretony.plantbiomes.common.main.EnumSpecialPlants;
+import austeretony.plantbiomes.common.main.PBManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.material.Material;
@@ -18,8 +20,8 @@ import net.minecraft.world.biome.Biome.FlowerEntry;
 public class PlantBiomesHooks {
 
     public static boolean isGrowthAllowedTick(World world, BlockPos pos, Block block, IBlockState blockState) {
-        if (DataLoader.exist(block)) {
-            if (DataLoader.get(block).isPermittedBiome(block, blockState, world, pos))
+        if (PBManager.exist(block)) {
+            if (PBManager.get(block).isPermittedBiome(block, blockState, world, pos))
                 return true;
             return false;           
         }
@@ -29,8 +31,8 @@ public class PlantBiomesHooks {
     public static boolean isGrowthAllowedBonemeal(World world, BlockPos pos) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
-        if (DataLoader.exist(block)) {
-            if (DataLoader.get(block).isPermittedBiome(block, blockState, world, pos))
+        if (PBManager.exist(block)) {
+            if (PBManager.get(block).isPermittedBiome(block, blockState, world, pos))
                 return true;
             if (block instanceof BlockGrass) return true;
             world.playEvent(900, pos, 0);
@@ -41,8 +43,8 @@ public class PlantBiomesHooks {
 
     public static boolean isGrowthAllowedTallgrass(World world, BlockPos pos, IBlockState blockState) {
         Block block = blockState.getBlock();
-        if (DataLoader.exist(block)) {
-            if (DataLoader.get(block).isPermittedBiome(block, blockState, world, pos))
+        if (PBManager.exist(block)) {
+            if (PBManager.get(block).isPermittedBiome(block, blockState, world, pos))
                 return true;
             return false;
         }
@@ -51,17 +53,32 @@ public class PlantBiomesHooks {
 
     public static boolean isGrowthAllowedFlower(World world, BlockPos pos, FlowerEntry flowerEntry) {
         Block block = flowerEntry.state.getBlock();
-        if (DataLoader.exist(block)) {
-            if (DataLoader.get(block).isPermittedBiome(block, flowerEntry.state, world, pos))
+        if (PBManager.exist(block)) {
+            if (PBManager.get(block).isPermittedBiome(block, flowerEntry.state, world, pos))
                 return true;
             return false;
         }
         return true;
     }
 
+    public static int isGrowthAllowedAgriCraftCrop(World world, BlockPos pos, String cropId) {
+        if (PBManager.existSpecial(cropId, EnumPBPlantType.AGRICRAFT_CROP)) {
+            if (PBManager.getSpecial(cropId, EnumPBPlantType.AGRICRAFT_CROP).isPermittedBiome(EnumSpecialPlants.SPECIALS_META, PBManager.getBiomeRegistryName(world, pos)))
+                return 1;
+            return 0;           
+        }
+        return 1;
+    }
+
+    public static void showAgriCraftCropDeniedBiome(World world, BlockPos pos, String cropId, EntityPlayer player) {
+        if (player.getHeldItemMainhand().getItem() == Items.DYE && EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getMetadata()) == EnumDyeColor.WHITE)
+            if (isGrowthAllowedAgriCraftCrop(world, pos, cropId) == 0)
+                world.playEvent(900, pos, 0);
+    }
+
     public static boolean isGrowthAllowedIC2Crop(World world, BlockPos pos, String cropId) {
-        if (DataLoader.existIC2(cropId)) {
-            if (DataLoader.getIC2(cropId).isPermittedBiome(16, DataLoader.getBiomeRegistryName(world, pos)))
+        if (PBManager.existSpecial(cropId, EnumPBPlantType.IC2_CROP)) {
+            if (PBManager.getSpecial(cropId, EnumPBPlantType.IC2_CROP).isPermittedBiome(EnumSpecialPlants.SPECIALS_META, PBManager.getBiomeRegistryName(world, pos)))
                 return true;
             return false;           
         }
@@ -75,8 +92,8 @@ public class PlantBiomesHooks {
     }
 
     public static boolean isGrowthAllowedForestrySapling(World world, BlockPos pos, String ident, boolean bonemealUsed) {
-        if (DataLoader.existForestry(ident)) {
-            if (DataLoader.getForestry(ident).isPermittedBiome(16, DataLoader.getBiomeRegistryName(world, pos)))
+        if (PBManager.existSpecial(ident, EnumPBPlantType.FORESTRY_SAPLING)) {
+            if (PBManager.getSpecial(ident, EnumPBPlantType.FORESTRY_SAPLING).isPermittedBiome(EnumSpecialPlants.SPECIALS_META, PBManager.getBiomeRegistryName(world, pos)))
                 return true;
             if (bonemealUsed)
                 world.playEvent(900, pos, 0);

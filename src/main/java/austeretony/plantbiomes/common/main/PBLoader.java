@@ -21,14 +21,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import austeretony.plantbiomes.common.reference.CommonReference;
-import austeretony.plantbiomes.util.PBUtils;
-import net.minecraft.block.Block;
+import austeretony.plantbiomes.common.util.PBUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Loader;
 
-public class DataLoader {
+public class PBLoader {
 
     private static final String 
     EXT_CONFIGURAION_FILE = CommonReference.getGameFolder() + "/config/plantbiomes/config.json",
@@ -36,136 +32,7 @@ public class DataLoader {
 
     private static final DateFormat BACKUP_DATE_FORMAT = new SimpleDateFormat("yy_MM_dd-HH-mm-ss");
 
-    public static LatestPlant latestPlant;
-
-    private static final Map<ResourceLocation, PlantData> PLANTS_DATA = new HashMap<ResourceLocation, PlantData>();
-
-    public static Map<String, ResourceLocation> ic2Crops, forestrySaplings;
-
-    private static boolean 
-    showUpdateMessages, 
-    useExternalConfig, 
-    autosave,
-    isSettingsEnabled = true,
-    isConfigModeEnabled,
-    ic2Loaded,
-    forestryLoaded,
-    hasPlantsData,
-    hasIC2Crops,
-    hasForestrySaplings;
-
-    public static boolean exist(ResourceLocation registryName) {
-        return hasPlantsData && PLANTS_DATA.containsKey(registryName);
-    }
-
-    public static boolean exist(Block block) {
-        return exist(block.getRegistryName());
-    }
-
-    public static boolean existLatest() {
-        return exist(latestPlant.registryName);
-    }
-
-    public static boolean existIC2(String cropId) {
-        return hasIC2Crops && ic2Crops.containsKey(cropId) && exist(ic2Crops.get(cropId));
-    }
-
-    public static boolean existForestry(String ident) {
-        return hasForestrySaplings && forestrySaplings.containsKey(ident) && exist(forestrySaplings.get(ident));
-    }
-
-    public static boolean existMetaLatest() {
-        return exist(latestPlant.registryName) && get(latestPlant.registryName).hasMetaData(latestPlant.meta);
-    }
-
-    public static void createMetaLatest() {
-        if (!PLANTS_DATA.containsKey(latestPlant.registryName)) {
-            PlantData plantData = new PlantData(latestPlant.registryName);
-            plantData.createMeta(latestPlant.meta, latestPlant.unlocalizedName);
-            PLANTS_DATA.put(latestPlant.registryName, plantData);  
-            if (latestPlant.isIC2Crop()) {
-                ic2Crops.put(latestPlant.getIC2CropId(), latestPlant.registryName);
-                hasIC2Crops = true;
-            } else if (latestPlant.isForestrySapling()) {
-                forestrySaplings.put(latestPlant.getForestrySaplingIdent(), latestPlant.registryName);
-                hasForestrySaplings = true;
-            }
-        } else {
-            get(latestPlant.registryName).createMeta(latestPlant.meta, latestPlant.unlocalizedName); 
-        }
-        hasPlantsData = true;
-    }
-
-    public static Map<ResourceLocation, PlantData> map() {
-        return PLANTS_DATA;
-    }
-
-    public static void clear() {
-        PLANTS_DATA.clear();
-        hasPlantsData = false;
-        if (ic2Loaded) {
-            ic2Crops.clear();
-            hasIC2Crops = false;
-        }
-        if (forestryLoaded) {
-            forestrySaplings.clear();
-            hasForestrySaplings = false;
-        }
-    }
-
-    private static PlantData get(ResourceLocation registryName) {
-        return PLANTS_DATA.get(registryName);
-    }
-
-    public static PlantData get(Block block) {
-        return get(block.getRegistryName());
-    }
-
-    public static PlantData getLatest() {
-        return get(latestPlant.registryName);
-    }
-
-    public static PlantData getIC2(String cropId) {
-        return get(ic2Crops.get(cropId));
-    }
-
-    public static PlantData getForestry(String ident) {
-        return get(forestrySaplings.get(ident));
-    }
-
-    public static MetaPlant getMetaLatest() {
-        return get(latestPlant.registryName).getMeta(latestPlant.meta);
-    }
-
-    public static void removeMetaLatest() {
-        get(latestPlant.registryName).removeMeta(latestPlant.meta);
-        if (latestPlant.isIC2Crop()) {
-            ic2Crops.remove(latestPlant.getIC2CropId());
-            hasIC2Crops = ic2Crops.isEmpty();
-        } else if (latestPlant.isForestrySapling()) {
-            forestrySaplings.remove(latestPlant.getForestrySaplingIdent());
-            hasForestrySaplings = forestrySaplings.isEmpty();
-        }
-        if (!get(latestPlant.registryName).hasData())
-            PLANTS_DATA.remove(latestPlant.registryName);
-        hasPlantsData = PLANTS_DATA.isEmpty();
-    }
-
-    public static ResourceLocation getBiomeRegistryName(World world, BlockPos pos) {
-        return world.getBiome(pos).getRegistryName();
-    }
-
-    public static String createDisplayKey(ResourceLocation registryName, int meta) {
-        return registryName.toString() + "-" + meta;
-    }
-
     public static void load() {
-        ic2Loaded = Loader.isModLoaded("ic2");
-        forestryLoaded = Loader.isModLoaded("forestry");
-        if (ic2Loaded)
-            ic2Crops = new HashMap<String, ResourceLocation>();
-        if (forestryLoaded)
-            forestrySaplings = new HashMap<String, ResourceLocation>();
         JsonObject internalConfig, internalSettings;
         try {       
             internalConfig = (JsonObject) PBUtils.getInternalJsonData("assets/plantbiomes/config.json");  
@@ -175,8 +42,8 @@ public class DataLoader {
             exception.printStackTrace();
             return;
         }
-        useExternalConfig = internalConfig.get("main").getAsJsonObject().get("external_config").getAsBoolean();          
-        if (!useExternalConfig) {               
+        PBManager.setExternalConfigEnabled(internalConfig.get("main").getAsJsonObject().get("external_config").getAsBoolean());          
+        if (!PBManager.isExternalConfigEnabled()) {               
             loadConfigData(internalConfig, internalSettings);
         } else                  
             loadExternalConfig(internalConfig, internalSettings);
@@ -278,64 +145,42 @@ public class DataLoader {
 
     private static void loadConfigData(JsonObject config, JsonObject data) {          
         JsonObject mainSettings = config.get("main").getAsJsonObject();
-        autosave = mainSettings.get("autosave").getAsBoolean();     
-        showUpdateMessages = mainSettings.get("update_checker").getAsBoolean();     
+        PBManager.setAutosaveEnabled(mainSettings.get("autosave").getAsBoolean());     
+        PBManager.setOverlayEnabled(mainSettings.get("settings_overlay").getAsBoolean());    
+        PBManager.setTilesOverlayEnabled(mainSettings.get("tiles_overlay").getAsBoolean());     
+        PBManager.setUpdateMessagesEnabled(mainSettings.get("update_checker").getAsBoolean());     
         JsonObject plantObject, metaObject;
-        String plantRegistryName, plantUnlocalizedName;
-        String[] plantRegistryNameSplitted, biomeNameSplitted, unlocNameSplitted;
+        String[] plantRegistryNameSplitted, biomeNameSplitted;
         ResourceLocation registryName;
         int meta;
-        PlantData plantData;
-        MetaPlant metaPlant;
         for (Map.Entry<String, JsonElement> plantEntry : data.entrySet()) {
             if (plantEntry.getKey().equals("enabled")) {
-                isSettingsEnabled = data.get("enabled").getAsBoolean();
+                PBManager.setSettingsEnabled(data.get("enabled").getAsBoolean());
                 continue;
             }
-            plantRegistryName = plantEntry.getKey();
             plantObject = plantEntry.getValue().getAsJsonObject();
-            plantRegistryNameSplitted = plantRegistryName.split("[:]");
-            if (plantRegistryNameSplitted.length != 2) continue;
+            plantRegistryNameSplitted = plantEntry.getKey().split("[:]");
             registryName = new ResourceLocation(plantRegistryNameSplitted[0], plantRegistryNameSplitted[1]);
-            plantData = new PlantData(registryName);
-            if (plantObject.get("main_meta") != null)//for compatibility (till 1.3.0) 
-                plantData.setMainMeta(plantObject.get("main_meta").getAsInt());
-            for (Map.Entry<String, JsonElement> metaEntry : plantObject.entrySet()) {  
-                if (metaEntry.getKey().equals("main_meta")) continue;
+            for (Map.Entry<String, JsonElement> metaEntry : plantObject.entrySet()) { 
+                if (metaEntry.getKey().equals("type") || metaEntry.getKey().equals("main_meta")) continue;
                 meta = Integer.parseInt(metaEntry.getKey());
                 metaObject = metaEntry.getValue().getAsJsonObject();
-                plantUnlocalizedName = metaObject.get("name").getAsString();
-                unlocNameSplitted = plantUnlocalizedName.split("[.]");
-                if (unlocNameSplitted.length > 1 && !unlocNameSplitted[1].equals("crop") && !unlocNameSplitted[unlocNameSplitted.length - 1].equals("name"))//for compatibility (till 1.3.0) 
-                    plantUnlocalizedName = plantUnlocalizedName + ".name";
-                metaPlant = new MetaPlant(meta, plantUnlocalizedName);
+                PBManager.createMetaServer(
+                        EnumPBPlantType.getOf(plantObject.get("type").getAsString()), 
+                        new ResourceLocation(plantRegistryNameSplitted[0], plantRegistryNameSplitted[1]), 
+                        Integer.parseInt(metaEntry.getKey()), 
+                        metaObject.get("special").getAsString(), 
+                        metaObject.get("unlocalized").getAsString());
+                PBManager.getServer(registryName).setMainMeta(plantObject.get("main_meta").getAsInt());
                 if (metaObject.get("denied_global").getAsBoolean())
-                    metaPlant.denyGlobal();
-                for (JsonElement b : metaObject.get("deny").getAsJsonArray()) {
-                    biomeNameSplitted = b.getAsString().split("[:]");
-                    metaPlant.denyBiome(new ResourceLocation(biomeNameSplitted[0], biomeNameSplitted[1]));
+                    PBManager.getServer(registryName).getMeta(meta).denyGlobal();
+                for (JsonElement biomeName : metaObject.get("deny").getAsJsonArray()) {
+                    biomeNameSplitted = biomeName.getAsString().split("[:]");
+                    PBManager.getServer(registryName).getMeta(meta).denyBiome(new ResourceLocation(biomeNameSplitted[0], biomeNameSplitted[1]));
                 }
-                if (metaObject.get("valid") != null)//for compatibility (till 1.2.0)
-                    for (JsonElement b : metaObject.get("valid").getAsJsonArray()) {
-                        biomeNameSplitted = b.getAsString().split("[:]");
-                        metaPlant.addValidBiome(new ResourceLocation(biomeNameSplitted[0], biomeNameSplitted[1]));
-                    }
-                plantData.addMeta(meta, metaPlant);
-            }
-            PLANTS_DATA.put(registryName, plantData);
-            hasPlantsData = true;
-            if (plantData.hasMetaData(16)) {
-                if (ic2Loaded || forestryLoaded) {
-                    String[] splitted = plantData.getMeta(16).unlocalizedName.split("[.]");
-                    if (splitted.length == 3) {
-                        if (splitted[1].equals("crop")) {
-                            ic2Crops.put(splitted[2], plantData.registryName);
-                            hasIC2Crops = true;
-                        } else if (splitted[0].equals("forestry")) {
-                            forestrySaplings.put(splitted[0] + "." + splitted[1], plantData.registryName);
-                            hasForestrySaplings = true;
-                        }
-                    }
+                for (JsonElement biomeName : metaObject.get("valid").getAsJsonArray()) {
+                    biomeNameSplitted = biomeName.getAsString().split("[:]");
+                    PBManager.getServer(registryName).getMeta(meta).addValidBiome(new ResourceLocation(biomeNameSplitted[0], biomeNameSplitted[1]));
                 }
             }
         }
@@ -349,15 +194,17 @@ public class DataLoader {
         dataObject = new JsonObject(),
         plantObject, metaObject;
         JsonArray deniedArray, vailidArray;   
-        dataObject.add("enabled", new JsonPrimitive(isSettingsEnabled));
-        for (PlantData plantData : PLANTS_DATA.values()) {
+        dataObject.add("enabled", new JsonPrimitive(PBManager.isSettingsEnabled()));
+        for (PlantData plantData : PBManager.getDataServer().values()) {
             plantObject = new JsonObject();
+            plantObject.add("type", new JsonPrimitive(plantData.enumType.toString()));
             plantObject.add("main_meta", new JsonPrimitive(plantData.getMainMeta()));
             for (MetaPlant metaPlant : plantData.getData().values()) {
                 metaObject = new JsonObject();
                 deniedArray = new JsonArray();
                 vailidArray = new JsonArray();
-                metaObject.add("name", new JsonPrimitive(metaPlant.unlocalizedName));
+                metaObject.add("special", new JsonPrimitive(metaPlant.specialName));
+                metaObject.add("unlocalized", new JsonPrimitive(metaPlant.unlocalizedName));
                 metaObject.add("denied_global", new JsonPrimitive(metaPlant.isDeniedGlobal()));
                 for (ResourceLocation b : metaPlant.getDeniedBiomes())
                     deniedArray.add(new JsonPrimitive(b.toString()));
@@ -380,45 +227,9 @@ public class DataLoader {
         try {
             PBUtils.createExternalJsonFile(
                     CommonReference.getGameFolder() + "/config/plantbiomes/plants_settings_" + BACKUP_DATE_FORMAT.format(new Date()) + ".json", 
-                    isExternalConfigEnabled() ? PBUtils.getExternalJsonData(EXT_DATA_FILE) : PBUtils.getInternalJsonData("assets/plantbiomes/plants_settings.json"));         
+                    PBManager.isExternalConfigEnabled() ? PBUtils.getExternalJsonData(EXT_DATA_FILE) : PBUtils.getInternalJsonData("assets/plantbiomes/plants_settings.json"));         
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-    }
-
-    public static boolean isIC2Loaded() {
-        return ic2Loaded;
-    }
-
-    public static boolean forestryLoaded() {
-        return forestryLoaded;
-    }
-
-    public static boolean isSettingsEnabled() {
-        return isSettingsEnabled;
-    }
-
-    public static void setSettingsEnabled(boolean isEnabled) {
-        isSettingsEnabled = isEnabled;
-    }
-
-    public static boolean isUpdateMessagesEnabled() {               
-        return showUpdateMessages;
-    }
-
-    public static boolean isExternalConfigEnabled() {               
-        return useExternalConfig;
-    }
-
-    public static boolean isAutosaveEnabled() {               
-        return autosave;
-    }
-
-    public static boolean isConfigModeEnabled() {           
-        return isConfigModeEnabled;
-    }
-
-    public static void setConfigModeEnabled(boolean isEnabled) {            
-        isConfigModeEnabled = isEnabled;
     }
 }

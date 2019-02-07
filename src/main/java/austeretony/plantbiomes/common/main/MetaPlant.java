@@ -9,18 +9,20 @@ public class MetaPlant {
 
     public final int meta;
 
-    public final String unlocalizedName;
+    public final String specialName, unlocalizedName;
 
     private final Set<ResourceLocation> 
     denied = new HashSet<ResourceLocation>(),
     valid = new HashSet<ResourceLocation>();
 
-    private boolean deniedGlobal,
-    deniedEmpty = true,
-    validEmpty = true;
+    private boolean 
+    deniedGlobal,
+    hasDenied,
+    hasValid;
 
-    public MetaPlant(int meta, String unlocalizedName) {
+    public MetaPlant(int meta, String specialName, String unlocalizedName) {
         this.meta = meta;
+        this.specialName = specialName;
         this.unlocalizedName = unlocalizedName;
     }
 
@@ -29,26 +31,26 @@ public class MetaPlant {
     }
 
     public boolean isDeniedBiomesExist() {
-        return !this.deniedEmpty;
+        return this.hasDenied;
     }
-
+    
     public boolean isDeniedBiome(ResourceLocation biomeRegistryName) {
         return this.denied.contains(biomeRegistryName);
     }
 
     public void denyBiome(ResourceLocation biomeRegistryName) {
         this.denied.add(biomeRegistryName);
-        this.deniedEmpty = false;
+        this.hasDenied = true;
     }
 
     public void allowBiome(ResourceLocation biomeRegistryName) {
         this.denied.remove(biomeRegistryName);
-        this.deniedEmpty = this.denied.isEmpty();
+        this.hasDenied = !this.denied.isEmpty();
     }
 
     public void clearDeniedBiomes() {
         this.denied.clear();
-        this.deniedEmpty = true;
+        this.hasDenied = false;
     }
 
     public boolean isDeniedGlobal() {
@@ -72,25 +74,25 @@ public class MetaPlant {
     }
 
     public boolean isValidBiomesExist() {
-        return !this.validEmpty;
+        return this.hasValid;
     }
 
     public void addValidBiome(ResourceLocation biomeRegistryName) {
         this.valid.add(biomeRegistryName);
-        this.validEmpty = false;
+        this.hasValid = true;
     }
 
     public void removeValidBiome(ResourceLocation biomeRegistryName) {
         this.valid.remove(biomeRegistryName);
-        this.validEmpty = this.valid.isEmpty();
+        this.hasValid = !this.valid.isEmpty();
     }
 
     public void clearValidBiomes() {
         this.valid.clear();
-        this.validEmpty = true;
+        this.hasValid = false;
     }
 
     public boolean isPermittedBiome(ResourceLocation biomeRegistryName) {
-        return this.validEmpty ? !this.deniedGlobal && (this.deniedEmpty || !this.denied.contains(biomeRegistryName)) : this.valid.contains(biomeRegistryName);
+        return this.hasValid ? this.valid.contains(biomeRegistryName) : !this.deniedGlobal && (!this.hasDenied || !this.denied.contains(biomeRegistryName));
     }
 }

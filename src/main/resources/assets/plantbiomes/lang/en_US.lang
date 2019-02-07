@@ -4,6 +4,8 @@ pb.command.help.enable=enable plant settings.
 pb.command.help.status=check settings status.
 pb.command.help.enable-conf=enable configuration mode.
 pb.command.help.disable-conf=disable configuration mode.
+pb.command.help.enable-overlay=enable settings overlay.
+pb.command.help.disable-overlay=disable settings overlay.
 pb.command.help.settings=settings list.
 pb.command.help.biome=current biome.
 pb.command.help.latest=latest interacted plant.
@@ -20,16 +22,20 @@ pb.command.help.clear-valid=clear valid biomes list for latest plant.
 pb.command.help.clear-latest=clear settings for latest plant.
 pb.command.help.clear-all=clear all settings.
 pb.command.help.save=save settings.
+pb.command.help.reload=reload settings.
 pb.command.help.backup=backup settings to new file.
 
 pb.config.invalidState=External config disabled, settings can't be changed.
 
 pb.command.err.debugMode=Configuration mode must be enabled.
+pb.command.err.overlay=Overlay disabled.
 pb.command.enable=Settings enabled.
 pb.command.disable=Settings disabled.
 pb.command.status=Settings
 pb.command.enable.conf=Configuration mode enabled.
 pb.command.disable.conf=Configuration mode disabled.
+pb.command.enable.overlay=Settings overlay enabled.
+pb.command.disable.overlay=Settings overlay disabled.
 pb.command.settings=Settings:
 pb.command.settings.empty=Empty
 pb.command.biome=Current biome: %s.
@@ -52,6 +58,7 @@ pb.command.clear.valid=Valid biomes list cleared for latest plant.
 pb.command.clear.latest=All data for latest plant was removed.
 pb.command.clear.all=All data was removed.
 pb.command.save=Settings saved.
+pb.command.reload=Settings reloaded.
 pb.command.backup=Settings backup created.
 
 pb.plantUnsupported=This plant is unsupported.

@@ -1,7 +1,9 @@
 {
   "main": {
     "external_config": true,  
-    "autosave": true,  
+    "autosave": true, 
+    "settings_overlay": true,
+    "tiles_overlay": true,
     "update_checker": true
   }
 }

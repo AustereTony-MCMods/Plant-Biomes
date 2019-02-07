@@ -65,8 +65,8 @@ public enum EnumChatMessages {
         @Override
         public void sendMessage(EntityPlayer player, String... args) {
             ITextComponent msg1;
-            msg1 = DataLoader.isSettingsEnabled() ? new TextComponentTranslation("pb.status.enabled") : new TextComponentTranslation("pb.status.disabled");
-            msg1.getStyle().setColor(DataLoader.isSettingsEnabled() ? TextFormatting.GREEN : TextFormatting.RED);        
+            msg1 = PBManager.isSettingsEnabled() ? new TextComponentTranslation("pb.status.enabled") : new TextComponentTranslation("pb.status.disabled");
+            msg1.getStyle().setColor(PBManager.isSettingsEnabled() ? TextFormatting.GREEN : TextFormatting.RED);        
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.status").appendSibling(new TextComponentString(": ")).appendSibling(msg1)));
         }   
     },
@@ -84,7 +84,7 @@ public enum EnumChatMessages {
 
         @Override
         public void sendMessage(EntityPlayer player, String... args) {
-            if (DataLoader.isAutosaveEnabled())
+            if (PBManager.isAutosaveEnabled())
                 CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable.conf")).appendSibling(new TextComponentString(" ")).appendSibling(new TextComponentTranslation("pb.autosave.enabled")));
             else
                 CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable.conf")).appendSibling(new TextComponentString(" ")).appendSibling(new TextComponentTranslation("pb.autosave.disabled")));
@@ -95,6 +95,30 @@ public enum EnumChatMessages {
         @Override
         public void sendMessage(EntityPlayer player, String... args) {
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.disable.conf")));
+        }   
+    },
+    OVERLAY_DENIED {
+
+        @Override
+        public void sendMessage(EntityPlayer player, String... args) {
+            ITextComponent msg1;
+            msg1 = new TextComponentTranslation("pb.command.err.overlay");                        
+            msg1.getStyle().setColor(TextFormatting.RED);                       
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1));    
+        }
+    },
+    OVERLAY_ENABLED {
+
+        @Override
+        public void sendMessage(EntityPlayer player, String... args) {
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable.overlay")));
+        }    
+    },
+    OVERLAY_DISABLED {
+
+        @Override
+        public void sendMessage(EntityPlayer player, String... args) {
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.disable.overlay")));
         }   
     },
     CURRENT_BIOME {
@@ -111,9 +135,9 @@ public enum EnumChatMessages {
             ITextComponent msg1, msg2, msg3;
             STATUS.sendMessage(player, args);
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.settings")));
-            if (DataLoader.map().isEmpty())
+            if (PBManager.getDataServer().isEmpty())
                 CommonReference.sendMessage(player, new TextComponentTranslation("pb.command.settings.empty"));
-            for (PlantData plantData : DataLoader.map().values()) {
+            for (PlantData plantData : PBManager.getDataServer().values()) {
                 if (plantData.hasMainMeta()) {
                     msg1 = new TextComponentTranslation("pb.mainMetaSet", plantData.getMainMeta());
                     msg1.getStyle().setColor(TextFormatting.YELLOW); 
@@ -121,7 +145,7 @@ public enum EnumChatMessages {
                 }
                 for (MetaPlant metaPlant : plantData.getData().values()) {      
                     if (plantData.hasMainMeta() && plantData.getMainMeta() != metaPlant.meta) continue;
-                    msg1 = new TextComponentString(DataLoader.createDisplayKey(plantData.registryName, metaPlant.meta));
+                    msg1 = new TextComponentString(PBManager.createDisplayKey(plantData.registryName, metaPlant.meta));
                     msg2 = new TextComponentString(" / ");
                     msg3 = new TextComponentTranslation((metaPlant.unlocalizedName).trim());
                     CommonReference.sendMessage(player, msg1.appendSibling(msg2).appendSibling(msg3));
@@ -150,7 +174,7 @@ public enum EnumChatMessages {
         }    
     },
     UNSUPPORTED_PLANT {
-        
+
         @Override
         public void sendMessage(EntityPlayer player, String... args) {
             ITextComponent msg1;
@@ -169,23 +193,23 @@ public enum EnumChatMessages {
             msg3 = new TextComponentString(" / ");
             msg4 = new TextComponentString(", ");
             msg4.getStyle().setColor(TextFormatting.AQUA);
-            plantKey = new TextComponentString(DataLoader.createDisplayKey(DataLoader.latestPlant.registryName, DataLoader.latestPlant.meta));                                
+            plantKey = new TextComponentString(PBManager.createDisplayKey(PBManager.latestPlant.registryName, PBManager.latestPlant.meta));                                
             plantKey.getStyle().setColor(TextFormatting.WHITE);  
-            plantName = new TextComponentTranslation((DataLoader.latestPlant.unlocalizedName).trim());                           
+            plantName = new TextComponentTranslation((PBManager.latestPlant.unlocalizedName).trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);  
-            biomeName = new TextComponentString(DataLoader.latestPlant.biomeRegistryName.toString());
+            biomeName = new TextComponentString(PBManager.latestPlant.biomeRegistryName.toString());
             TextFormatting biomeColor = TextFormatting.GREEN;
-            if (DataLoader.existLatest()) {
-                if (DataLoader.getLatest().hasMainMeta()) {
-                    if (DataLoader.getLatest().getMainMetaPlant().isValidBiomesExist())
-                        biomeColor = DataLoader.getLatest().getMainMetaPlant().isValidBiome(DataLoader.latestPlant.biomeRegistryName) ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
-                    else if (DataLoader.getLatest().getMainMetaPlant().isDeniedBiome(DataLoader.latestPlant.biomeRegistryName) || DataLoader.getLatest().getMainMetaPlant().isDeniedGlobal())
+            if (PBManager.existLatest()) {
+                if (PBManager.getLatest().hasMainMeta()) {
+                    if (PBManager.getLatest().getMainMetaPlant().isValidBiomesExist())
+                        biomeColor = PBManager.getLatest().getMainMetaPlant().isValidBiome(PBManager.latestPlant.biomeRegistryName) ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
+                    else if (PBManager.getLatest().getMainMetaPlant().isDeniedBiome(PBManager.latestPlant.biomeRegistryName) || PBManager.getLatest().getMainMetaPlant().isDeniedGlobal())
                         biomeColor = TextFormatting.RED;
                 } else {
-                    if (DataLoader.existMetaLatest()) {
-                        if (DataLoader.getMetaLatest().isValidBiomesExist())
-                            biomeColor = DataLoader.getMetaLatest().isValidBiome(DataLoader.latestPlant.biomeRegistryName) ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
-                        else if (DataLoader.getMetaLatest().isDeniedBiome(DataLoader.latestPlant.biomeRegistryName) || DataLoader.getMetaLatest().isDeniedGlobal())
+                    if (PBManager.existMetaLatest()) {
+                        if (PBManager.getMetaLatest().isValidBiomesExist())
+                            biomeColor = PBManager.getMetaLatest().isValidBiome(PBManager.latestPlant.biomeRegistryName) ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
+                        else if (PBManager.getMetaLatest().isDeniedBiome(PBManager.latestPlant.biomeRegistryName) || PBManager.getMetaLatest().isDeniedGlobal())
                             biomeColor = TextFormatting.RED;
                     }
                 }
@@ -224,11 +248,11 @@ public enum EnumChatMessages {
             msg3 = new TextComponentString(" -> "); 
             msg4 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
-            plantKey = new TextComponentString(DataLoader.createDisplayKey(DataLoader.latestPlant.registryName, DataLoader.latestPlant.meta));
+            plantKey = new TextComponentString(PBManager.createDisplayKey(PBManager.latestPlant.registryName, PBManager.latestPlant.meta));
             plantKey.getStyle().setColor(TextFormatting.WHITE); 
-            plantName = new TextComponentTranslation((DataLoader.latestPlant.unlocalizedName).trim());                           
+            plantName = new TextComponentTranslation((PBManager.latestPlant.unlocalizedName).trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);  
-            biomeName = new TextComponentString(DataLoader.latestPlant.biomeRegistryName.toString());
+            biomeName = new TextComponentString(PBManager.latestPlant.biomeRegistryName.toString());
             biomeName.getStyle().setColor(TextFormatting.WHITE);  
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName));
         }
@@ -243,11 +267,11 @@ public enum EnumChatMessages {
             msg3 = new TextComponentString(" -> "); 
             msg4 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
-            plantKey = new TextComponentString(DataLoader.createDisplayKey(DataLoader.latestPlant.registryName, DataLoader.latestPlant.meta));
+            plantKey = new TextComponentString(PBManager.createDisplayKey(PBManager.latestPlant.registryName, PBManager.latestPlant.meta));
             plantKey.getStyle().setColor(TextFormatting.WHITE); 
-            plantName = new TextComponentTranslation((DataLoader.latestPlant.unlocalizedName).trim());                           
+            plantName = new TextComponentTranslation((PBManager.latestPlant.unlocalizedName).trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);  
-            biomeName = new TextComponentString(DataLoader.latestPlant.biomeRegistryName.toString());
+            biomeName = new TextComponentString(PBManager.latestPlant.biomeRegistryName.toString());
             biomeName.getStyle().setColor(TextFormatting.WHITE);  
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName));
         }
@@ -260,9 +284,9 @@ public enum EnumChatMessages {
             msg1 = new TextComponentTranslation("pb.command.deny.global");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" / ");
-            plantKey = new TextComponentString(DataLoader.createDisplayKey(DataLoader.latestPlant.registryName, DataLoader.latestPlant.meta));
+            plantKey = new TextComponentString(PBManager.createDisplayKey(PBManager.latestPlant.registryName, PBManager.latestPlant.meta));
             plantKey.getStyle().setColor(TextFormatting.WHITE); 
-            plantName = new TextComponentTranslation((DataLoader.latestPlant.unlocalizedName).trim());                           
+            plantName = new TextComponentTranslation((PBManager.latestPlant.unlocalizedName).trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);   
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName));
         }
@@ -275,9 +299,9 @@ public enum EnumChatMessages {
             msg1 = new TextComponentTranslation("pb.command.allow.global");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" / ");
-            plantKey = new TextComponentString(DataLoader.createDisplayKey(DataLoader.latestPlant.registryName, DataLoader.latestPlant.meta));
+            plantKey = new TextComponentString(PBManager.createDisplayKey(PBManager.latestPlant.registryName, PBManager.latestPlant.meta));
             plantKey.getStyle().setColor(TextFormatting.WHITE); 
-            plantName = new TextComponentTranslation((DataLoader.latestPlant.unlocalizedName).trim());                           
+            plantName = new TextComponentTranslation((PBManager.latestPlant.unlocalizedName).trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);   
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName));
         }
@@ -292,11 +316,11 @@ public enum EnumChatMessages {
             msg3 = new TextComponentString(" -> "); 
             msg4 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
-            plantKey = new TextComponentString(DataLoader.createDisplayKey(DataLoader.latestPlant.registryName, DataLoader.latestPlant.meta));
+            plantKey = new TextComponentString(PBManager.createDisplayKey(PBManager.latestPlant.registryName, PBManager.latestPlant.meta));
             plantKey.getStyle().setColor(TextFormatting.WHITE); 
-            plantName = new TextComponentTranslation((DataLoader.latestPlant.unlocalizedName).trim());                           
+            plantName = new TextComponentTranslation((PBManager.latestPlant.unlocalizedName).trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);  
-            biomeName = new TextComponentString(DataLoader.latestPlant.biomeRegistryName.toString());
+            biomeName = new TextComponentString(PBManager.latestPlant.biomeRegistryName.toString());
             biomeName.getStyle().setColor(TextFormatting.WHITE);  
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName));
         }
@@ -311,11 +335,11 @@ public enum EnumChatMessages {
             msg3 = new TextComponentString(" -> "); 
             msg4 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
-            plantKey = new TextComponentString(DataLoader.createDisplayKey(DataLoader.latestPlant.registryName, DataLoader.latestPlant.meta));
+            plantKey = new TextComponentString(PBManager.createDisplayKey(PBManager.latestPlant.registryName, PBManager.latestPlant.meta));
             plantKey.getStyle().setColor(TextFormatting.WHITE); 
-            plantName = new TextComponentTranslation((DataLoader.latestPlant.unlocalizedName).trim());                           
+            plantName = new TextComponentTranslation((PBManager.latestPlant.unlocalizedName).trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);  
-            biomeName = new TextComponentString(DataLoader.latestPlant.biomeRegistryName.toString());
+            biomeName = new TextComponentString(PBManager.latestPlant.biomeRegistryName.toString());
             biomeName.getStyle().setColor(TextFormatting.WHITE);  
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName));
         }
@@ -330,9 +354,9 @@ public enum EnumChatMessages {
             msg3 = new TextComponentString(" / ");
             msg4 = new TextComponentString(" ");
             msg4.getStyle().setColor(TextFormatting.AQUA);
-            plantKey = new TextComponentString(DataLoader.createDisplayKey(DataLoader.latestPlant.registryName, DataLoader.latestPlant.meta));                                
+            plantKey = new TextComponentString(PBManager.createDisplayKey(PBManager.latestPlant.registryName, PBManager.latestPlant.meta));                                
             plantKey.getStyle().setColor(TextFormatting.WHITE);  
-            plantName = new TextComponentTranslation((DataLoader.latestPlant.unlocalizedName).trim());                           
+            plantName = new TextComponentTranslation((PBManager.latestPlant.unlocalizedName).trim());                           
             plantName.getStyle().setColor(TextFormatting.WHITE);  
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName).appendSibling(msg4).appendSibling(new TextComponentTranslation("pb.command.set-main.end")));
         } 
@@ -354,7 +378,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1));    
         }
     },
-    PLANT_BIOMES_CLEARED {
+    LATEST_PLANT_CLEARED {
 
         @Override
         public void sendMessage(EntityPlayer player, String... args) {                    
@@ -407,6 +431,13 @@ public enum EnumChatMessages {
         @Override
         public void sendMessage(EntityPlayer player, String... args) {                    
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.save")));    
+        }
+    },
+    SETTINGS_RELOADED {
+
+        @Override
+        public void sendMessage(EntityPlayer player, String... args) {                    
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.reload")));    
         }
     },
     BACKUP_CREATED {

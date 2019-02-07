@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import austeretony.plantbiomes.common.reference.CommonReference;
-import austeretony.plantbiomes.util.PBUtils;
+import austeretony.plantbiomes.common.util.PBUtils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
@@ -22,13 +22,14 @@ public class UpdateChecker implements Runnable {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
-        if (DataLoader.isUpdateMessagesEnabled() && CommonReference.isOpped(event.player))
+        if (PBManager.isUpdateMessagesEnabled() && CommonReference.isOpped(event.player))
             if (PBUtils.isOutdated(PlantBiomesMain.VERSION, availableVersion))	
                 EnumChatMessages.UPDATE_MESSAGE.sendMessage(event.player, availableVersion);
     }
 
     @Override
     public void run() {
+        PlantBiomesMain.LOGGER.info("Update check started...");
         URL versionsURL;		
         try {			
             versionsURL = new URL(PlantBiomesMain.VERSIONS_URL);
@@ -57,5 +58,6 @@ public class UpdateChecker implements Runnable {
             return;
         }        
         availableVersion = data.get("available").getAsString();
+        PlantBiomesMain.LOGGER.info("Update check ended. Current/available: " + PlantBiomesMain.VERSION + "/" + availableVersion);
     }
 }

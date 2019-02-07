@@ -13,13 +13,16 @@ public class PlantData {
 
     public final ResourceLocation registryName;
 
+    public final EnumPBPlantType enumType;
+
     private final Map<Integer, MetaPlant> data = new HashMap<Integer, MetaPlant>();
 
     private int mainMeta = -1;
 
     private boolean hasMainMeta;
 
-    public PlantData(ResourceLocation registryName) {
+    public PlantData(EnumPBPlantType enumType, ResourceLocation registryName) {
+        this.enumType = enumType;
         this.registryName = registryName;
     }
 
@@ -43,8 +46,8 @@ public class PlantData {
         this.data.put(meta, metaPlant);
     }
 
-    public void createMeta(int meta, String unlocalizedName) {
-        this.data.put(meta, new MetaPlant(meta, unlocalizedName));
+    public void createMeta(int meta, String specialName, String unlocalizedName) {
+        this.data.put(meta, new MetaPlant(meta, specialName, unlocalizedName));
     }
 
     public void removeMeta(int meta) {
@@ -63,9 +66,9 @@ public class PlantData {
         return this.data.get(this.mainMeta);
     }
 
-    public void setMainMeta(int customizedMeta) {
-        this.mainMeta = customizedMeta;
-        this.hasMainMeta = customizedMeta != -1;
+    public void setMainMeta(int mainMeta) {
+        this.mainMeta = mainMeta;
+        this.hasMainMeta = mainMeta != -1;
     }
 
     public void resetMainMeta() {
@@ -78,7 +81,7 @@ public class PlantData {
     }
 
     public boolean isPermittedBiome(int meta, ResourceLocation biomeRegistryName) {
-        return !DataLoader.isSettingsEnabled() || (this.hasMainMeta ? verifyMeta(this.mainMeta, biomeRegistryName) : verifyMeta(meta, biomeRegistryName));
+        return !PBManager.isSettingsEnabled() || (this.hasMainMeta ? verifyMeta(this.mainMeta, biomeRegistryName) : verifyMeta(meta, biomeRegistryName));
     }
 
     public boolean isPermittedBiome(Block block, IBlockState blockState, ResourceLocation biomeRegistryName) {
@@ -86,6 +89,6 @@ public class PlantData {
     }
 
     public boolean isPermittedBiome(Block block, IBlockState blockState, World world, BlockPos pos) {
-        return isPermittedBiome(block, blockState, DataLoader.getBiomeRegistryName(world, pos));
+        return isPermittedBiome(block, blockState, PBManager.getBiomeRegistryName(world, pos));
     }
 }

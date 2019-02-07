@@ -9,10 +9,56 @@ import net.minecraft.world.World;
 
 public enum EnumSpecialPlants {
 
+    AGRICRAFT_CROP("com.infinityraider.agricraft.tiles.TileEntityCrop") {
+
+        @Override
+        public boolean collectData(NBTTagCompound tagCompound, World world, BlockPos pos) {
+            String cropId = tagCompound.getString("agri_seed");
+            if (cropId.isEmpty())
+                return false;
+            PBManager.latestPlant = new LatestPlant(
+                    EnumPBPlantType.AGRICRAFT_CROP,
+                    new ResourceLocation("agricraft", cropId.replace(':', '.')), 
+                    SPECIALS_META, 
+                    cropId,
+                    cropId,
+                    PBManager.getBiomeRegistryName(world, pos), 
+                    pos);
+            return true;
+        }
+
+        @Override
+        public ResourceLocation createRegistryName(NBTTagCompound tagCompound) {
+            return new ResourceLocation("agricraft", tagCompound.getString("agri_seed").replace(':', '.'));
+        }
+    },
     FORESTRY_SAPLING("forestry.arboriculture.tiles.TileSapling") {
 
         @Override
-        public void collectData(NBTTagCompound tagCompound, World world, BlockPos pos) {
+        public boolean collectData(NBTTagCompound tagCompound, World world, BlockPos pos) {
+            NBTTagCompound 
+            containedTreeCompound = tagCompound.getCompoundTag("ContainedTree"),
+            genomeCompound = containedTreeCompound.getCompoundTag("Genome"),
+            alleleCompound;
+            NBTTagList chromosomesTagList = genomeCompound.getTagList("Chromosomes", 10);
+            alleleCompound = chromosomesTagList.getCompoundTagAt(0);
+            String ident = alleleCompound.getString("UID1");
+            if (ident.isEmpty())
+                return false;
+            String[] splitted = ident.split("[.]");
+            PBManager.latestPlant = new LatestPlant(
+                    EnumPBPlantType.FORESTRY_SAPLING,
+                    new ResourceLocation(splitted[0], splitted[1]), 
+                    SPECIALS_META, 
+                    ident,
+                    ident,
+                    PBManager.getBiomeRegistryName(world, pos), 
+                    pos);
+            return true;
+        }
+
+        @Override
+        public ResourceLocation createRegistryName(NBTTagCompound tagCompound) {
             NBTTagCompound 
             containedTreeCompound = tagCompound.getCompoundTag("ContainedTree"),
             genomeCompound = containedTreeCompound.getCompoundTag("Genome"),
@@ -21,23 +67,36 @@ public enum EnumSpecialPlants {
             alleleCompound = chromosomesTagList.getCompoundTagAt(0);
             String ident = alleleCompound.getString("UID1");
             String[] splitted = ident.split("[.]");
-            if (splitted.length > 1) {
-                DataLoader.latestPlant = new LatestPlant(new ResourceLocation(splitted[0], splitted[1]), 16, DataLoader.getBiomeRegistryName(world, pos), pos, ident + ".name");
-                DataLoader.latestPlant.setForestrySaplingIdent(ident);
-            }
+            return new ResourceLocation(splitted[0], splitted[1]);
         }
     },
     IC2_CROP("ic2.core.crop.TileEntityCrop") {
 
         @Override
-        public void collectData(NBTTagCompound tagCompound, World world, BlockPos pos) {
+        public boolean collectData(NBTTagCompound tagCompound, World world, BlockPos pos) {
             String 
             owner = tagCompound.getString("cropOwner"), 
             cropId = tagCompound.getString("cropId");
-            DataLoader.latestPlant = new LatestPlant(new ResourceLocation(owner, cropId), 16, DataLoader.getBiomeRegistryName(world, pos), pos, owner + ".crop." + cropId);
-            DataLoader.latestPlant.setIC2CropId(cropId);
+            if (cropId.isEmpty())
+                return false;
+            PBManager.latestPlant = new LatestPlant(
+                    EnumPBPlantType.IC2_CROP,
+                    new ResourceLocation(owner, cropId), 
+                    SPECIALS_META, 
+                    cropId,
+                    owner + ".crop." + cropId,
+                    PBManager.getBiomeRegistryName(world, pos), 
+                    pos);
+            return true;
+        }
+
+        @Override
+        public ResourceLocation createRegistryName(NBTTagCompound tagCompound) {
+            return new ResourceLocation(tagCompound.getString("cropOwner"), tagCompound.getString("cropId"));
         }
     };
+
+    public static final int SPECIALS_META = 16;
 
     public final String tileClassName;
 
@@ -45,7 +104,9 @@ public enum EnumSpecialPlants {
         this.tileClassName = tileClassName;
     }
 
-    public abstract void collectData(NBTTagCompound tagCompound, World world, BlockPos pos);
+    public abstract boolean collectData(NBTTagCompound tagCompound, World world, BlockPos pos);
+
+    public abstract ResourceLocation createRegistryName(NBTTagCompound tagCompound);
 
     public static EnumSpecialPlants identify(TileEntity tile) {
         String className = tile.getClass().getName();
