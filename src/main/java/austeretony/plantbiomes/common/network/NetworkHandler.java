@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.google.common.collect.HashBiMap;
 
 import austeretony.plantbiomes.common.main.PlantBiomesMain;
-import austeretony.plantbiomes.common.network.client.CPInitData;
 import austeretony.plantbiomes.common.network.client.CPSetOverlayStatus;
 import austeretony.plantbiomes.common.network.client.CPSyncPlantsData;
 import io.netty.buffer.ByteBuf;
@@ -35,9 +34,8 @@ public class NetworkHandler {
     }
 
     private static void registerPackets() {
-        register(CPInitData.class);
-        register(CPSetOverlayStatus.class);
         register(CPSyncPlantsData.class);
+        register(CPSetOverlayStatus.class);
     }
 
     private static void register(Class<? extends ProxyPacket> packet) {

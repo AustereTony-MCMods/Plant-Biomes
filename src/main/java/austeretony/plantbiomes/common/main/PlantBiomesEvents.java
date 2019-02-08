@@ -1,7 +1,6 @@
 package austeretony.plantbiomes.common.main;
 
 import austeretony.plantbiomes.common.network.NetworkHandler;
-import austeretony.plantbiomes.common.network.client.CPInitData;
 import austeretony.plantbiomes.common.network.client.CPSyncPlantsData;
 import austeretony.plantbiomes.common.reference.CommonReference;
 import net.minecraft.block.Block;
@@ -17,15 +16,20 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 public class PlantBiomesEvents {
 
     @SubscribeEvent
+    public void onPlayerConnectsToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+        if (PBManager.isClientDataInitialized())
+            PBManager.initClientData();
+    }
+
+    @SubscribeEvent
     public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
-        if (CommonReference.isOpped(event.player) && PBManager.isOverlayEnabled()) {
-            NetworkHandler.sendTo(new CPInitData(), (EntityPlayerMP) event.player);
+        if (CommonReference.isOpped(event.player) && PBManager.isOverlayEnabled())
             NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_ALL), (EntityPlayerMP) event.player);
-        }
     }
 
     @SubscribeEvent
@@ -41,7 +45,7 @@ public class PlantBiomesEvents {
 
     private void getPlantData(World world, BlockPos pos, Block block, IBlockState blockState, EntityPlayer player) {
         PlantBiomesMain.LOGGER.info("block class name: " + block.getClass().getName());//TODO For debug.
-        if (this.tryGetSpecialPlantData(world, pos, player)) return;
+        if (this.tryGetSpecialPlantData(world, pos, block, blockState, player)) return;
         EnumStandardPlants standard = EnumStandardPlants.identify(block);
         if (standard != null) {
             int meta = block.getMetaFromState(blockState);
@@ -60,16 +64,15 @@ public class PlantBiomesEvents {
         }
     }
 
-    private boolean tryGetSpecialPlantData(World world, BlockPos pos, EntityPlayer player) {
+    private boolean tryGetSpecialPlantData(World world, BlockPos pos, Block block, IBlockState blockState, EntityPlayer player) {
         boolean acquired = false;
         if (PBManager.shouldCheckSpecialPlantsServer()) {   
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile != null) {
+            if (block.hasTileEntity(blockState)) {
+                TileEntity tile = world.getTileEntity(pos);
                 EnumSpecialPlants special = EnumSpecialPlants.identify(tile);
-                if (special != null) {
+                if (special != null)
                     if (acquired = special.collectData(tile.serializeNBT(), world, pos))
                         EnumChatMessages.LATEST_PLANT.sendMessage(player);
-                }
             }
         } 
         return acquired;

@@ -23,6 +23,7 @@ import com.google.gson.JsonPrimitive;
 import austeretony.plantbiomes.common.reference.CommonReference;
 import austeretony.plantbiomes.common.util.PBUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 
 public class PBLoader {
 
@@ -152,6 +153,7 @@ public class PBLoader {
         JsonObject plantObject, metaObject;
         String[] plantRegistryNameSplitted, biomeNameSplitted;
         ResourceLocation registryName;
+        EnumPBPlantType enumType;
         int meta;
         for (Map.Entry<String, JsonElement> plantEntry : data.entrySet()) {
             if (plantEntry.getKey().equals("enabled")) {
@@ -159,6 +161,8 @@ public class PBLoader {
                 continue;
             }
             plantObject = plantEntry.getValue().getAsJsonObject();
+            enumType = EnumPBPlantType.getOf(plantObject.get("type").getAsString());
+            if (enumType != EnumPBPlantType.STANDARD && !Loader.isModLoaded(enumType.domain)) continue;
             plantRegistryNameSplitted = plantEntry.getKey().split("[:]");
             registryName = new ResourceLocation(plantRegistryNameSplitted[0], plantRegistryNameSplitted[1]);
             for (Map.Entry<String, JsonElement> metaEntry : plantObject.entrySet()) { 
@@ -166,7 +170,7 @@ public class PBLoader {
                 meta = Integer.parseInt(metaEntry.getKey());
                 metaObject = metaEntry.getValue().getAsJsonObject();
                 PBManager.createMetaServer(
-                        EnumPBPlantType.getOf(plantObject.get("type").getAsString()), 
+                        enumType, 
                         new ResourceLocation(plantRegistryNameSplitted[0], plantRegistryNameSplitted[1]), 
                         Integer.parseInt(metaEntry.getKey()), 
                         metaObject.get("special").getAsString(), 

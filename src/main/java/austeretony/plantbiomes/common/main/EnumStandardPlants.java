@@ -28,8 +28,16 @@ public enum EnumStandardPlants {
     BOP_BLOCK_GRASS("biomesoplenty.common.block.BlockBOPGrass"),
     BOP_VINE("biomesoplenty.common.block.BlockBOPVine"),
     BOP_BAMBOO("biomesoplenty.common.block.BlockBOPBamboo"),
+    //DynamicTrees
+    DT_FRUIT("com.ferreusveritas.dynamictrees.blocks.BlockFruit"),
+    DT_COCOA("com.ferreusveritas.dynamictrees.blocks.BlockFruitCocoa"),
+    //ImmersiveEngineering
+    IE_HEMP("blusunrize.immersiveengineering.common.blocks.plant.BlockIECrop"),
     //IndustrialCraft 2
     IC2_SAPLING("ic2.core.block.Ic2Sapling"),
+    //Mystical Agriculture
+    MA_CROP("com.blakebr0.mysticalagriculture.blocks.crop.BlockMysticalCrop"),
+    MA_INFERIUM_CROP("com.blakebr0.mysticalagriculture.blocks.crop.BlockInferiumCrop"),
     //Pam's HarvestCraft
     HC_SAPLING("com.pam.harvestcraft.blocks.growables.BlockPamSapling"),
     HC_CROP("com.pam.harvestcraft.blocks.growables.BlockPamCrop"),

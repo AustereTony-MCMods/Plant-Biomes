@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome.FlowerEntry;
@@ -28,14 +29,15 @@ public class PlantBiomesHooks {
         return true;
     }
 
-    public static boolean isGrowthAllowedBonemeal(World world, BlockPos pos) {
+    public static boolean isGrowthAllowedBonemeal(World world, BlockPos pos, boolean flag) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         if (PBManager.exist(block)) {
             if (PBManager.get(block).isPermittedBiome(block, blockState, world, pos))
                 return true;
-            if (block instanceof BlockGrass) return true;
-            world.playEvent(900, pos, 0);
+            if (block instanceof BlockGrass) return true;//Allow bonemeal usage on grass block if grass spreading disabled in this biome.
+            if (flag)
+                world.playEvent(900, pos, 0);
             return false;
         }
         return true;
@@ -74,6 +76,15 @@ public class PlantBiomesHooks {
         if (player.getHeldItemMainhand().getItem() == Items.DYE && EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getMetadata()) == EnumDyeColor.WHITE)
             if (isGrowthAllowedAgriCraftCrop(world, pos, cropId) == 0)
                 world.playEvent(900, pos, 0);
+    }
+
+    public static boolean isGrowthAllowedTickDynamicTree(World world, BlockPos pos, ResourceLocation registryName) {
+        if (PBManager.existServer(registryName)) {
+            if (PBManager.getServer(registryName).isPermittedBiome(EnumSpecialPlants.SPECIALS_META, PBManager.getBiomeRegistryName(world, pos)))
+                return true;
+            return false;           
+        }
+        return true;
     }
 
     public static boolean isGrowthAllowedIC2Crop(World world, BlockPos pos, String cropId) {

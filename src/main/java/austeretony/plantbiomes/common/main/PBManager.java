@@ -36,6 +36,7 @@ public class PBManager {
 
     @SideOnly(Side.CLIENT)
     private static boolean 
+    clientInitialized,
     overlayStatus,
     isTilesAllowed;
 
@@ -60,6 +61,7 @@ public class PBManager {
     public static void initClientData() {
         plantsDataClient = new HashMap<ResourceLocation, PlantData>();
         checkForSpecialPlantsClient();
+        clientInitialized = true;
     }
 
     @SideOnly(Side.CLIENT)
@@ -230,6 +232,11 @@ public class PBManager {
 
     public static String createDisplayKey(ResourceLocation registryName, int meta) {
         return registryName.toString() + "-" + meta;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static boolean isClientDataInitialized() {
+        return clientInitialized;
     }
 
     @SideOnly(Side.CLIENT)
