@@ -1,3 +1,11 @@
+1.4.6
++Code optimizations. Fixed minor problems.
++Fixed AgriCraft crop interaction problems.
++Added support for Mystical Agriculture crops.
++Added support for Immersive Engineering hemp crop.
++Added support for Dynamic Trees saplings and fruits.
++Fixed Hunger Overhaul advanced bonemeal behavior, 
+now it considers Plant Biomes settings.
 1.4.0
 +Added settings overlay for supported plants. Overlay can be enabled with "/pb enable-overlay"
 and disabled with "/pb disable-overlay". Overlay radius is 20 blocks.

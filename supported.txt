@@ -1,5 +1,8 @@
 Plant Biomes settings can be applied for plants from various mods.
-If you want support for some modded plants, leave request.
+Also it should support fertilizers and other growth boosters
+behavior according to settings. If you want support for some modded 
+plants or fertilizers, leave request.
+***PLANTS***
 Supported modded plants:
 +AgriCraft (tested for 2.12.0-1.12.0-a6)
  - crops
@@ -8,11 +11,19 @@ Supported modded plants:
  - vines (spreading)
  - grass (spreading)
  - bamboo 
++DynamicTrees (tested for 0.9.4)
+ - saplings
+ - fruits
+ - suports Biomes O' Plenty addon saplings as well.
 +Forestry (tested for 5.8.2.382)
  - saplings
++Immersive Engineering (tested for 0.12-88)
+ - hemp crop
 +Industrial Craft 2 (tested for 2.8.108)
  - rubber tree sapling  
  - crops 
++Mystical Agriculture (tested for 1.7.1)
+ - crops
 +Pam's HarvestCraft (tested for 1.12.2zb)
  - crops
  - saplings
@@ -21,3 +32,16 @@ Supported modded plants:
  - saplings 
 +Twilight Forest (tested for 3.8.689)
  - saplings 
+ 
+***FERTILIZERS AND BOOSTERS***
+These props will consider Plant Biomes settings.
++Cyclic (tested for 1.17.16)
+ - sprinkler
++Mystical Agriculture
+ - growth accelerator
++Reliquary (tested for 1.3.4.780)
+ - lilypad of fertility (forestry saplings will ignore settings)
++Thaumcraft (tested for 6.1.BETA26)
+ - hoe of growth
+ - lamp of growth
+
