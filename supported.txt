@@ -14,7 +14,8 @@ Supported modded plants:
 +DynamicTrees (tested for 0.9.4)
  - saplings
  - fruits
- - suports Biomes O' Plenty addon saplings as well.
+ - Biomes O' Plenty addon saplings
+ - Thaumcraft addon saplings
 +Forestry (tested for 5.8.2.382)
  - saplings
 +Immersive Engineering (tested for 0.12-88)
