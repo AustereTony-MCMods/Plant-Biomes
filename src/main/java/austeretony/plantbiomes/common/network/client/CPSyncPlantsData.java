@@ -90,8 +90,6 @@ public class CPSyncPlantsData extends ProxyPacket {
 
     @Override
     public void read(PacketBuffer buffer) {
-        if (!PBManager.isClientDataInitialized())
-            PBManager.initClientData();
         this.action = buffer.readByte();
         if (this.action == EnumAction.SYNC_ALL.ordinal()) {
             PBManager.clearDataClient();

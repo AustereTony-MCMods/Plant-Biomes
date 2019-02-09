@@ -22,8 +22,7 @@ public class PlantBiomesEvents {
 
     @SubscribeEvent
     public void onPlayerConnectsToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-        if (PBManager.isClientDataInitialized())
-            PBManager.initClientData();
+        PBManager.initClientData();
     }
 
     @SubscribeEvent
@@ -35,7 +34,7 @@ public class PlantBiomesEvents {
     @SubscribeEvent
     public void onBlockActivated(PlayerInteractEvent event) {
         if (!event.getWorld().isRemote && event.getHand() == EnumHand.MAIN_HAND) {
-            if (PBManager.isConfigModeEnabled() && CommonReference.isOpped(event.getEntityPlayer()) && CommonReference.isMainHandEmpty(event.getEntityPlayer())) {
+            if (PBManager.isConfigModeEnabled() && CommonReference.isOpped(event.getEntityPlayer()) && CommonReference.isMainHandEmpty(event.getEntityPlayer())) {          
                 IBlockState blockState = event.getWorld().getBlockState(event.getPos());       
                 if (blockState != null)
                     getPlantData(event.getWorld(), event.getPos(), blockState.getBlock(), blockState, event.getEntityPlayer());      
@@ -44,7 +43,7 @@ public class PlantBiomesEvents {
     }
 
     private void getPlantData(World world, BlockPos pos, Block block, IBlockState blockState, EntityPlayer player) {
-        PlantBiomesMain.LOGGER.info("block class name: " + block.getClass().getName());//TODO For debug.
+        PlantBiomesMain.LOGGER.info("Block class name: " + block.getClass().getName());//TODO For debug.
         if (this.tryGetSpecialPlantData(world, pos, block, blockState, player)) return;
         EnumStandardPlants standard = EnumStandardPlants.identify(block);
         if (standard != null) {
@@ -58,9 +57,9 @@ public class PlantBiomesEvents {
                     unlocalizedName,
                     PBManager.getBiomeRegistryName(world, pos), 
                     pos);
-            EnumChatMessages.LATEST_PLANT.sendMessage(player);
+            EnumChatMessages.COMMAND_PB_LATEST.sendMessage(player);
         } else {
-            EnumChatMessages.UNSUPPORTED_PLANT.sendMessage(player);
+            EnumChatMessages.COMMAND_PB_ERR_UNSUPPORTED_PLANT.sendMessage(player);
         }
     }
 
@@ -69,10 +68,11 @@ public class PlantBiomesEvents {
         if (PBManager.shouldCheckSpecialPlantsServer()) {   
             if (block.hasTileEntity(blockState)) {
                 TileEntity tile = world.getTileEntity(pos);
+                PlantBiomesMain.LOGGER.info("Tile Entity class name: " + tile.getClass().getName());//TODO For debug.
                 EnumSpecialPlants special = EnumSpecialPlants.identify(tile);
                 if (special != null)
                     if (acquired = special.collectData(tile.serializeNBT(), world, pos))
-                        EnumChatMessages.LATEST_PLANT.sendMessage(player);
+                        EnumChatMessages.COMMAND_PB_LATEST.sendMessage(player);
             }
         } 
         return acquired;

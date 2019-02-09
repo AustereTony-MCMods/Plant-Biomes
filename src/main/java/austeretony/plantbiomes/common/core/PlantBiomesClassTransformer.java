@@ -48,7 +48,7 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             //AgriCraft (tested for 2.12.0-1.12.0-a6)
         case "com.infinityraider.agricraft.tiles.TileEntityCrop"://crops
             return patch(basicClass, EnumInputClasses.AC_TILE_ENTITY_CROP);
-        //case "com.infinityraider.agricraft.blocks.BlockCrop"://fertilizer behavior//TODO Need fix, broken interaction.
+            //case "com.infinityraider.agricraft.blocks.BlockCrop"://fertilizer behavior//TODO Need fix, broken interaction.
             //return patch(basicClass, EnumInputClasses.AC_BLOCK_CROP);
             //Biomes O' Plenty (tested for 7.0.1.2419)
         case "biomesoplenty.common.block.BlockBOPSapling"://saplings

@@ -78,9 +78,9 @@ public class OverlayRenderer {
         if (this.block != Blocks.AIR) {
             this.blockName = this.block.getRegistryName();
             this.meta = this.block.getMetaFromState(state);
-            if (PBManager.isTilesAllowedClient() && PBManager.shouldCheckSpecialPlantsServer()) {   
-                if (this.block.hasTileEntity(this.state)) {
-                    this.tile = this.world.getTileEntity(this.blockPos);
+            if (PBManager.isTilesAllowedClient() && PBManager.shouldCheckSpecialPlantsClient()) {  
+                this.tile = this.world.getTileEntity(this.blockPos);
+                if (this.tile != null) {
                     EnumSpecialPlants special = EnumSpecialPlants.identify(this.tile);
                     if (special != null) {
                         this.tilePos.setPosition(this.blockPos);

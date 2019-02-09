@@ -78,10 +78,10 @@ public enum EnumSpecialPlants {
         if (speciesName.isEmpty())
             return false;
         PBManager.latestPlant = new LatestPlant(
-                EnumPBPlantType.STANDARD,
+                EnumPBPlantType.DYNAMIC_TREES_SAPLING,
                 new ResourceLocation(speciesName), 
                 SPECIALS_META, 
-                "",
+                speciesName,
                 speciesName,
                 PBManager.getBiomeRegistryName(world, pos), 
                 pos);
