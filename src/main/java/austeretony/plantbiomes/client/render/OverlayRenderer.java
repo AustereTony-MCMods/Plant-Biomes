@@ -39,7 +39,7 @@ public class OverlayRenderer {
     private MutableBlockPos blockPos = new MutableBlockPos();
 
     private WorldPosition tilePos = new WorldPosition();
-
+    
     private TileEntity tile;
 
     private IBlockState state;
@@ -64,7 +64,7 @@ public class OverlayRenderer {
                 for (this.y = this.player.posY - RANGE; this.y < this.player.posY + RANGE; this.y++) {
                     for (this.z = this.player.posZ - RANGE; this.z < this.player.posZ + RANGE; this.z++) {
                         this.blockPos.setPos(this.x, this.y, this.z);
-                        renderOverlay(event.getPartialTicks());
+                        this.renderOverlay(event.getPartialTicks());
                     }
                 }
             }
@@ -77,10 +77,10 @@ public class OverlayRenderer {
         this.block = this.state.getBlock();
         if (this.block != Blocks.AIR) {
             this.blockName = this.block.getRegistryName();
-            this.meta = this.block.getMetaFromState(state);
+            this.meta = this.block.getMetaFromState(this.state);
             if (PBManager.isTilesAllowedClient() && PBManager.shouldCheckSpecialPlantsClient()) {  
-                this.tile = this.world.getTileEntity(this.blockPos);
-                if (this.tile != null) {
+                if (this.block.hasTileEntity(this.state)) {
+                    this.tile = this.world.getTileEntity(this.blockPos);
                     EnumSpecialPlants special = EnumSpecialPlants.identify(this.tile);
                     if (special != null) {
                         this.tilePos.setPosition(this.blockPos);
@@ -91,6 +91,7 @@ public class OverlayRenderer {
                         } else {
                             this.blockName = this.SPECIAL_NAMES.get(this.tilePos);
                         }
+                        if (this.blockName == null) return;
                     }
                 }
             } 

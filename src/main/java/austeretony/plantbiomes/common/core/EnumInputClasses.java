@@ -10,6 +10,7 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -43,14 +44,14 @@ public enum EnumInputClasses {
     DT_SPECIES_CACTUS("DynamicTrees", "SpeciesCactus", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
     DT_BLOCK_FRUIT("DynamicTrees", "BlockFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
+    FORESTRY_TILE_FRUIT_POD("Forestry", "TileFruitPod", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    FORESTRY_BLOCK_FRUIT_POD("Forestry", "BlockFruitPod", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    FORESTRY_TILE_LEAVES("Forestry", "TileLeaves", 0, 0),
+    FORESTRY_BLOCK_LEAVES("Forestry", "BlockForestryLeaves", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    FORESTRY_TILE_SAPLING("Forestry", "TileSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
     FORESTRY_BLOCK_SAPLING("Forestry", "BlockSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    FORESTRY_TILE_ENTITY_SAPLING("Forestry", "TileSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
     MA_BLOCK_MYSTICAL_CROP("Mystical Agriculture", "BlockMysticalCrop", 0, 0),
-
-    HC_BLOCK_SAPLING("Pam's HarvestCraft", "BlockPamSapling", 0, 0),
-    HC_BLOCK_CROP("Pam's HarvestCraft", "BlockPamCrop", 0, 0),
-    HC_BLOCK_FRUIT("Pam's HarvestCraft", "BlockPamFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
     HO_BONEMEAL_MODULE("Hunger Overhaul", "BonemealModule", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
@@ -69,6 +70,18 @@ public enum EnumInputClasses {
     IC2_CROP_BASE_METAL_COMMON("IndustrialCraft 2", "CropBaseMetalCommon", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
     IC2_CROP_BASE_METAL_UNCOMMON("IndustrialCraft 2", "CropBaseMetalUncommon", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
     IC2_CROP_EATING("IndustrialCraft 2", "CropEating", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+
+    PHC_BLOCK_SAPLING("Pam's HarvestCraft", "BlockPamSapling", 0, 0),
+    PHC_BLOCK_CROP("Pam's HarvestCraft", "BlockPamCrop", 0, 0),
+    PHC_BLOCK_FRUIT("Pam's HarvestCraft", "BlockPamFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+
+    RUSTIC_BLOCK_SAPLING("Rustic", "BlockSaplingRustic", 0, 0),
+    RUSTIC_BLOCK_SAPLING_APPLE("Rustic", "BlockSaplingApple", 0, 0),
+    RUSTIC_BLOCK_STAKE_CROP("Rustic", "BlockStakeCrop", 0, 0),
+    RUSTIC_BLOCK_APPLE_SEEDS("Rustic", "BlockAppleSeeds", 0, 0),
+    RUSTIC_BLOCK_BERRY_BUSH("Rustic", "BlockBerryBush", 0, 0),
+    RUSTIC_BLOCK_GRAPE_STEM("Rustic", "BlockGrapeStem", 0, 0),
+    RUSTIC_BLOCK_HERB_BASE("Rustic", "BlockHerbBase", 0, 0),
 
     TC_BLOCK_SAPLING("Thaumcraft", "BlockSaplingTC", 0, 0),
 
@@ -138,20 +151,21 @@ public enum EnumInputClasses {
         case DT_BLOCK_FRUIT:
             return patchDTBlockFruit(classNode); 
 
+        case FORESTRY_TILE_FRUIT_POD:
+            return patchForestryTileFruitPod(classNode); 
+        case FORESTRY_BLOCK_FRUIT_POD:
+            return patchForestryBlockFruitPod(classNode);    
+        case FORESTRY_TILE_LEAVES:
+            return patchForestryTileLeaves(classNode); 
+        case FORESTRY_BLOCK_LEAVES:
+            return patchForestryBlockLeaves(classNode); 
+        case FORESTRY_TILE_SAPLING:
+            return patchForestryTileSapling(classNode); 
         case FORESTRY_BLOCK_SAPLING:
             return patchForestryBlockSapling(classNode); 
-        case FORESTRY_TILE_ENTITY_SAPLING:
-            return patchForestryTileSapling(classNode); 
 
         case MA_BLOCK_MYSTICAL_CROP:
             return patchMABlockMysticalCrop(classNode); 
-
-        case HC_BLOCK_SAPLING:
-            return patchHCBlockPamSapling(classNode); 
-        case HC_BLOCK_CROP:
-            return patchHCBlockPamCrop(classNode); 
-        case HC_BLOCK_FRUIT:
-            return patchHCBlockPamFruit(classNode); 
 
         case HO_BONEMEAL_MODULE:
             return patchHOBonemealModule(classNode); 
@@ -185,6 +199,28 @@ public enum EnumInputClasses {
             return patchIC2CropBaseMetalUncommon(classNode);
         case IC2_CROP_EATING:
             return patchIC2CropEating(classNode);
+
+        case PHC_BLOCK_SAPLING:
+            return patchPHCBlockPamSapling(classNode); 
+        case PHC_BLOCK_CROP:
+            return patchPHCBlockPamCrop(classNode); 
+        case PHC_BLOCK_FRUIT:
+            return patchPHCBlockPamFruit(classNode); 
+
+        case RUSTIC_BLOCK_SAPLING:
+            return patchRusticBlockSapling(classNode);
+        case RUSTIC_BLOCK_SAPLING_APPLE:
+            return patchRusticBlockSaplingApple(classNode);
+        case RUSTIC_BLOCK_STAKE_CROP:
+            return patchRusticBlockStakeCrop(classNode);
+        case RUSTIC_BLOCK_APPLE_SEEDS:
+            return patchRusticBlockAppleSeeds(classNode);
+        case RUSTIC_BLOCK_BERRY_BUSH:
+            return patchRusticBlockBerryBush(classNode);
+        case RUSTIC_BLOCK_GRAPE_STEM:
+            return patchRusticBlockGrapeStem(classNode);
+        case RUSTIC_BLOCK_HERB_BASE:
+            return patchRusticBlockHerbBase(classNode);
 
         case TC_BLOCK_SAPLING:
             return patchTCBlockSapling(classNode);
@@ -830,37 +866,161 @@ public enum EnumInputClasses {
         return patchBOPBlockBamboo(classNode);
     }
 
-    private boolean patchForestryBlockSapling(ClassNode classNode) {
+    private boolean patchForestryTileFruitPod(ClassNode classNode) {
         String
-        canUseBonemealMethodName = "func_180670_a",
-        getTreeMethodName = "getTree",
-        getIdentMethodName = "getIdent",
-        tileSaplingClassName = "forestry/arboriculture/tiles/TileSapling",
-        iTreeClassName = "forestry/api/arboriculture/ITree",
+        alleleFieldName = "allele",
+        onBlockTickMethodName = "onBlockTick",
+        getUIDMethodName = "getUID",
+        tileFruitPodClassName = "forestry/arboriculture/tiles/TileFruitPod",
+        iAlleleFruitClassName = "forestry/api/arboriculture/IAlleleFruit",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        blockClassName = "net/minecraft/block/Block",
         stringClassName = "java/lang/String";
         boolean isSuccessful = false;        
         AbstractInsnNode currentInsn;
 
         for (MethodNode methodNode : classNode.methods) {
-            if (methodNode.name.equals(canUseBonemealMethodName)) {                         
-                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();  
-                JumpInsnNode ifnullInsnNode = null      ;
+            if (methodNode.name.equals(onBlockTickMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
                 while (insnIterator.hasNext()) {                        
-                    currentInsn = insnIterator.next();  
-                    if (currentInsn.getOpcode() == Opcodes.ASTORE) {         
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IFEQ) {     
                         InsnList nodesList = new InsnList();   
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileSaplingClassName, getTreeMethodName, "()L" + iTreeClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
-                        nodesList.add(new InsnNode(Opcodes.ICONST_1));     
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestrySapling", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";Z)Z", false));
-                        nodesList.add(new InsnNode(Opcodes.IRETURN));
-                        methodNode.instructions.insert(currentInsn, nodesList); 
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileFruitPodClassName, alleleFieldName, "L" + iAlleleFruitClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iAlleleFruitClassName, getUIDMethodName, "()L" + stringClassName + ";", true));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestryFruitPod", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious(), nodesList); 
+                        isSuccessful = true;                        
+                        break;
+                    }
+                } 
+                break;
+            }
+        }
+        return isSuccessful;
+    }
+
+    private boolean patchForestryBlockFruitPod(ClassNode classNode) {
+        String
+        growMethodName = "func_176474_b",
+        serializeNBTMethodName = "serializeNBT",
+        getStringMethodName = "func_74779_i",
+        tileFruitPodClassName = "forestry/arboriculture/tiles/TileFruitPod",
+        nbtTagCompoundClassName = "net/minecraft/nbt/NBTTagCompound",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        stringClassName = "java/lang/String";
+        boolean isSuccessful = false;        
+        int ldcCount = 0;
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {
+            if (methodNode.name.equals(growMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();  
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();  
+                    if (currentInsn.getOpcode() == Opcodes.LDC) {       
+                        ldcCount++;
+                        if (ldcCount == 2) {
+                            InsnList nodesList = new InsnList();   
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileFruitPodClassName, serializeNBTMethodName, "()L" + nbtTagCompoundClassName + ";", false));
+                            nodesList.add(new LdcInsnNode("UID"));//fruid id key
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, nbtTagCompoundClassName, getStringMethodName, "(L" + stringClassName + ";)L" + stringClassName + ";", false));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedBonemealForestryFruitPod", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)F", false));
+                            methodNode.instructions.insertBefore(currentInsn, nodesList); 
+                            methodNode.instructions.remove(currentInsn);
+                            isSuccessful = true;                        
+                            break;
+                        }
+                    }
+                }                                           
+                break;
+            }
+        }
+        return isSuccessful;
+    }
+
+    private boolean patchForestryTileLeaves(ClassNode classNode) {
+        String
+        onBlockTickMethodName = "onBlockTick",
+        getIdentMethodName = "getIdent",
+        iTreeClassName = "forestry/api/arboriculture/ITree",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        stringClassName = "java/lang/String";
+        boolean isSuccessful = false;       
+        int ifgeCount = 0;
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {
+            if (methodNode.name.equals(onBlockTickMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.FCMPG) {    
+                        ifgeCount++;
+                        if (ifgeCount == 1) {
+                            InsnList nodesList = new InsnList();   
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestryLeaves", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                            nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn.getNext()).label));
+                            methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList); 
+                            isSuccessful = true;                        
+                            break;
+                        }
+                    }
+                } 
+                break;
+            }
+        }
+        return isSuccessful;
+    }
+
+    private boolean patchForestryBlockLeaves(ClassNode classNode) {
+        String
+        growMethodName = "func_176474_b",
+        getTreeMethodName = "getTree",
+        getIdentMethodName = "getIdent",
+        tileFruitPodClassName = "forestry/arboriculture/tiles/TileFruitPod",
+        iTreeClassName = "forestry/api/arboriculture/ITree",
+        tileLeavesClassName = "forestry/arboriculture/tiles/TileLeaves",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        stringClassName = "java/lang/String";
+        boolean isSuccessful = false;      
+        int ldcCount = 0;
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {
+            if (methodNode.name.equals(growMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();  
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();  
+                    if (currentInsn.getOpcode() == Opcodes.LDC) {
+                        ldcCount++;
+                        if (ldcCount == 2) {
+                            InsnList nodesList = new InsnList();   
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));//tile
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileLeavesClassName, getTreeMethodName, "()L" + iTreeClassName + ";", false));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedBonemealForestryLeaves", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)F", false));
+                            methodNode.instructions.insertBefore(currentInsn, nodesList); 
+                            methodNode.instructions.remove(currentInsn);
+                            isSuccessful = true;                        
+                            break;
+                        }
                     }
                 }                                           
                 break;
@@ -880,7 +1040,6 @@ public enum EnumInputClasses {
         iTreeClassName = "forestry/api/arboriculture/ITree",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        blockClassName = "net/minecraft/block/Block",
         stringClassName = "java/lang/String";
         boolean isSuccessful = false;        
         AbstractInsnNode currentInsn;
@@ -920,20 +1079,47 @@ public enum EnumInputClasses {
         return isSuccessful;
     }
 
+    private boolean patchForestryBlockSapling(ClassNode classNode) {
+        String
+        canUseBonemealMethodName = "func_180670_a",
+        getTreeMethodName = "getTree",
+        getIdentMethodName = "getIdent",
+        tileSaplingClassName = "forestry/arboriculture/tiles/TileSapling",
+        iTreeClassName = "forestry/api/arboriculture/ITree",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        stringClassName = "java/lang/String";
+        boolean isSuccessful = false;        
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {
+            if (methodNode.name.equals(canUseBonemealMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();  
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();  
+                    if (currentInsn.getOpcode() == Opcodes.ASTORE) {         
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileSaplingClassName, getTreeMethodName, "()L" + iTreeClassName + ";", false));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
+                        nodesList.add(new InsnNode(Opcodes.ICONST_1));     
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestrySapling", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";Z)Z", false));
+                        nodesList.add(new InsnNode(Opcodes.IRETURN));
+                        methodNode.instructions.insert(currentInsn, nodesList); 
+                        isSuccessful = true;                        
+                        break;
+                    }
+                }                                           
+                break;
+            }
+        }
+        return isSuccessful;
+    }
+
     private boolean patchMABlockMysticalCrop(ClassNode classNode) {
         return patchBOPBlockSapling(classNode);
-    }
-
-    private boolean patchHCBlockPamSapling(ClassNode classNode) {
-        return patchBOPBlockSapling(classNode);
-    }
-
-    private boolean patchHCBlockPamCrop(ClassNode classNode) {
-        return patchBOPBlockSapling(classNode);
-    }
-
-    private boolean patchHCBlockPamFruit(ClassNode classNode) {
-        return patchBOPBlockBamboo(classNode);
     }
 
     private boolean patchHOBonemealModule(ClassNode classNode) {
@@ -1383,6 +1569,46 @@ public enum EnumInputClasses {
             }
         }    
         return isSuccessful;
+    }
+
+    private boolean patchPHCBlockPamSapling(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchPHCBlockPamCrop(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchPHCBlockPamFruit(ClassNode classNode) {
+        return patchBOPBlockBamboo(classNode);
+    }
+
+    private boolean patchRusticBlockSapling(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchRusticBlockSaplingApple(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchRusticBlockStakeCrop(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchRusticBlockAppleSeeds(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchRusticBlockBerryBush(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchRusticBlockGrapeStem(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchRusticBlockHerbBase(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
     }
 
     private boolean patchTCBlockSapling(ClassNode classNode) {

@@ -10,7 +10,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 
 public class PlantBiomesClassTransformer implements IClassTransformer {
 
-    public static final Logger LOGGER = LogManager.getLogger("Plant Biomes Core");
+    public static final Logger CORE_LOGGER = LogManager.getLogger("Plant Biomes Core");
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {   
@@ -48,7 +48,8 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             //AgriCraft (tested for 2.12.0-1.12.0-a6)
         case "com.infinityraider.agricraft.tiles.TileEntityCrop"://crops
             return patch(basicClass, EnumInputClasses.AC_TILE_ENTITY_CROP);
-            //case "com.infinityraider.agricraft.blocks.BlockCrop"://fertilizer behavior//TODO Need fix, broken interaction.
+            //TODO Need fix, broken interaction.
+            //case "com.infinityraider.agricraft.blocks.BlockCrop"://fertilizer behavior
             //return patch(basicClass, EnumInputClasses.AC_BLOCK_CROP);
             //Biomes O' Plenty (tested for 7.0.1.2419)
         case "biomesoplenty.common.block.BlockBOPSapling"://saplings
@@ -65,9 +66,17 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         case "com.ferreusveritas.dynamictrees.blocks.BlockFruit"://fruits
             return patch(basicClass, EnumInputClasses.DT_BLOCK_FRUIT);
             //Forestry (tested for 5.8.2.382)
+        case "forestry.arboriculture.tiles.TileFruitPod"://fruits
+            return patch(basicClass, EnumInputClasses.FORESTRY_TILE_FRUIT_POD);       
+        case "forestry.arboriculture.blocks.BlockFruitPod"://bonemeal behavior for fruits 
+            return patch(basicClass, EnumInputClasses.FORESTRY_BLOCK_FRUIT_POD);
+        case "forestry.arboriculture.tiles.TileLeaves"://leaves with fruits
+            return patch(basicClass, EnumInputClasses.FORESTRY_TILE_LEAVES);       
+        case "forestry.arboriculture.blocks.BlockForestryLeaves"://bonemeal behavior for leaves with fruits 
+            return patch(basicClass, EnumInputClasses.FORESTRY_BLOCK_LEAVES);
         case "forestry.arboriculture.tiles.TileSapling"://saplings
-            return patch(basicClass, EnumInputClasses.FORESTRY_TILE_ENTITY_SAPLING);
-        case "forestry.arboriculture.blocks.BlockSapling"://bonemeal behavior  
+            return patch(basicClass, EnumInputClasses.FORESTRY_TILE_SAPLING);
+        case "forestry.arboriculture.blocks.BlockSapling"://bonemeal behavior for saplings 
             return patch(basicClass, EnumInputClasses.FORESTRY_BLOCK_SAPLING);
             //Hunger Overhaul (tested for 1.3.3)
         case "iguanaman.hungeroverhaul.module.bonemeal.BonemealModule"://bonemeal behavior
@@ -107,11 +116,26 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             return patch(basicClass, EnumInputClasses.MA_BLOCK_MYSTICAL_CROP);
             //Pam's HarvestCraft (tested for 1.12.2zb)
         case "com.pam.harvestcraft.blocks.growables.BlockPamSapling"://saplings
-            return patch(basicClass, EnumInputClasses.HC_BLOCK_SAPLING);
+            return patch(basicClass, EnumInputClasses.PHC_BLOCK_SAPLING);
         case "com.pam.harvestcraft.blocks.growables.BlockPamCrop"://crops
-            return patch(basicClass, EnumInputClasses.HC_BLOCK_CROP);
+            return patch(basicClass, EnumInputClasses.PHC_BLOCK_CROP);
         case "com.pam.harvestcraft.blocks.growables.BlockPamFruit"://fruits
-            return patch(basicClass, EnumInputClasses.HC_BLOCK_FRUIT);
+            return patch(basicClass, EnumInputClasses.PHC_BLOCK_FRUIT);
+            //Rustic (tested for 1.1.0)
+        case "rustic.common.blocks.BlockSaplingRustic"://saplings
+            return patch(basicClass, EnumInputClasses.RUSTIC_BLOCK_SAPLING);
+        case "rustic.common.blocks.crops.BlockSaplingApple"://apple sapling
+            return patch(basicClass, EnumInputClasses.RUSTIC_BLOCK_SAPLING_APPLE);
+        case "rustic.common.blocks.crops.BlockStakeCrop"://crops
+            return patch(basicClass, EnumInputClasses.RUSTIC_BLOCK_STAKE_CROP);
+        case "rustic.common.blocks.crops.BlockAppleSeeds"://apple seeds
+            return patch(basicClass, EnumInputClasses.RUSTIC_BLOCK_APPLE_SEEDS);
+        case "rustic.common.blocks.crops.BlockBerryBush"://berry bush
+            return patch(basicClass, EnumInputClasses.RUSTIC_BLOCK_BERRY_BUSH);
+        case "rustic.common.blocks.crops.BlockGrapeStem"://grape
+            return patch(basicClass, EnumInputClasses.RUSTIC_BLOCK_GRAPE_STEM);
+        case "rustic.common.blocks.crops.BlockHerbBase"://herbs
+            return patch(basicClass, EnumInputClasses.RUSTIC_BLOCK_HERB_BASE);
             //Thaumcraft (tested for 6.1.BETA26)
         case "thaumcraft.common.blocks.world.plants.BlockSaplingTC"://saplings
             return patch(basicClass, EnumInputClasses.TC_BLOCK_SAPLING);
@@ -127,7 +151,7 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         ClassReader classReader = new ClassReader(basicClass);
         classReader.accept(classNode, enumInput.readerFlags);
         if (enumInput.patch(classNode))
-            LOGGER.info(enumInput.domain + " <" + enumInput.clazz + ".class> patched!");
+            CORE_LOGGER.info(enumInput.domain + " <" + enumInput.clazz + ".class> patched!");
         ClassWriter writer = new ClassWriter(enumInput.writerFlags);        
         classNode.accept(writer);
         return writer.toByteArray();    

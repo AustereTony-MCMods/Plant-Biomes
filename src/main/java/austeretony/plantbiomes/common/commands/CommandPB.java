@@ -48,14 +48,12 @@ public class CommandPB extends CommandBase {
             break;
         case ENABLE:
             PBManager.setSettingsEnabled(true);
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
+            this.saveSettings();
             EnumChatMessages.COMMAND_PB_ENABLE.sendMessage(player);
             break;
         case DISABLE:
             PBManager.setSettingsEnabled(false);
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
+            this.saveSettings();
             EnumChatMessages.COMMAND_PB_DISABLE.sendMessage(player);
             break;  
         case STATUS:
@@ -103,19 +101,15 @@ public class CommandPB extends CommandBase {
             if (!PBManager.existMetaLatest())
                 PBManager.createMetaLatest();
             PBManager.getMetaLatest().denyBiome(PBManager.latestPlant.biomeRegistryName);
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.saveSettings();
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_DENY.sendMessage(player);
             break;
         case ALLOW:
             if (!this.validAction(player, true, true, true, false)) break;
             PBManager.getMetaLatest().allowBiome(PBManager.latestPlant.biomeRegistryName);
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.saveSettings();
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_ALLOW.sendMessage(player);
             break;
         case DENY_GLOBAL:
@@ -123,19 +117,15 @@ public class CommandPB extends CommandBase {
             if (!PBManager.existMetaLatest())
                 PBManager.createMetaLatest();
             PBManager.getMetaLatest().denyGlobal();
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.saveSettings();
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_DENY_GLOBAL.sendMessage(player);
             break;
         case ALLOW_GLOBAL:
             if (!this.validAction(player, true, true, true, false)) break;
             PBManager.getMetaLatest().allowGlobal();
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.saveSettings();
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_ALLOW_GLOBAL.sendMessage(player);
             break;
         case ADD_VALID:
@@ -143,53 +133,43 @@ public class CommandPB extends CommandBase {
             if (!PBManager.existMetaLatest())
                 PBManager.createMetaLatest();
             PBManager.getMetaLatest().addValidBiome(PBManager.latestPlant.biomeRegistryName);
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.saveSettings();
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_ADD_VALID.sendMessage(player);
             break;
         case REMOVE_VALID:
             if (!this.validAction(player, true, true, true, false)) break;
             PBManager.getMetaLatest().removeValidBiome(PBManager.latestPlant.biomeRegistryName);
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.saveSettings();
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_REMOVE_VALID.sendMessage(player);
             break;
         case SET_MAIN:
             if (!this.validAction(player, true, true, true, false)) break;
             PBManager.getLatest().setMainMeta(PBManager.latestPlant.meta);
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.saveSettings();
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_SET_MAIN.sendMessage(player);
             break;
         case RESET_MAIN:
             if (!this.validAction(player, true, true, false, false)) break;
             PBManager.getLatest().resetMainMeta();
-            if (PBManager.isAutosaveEnabled())
-                PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.saveSettings();
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_RESET_MAIN.sendMessage(player);
             break;
         case CLEAR_DENIED:
             if (!this.validAction(player, true, false, true, false)) break;
             PBManager.getMetaLatest().clearDeniedBiomes();
             PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_CLEAR_DENIED.sendMessage(player);                                                   
             break;
         case CLEAR_VALID:
             if (!this.validAction(player, true, false, true, false)) break;
             PBManager.getMetaLatest().clearValidBiomes();
             PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_LATEST), (EntityPlayerMP) player);
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_CLEAR_VALID.sendMessage(player);                                                   
             break;
         case CLEAR_LATEST:
@@ -197,16 +177,14 @@ public class CommandPB extends CommandBase {
             PBManager.removeMetaLatest();//TODO This cause settings mess up (map data disappear), need to investigate why.
             PBLoader.saveSettings();
             PBManager.initServerData();//Fast fix. 
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_ALL), (EntityPlayerMP) player);//REMOVE_LATEST should be used instead, but it will break overlay render.
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_ALL);//REMOVE_LATEST should be used instead, but it will break overlay render.
             EnumChatMessages.COMMAND_PB_CLEAR_LATEST.sendMessage(player);                                                   
             break;
         case CLEAR_ALL:
             if (!this.validAction(player, true, false, false, true)) break; 
             PBManager.clearDataServer();
             PBLoader.saveSettings();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.REMOVE_ALL), (EntityPlayerMP) player);
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.REMOVE_ALL);
             EnumChatMessages.COMMAND_PB_CLEAR_ALL.sendMessage(player);
             break;
         case SAVE:
@@ -217,8 +195,7 @@ public class CommandPB extends CommandBase {
         case RELOAD:
             if (!this.validAction(player, true, false, false, false)) break;
             PBManager.initServerData();
-            if (PBManager.isOverlayEnabled())
-                NetworkHandler.sendTo(new CPSyncPlantsData(CPSyncPlantsData.EnumAction.SYNC_ALL), (EntityPlayerMP) player);
+            this.syncOverlay(player, CPSyncPlantsData.EnumAction.SYNC_ALL);
             EnumChatMessages.COMMAND_PB_RELOAD.sendMessage(player);
             break;
         case BACKUP:
@@ -247,5 +224,15 @@ public class CommandPB extends CommandBase {
             return false;
         }
         return true;
+    }
+
+    private void saveSettings() {
+        if (PBManager.isAutosaveEnabled())
+            PBLoader.saveSettings();
+    }
+
+    private void syncOverlay(EntityPlayer player, CPSyncPlantsData.EnumAction enumAction) {
+        if (PBManager.isOverlayEnabled())
+            NetworkHandler.sendTo(new CPSyncPlantsData(enumAction), (EntityPlayerMP) player);
     }
 }

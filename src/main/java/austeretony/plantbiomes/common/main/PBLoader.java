@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.Loader;
 public class PBLoader {
 
     private static final String 
-    EXT_CONFIGURAION_FILE = CommonReference.getGameFolder() + "/config/plantbiomes/config.json",
+    EXT_CONFIGURATION_FILE = CommonReference.getGameFolder() + "/config/plantbiomes/config.json",
     EXT_DATA_FILE = CommonReference.getGameFolder() + "/config/plantbiomes/plants_settings.json";
 
     private static final DateFormat BACKUP_DATE_FORMAT = new SimpleDateFormat("yy_MM_dd-HH-mm-ss");
@@ -45,30 +45,26 @@ public class PBLoader {
         }
         PBManager.setExternalConfigEnabled(internalConfig.get("main").getAsJsonObject().get("external_config").getAsBoolean());          
         if (!PBManager.isExternalConfigEnabled()) {               
-            loadConfigData(internalConfig, internalSettings);
+            loadData(internalConfig, internalSettings);
         } else                  
             loadExternalConfig(internalConfig, internalSettings);
     }
 
     private static void loadExternalConfig(JsonObject internalConfig, JsonObject internalSettings) {
-        String 
-        gameFolder = CommonReference.getGameFolder(),
-        configFolder = gameFolder + "/config/plantbiomes/config.json",
-        settingsFolder = gameFolder + "/config/plantbiomes/plants_settings.json";
-        Path configPath = Paths.get(configFolder);      
+        Path configPath = Paths.get(EXT_CONFIGURATION_FILE);      
         if (Files.exists(configPath)) {
             JsonObject externalConfig, externalSettings;
             try {                   
                 externalConfig = updateConfig(internalConfig);    
-                externalSettings = (JsonObject) PBUtils.getExternalJsonData(settingsFolder);       
+                externalSettings = (JsonObject) PBUtils.getExternalJsonData(EXT_DATA_FILE);       
             } catch (IOException exception) {  
                 PlantBiomesMain.LOGGER.error("External configuration file damaged!");
                 exception.printStackTrace();
                 return;
             }       
-            loadConfigData(externalConfig, externalSettings);
+            loadData(externalConfig, externalSettings);
         } else {                
-            Path dataPath = Paths.get(settingsFolder);      
+            Path dataPath = Paths.get(EXT_DATA_FILE);      
             try {               
                 Files.createDirectories(configPath.getParent());                                
                 Files.createDirectories(dataPath.getParent());                            
@@ -80,19 +76,16 @@ public class PBLoader {
     }
 
     private static JsonObject updateConfig(JsonObject internalConfig) throws IOException {
-        String 
-        gameFolder = CommonReference.getGameFolder(),
-        configFolder = gameFolder + "/config/plantbiomes/config.json";
         JsonObject externalConfigOld, externalConfigNew, externalGroupNew;
         try {                   
-            externalConfigOld = (JsonObject) PBUtils.getExternalJsonData(configFolder);       
+            externalConfigOld = (JsonObject) PBUtils.getExternalJsonData(EXT_CONFIGURATION_FILE);       
         } catch (IOException exception) {  
             PlantBiomesMain.LOGGER.error("External configuration file damaged!");
             exception.printStackTrace();
             return null;
         }
         JsonElement versionElement = externalConfigOld.get("ver");
-        if (versionElement == null || isOutdatedConfig(versionElement.getAsString())) {
+        if (versionElement == null || PBUtils.isOutdated(versionElement.getAsString(), PlantBiomesMain.VERSION)) {
             externalConfigNew = new JsonObject();
             externalConfigNew.add("ver", new JsonPrimitive(PlantBiomesMain.VERSION));
             Map<String, JsonElement> 
@@ -123,29 +116,25 @@ public class PBLoader {
                         externalGroupNew.add(k, internalGroup.get(k));
                 }
                 externalConfigNew.add(key, externalGroupNew);
-                PBUtils.createExternalJsonFile(EXT_CONFIGURAION_FILE, externalConfigNew);
+                PBUtils.createExternalJsonFile(EXT_CONFIGURATION_FILE, externalConfigNew);
             }
             return externalConfigNew;
         }
         return externalConfigOld;
     }
 
-    private static boolean isOutdatedConfig(String configVersion) {
-        return PBUtils.isOutdated(configVersion, PlantBiomesMain.VERSION);
-    }
-
     private static void createExternalCopyAndLoad(JsonObject internalConfig, JsonObject internalSettings) {       
         try {           
-            PBUtils.createExternalJsonFile(EXT_CONFIGURAION_FILE, internalConfig); 
+            PBUtils.createExternalJsonFile(EXT_CONFIGURATION_FILE, internalConfig); 
             PBUtils.createExternalJsonFile(EXT_DATA_FILE, internalSettings);                                                                                                    
         } catch (IOException exception) {               
             exception.printStackTrace();
         }
-        loadConfigData(internalConfig, internalSettings);
+        loadData(internalConfig, internalSettings);
     }
 
-    private static void loadConfigData(JsonObject config, JsonObject data) {          
-        JsonObject mainSettings = config.get("main").getAsJsonObject();
+    private static void loadData(JsonObject configFile, JsonObject settingsFile) {          
+        JsonObject mainSettings = configFile.get("main").getAsJsonObject();
         PBManager.setAutosaveEnabled(mainSettings.get("autosave").getAsBoolean());     
         PBManager.setOverlayEnabled(mainSettings.get("settings_overlay").getAsBoolean());    
         PBManager.setTilesOverlayEnabled(mainSettings.get("tiles_overlay").getAsBoolean());     
@@ -155,9 +144,9 @@ public class PBLoader {
         ResourceLocation registryName;
         EnumPBPlantType enumType;
         int meta;
-        for (Map.Entry<String, JsonElement> plantEntry : data.entrySet()) {
+        for (Map.Entry<String, JsonElement> plantEntry : settingsFile.entrySet()) {
             if (plantEntry.getKey().equals("enabled")) {
-                PBManager.setSettingsEnabled(data.get("enabled").getAsBoolean());
+                PBManager.setSettingsEnabled(settingsFile.get("enabled").getAsBoolean());
                 continue;
             }
             plantObject = plantEntry.getValue().getAsJsonObject();

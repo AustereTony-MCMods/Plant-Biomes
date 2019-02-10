@@ -33,12 +33,14 @@ public class PlantBiomesEvents {
 
     @SubscribeEvent
     public void onBlockActivated(PlayerInteractEvent event) {
-        if (!event.getWorld().isRemote && event.getHand() == EnumHand.MAIN_HAND) {
-            if (PBManager.isConfigModeEnabled() && CommonReference.isOpped(event.getEntityPlayer()) && CommonReference.isMainHandEmpty(event.getEntityPlayer())) {          
-                IBlockState blockState = event.getWorld().getBlockState(event.getPos());       
-                if (blockState != null)
-                    getPlantData(event.getWorld(), event.getPos(), blockState.getBlock(), blockState, event.getEntityPlayer());      
-            }   
+        if (!event.getWorld().isRemote
+                && PBManager.isConfigModeEnabled() 
+                && CommonReference.isOpped(event.getEntityPlayer()) 
+                && event.getHand() == EnumHand.MAIN_HAND 
+                && CommonReference.isMainHandEmpty(event.getEntityPlayer())) {        
+            IBlockState blockState = event.getWorld().getBlockState(event.getPos());       
+            if (blockState != null)
+                this.getPlantData(event.getWorld(), event.getPos(), blockState.getBlock(), blockState, event.getEntityPlayer());      
         }
     }
 
@@ -48,13 +50,12 @@ public class PlantBiomesEvents {
         EnumStandardPlants standard = EnumStandardPlants.identify(block);
         if (standard != null) {
             int meta = block.getMetaFromState(blockState);
-            String unlocalizedName = new ItemStack(Item.getItemFromBlock(block), 1, meta).getUnlocalizedName() + ".name";
             PBManager.latestPlant = new LatestPlant(
                     EnumPBPlantType.STANDARD,
                     block.getRegistryName(), 
                     meta, 
                     "",
-                    unlocalizedName,
+                    new ItemStack(Item.getItemFromBlock(block), 1, meta).getUnlocalizedName() + ".name",
                     PBManager.getBiomeRegistryName(world, pos), 
                     pos);
             EnumChatMessages.COMMAND_PB_LATEST.sendMessage(player);
@@ -71,7 +72,7 @@ public class PlantBiomesEvents {
                 PlantBiomesMain.LOGGER.info("Tile Entity class name: " + tile.getClass().getName());//TODO For debug.
                 EnumSpecialPlants special = EnumSpecialPlants.identify(tile);
                 if (special != null)
-                    if (acquired = special.collectData(tile.serializeNBT(), world, pos))
+                    if (acquired = special.getData(tile.serializeNBT(), world, pos))
                         EnumChatMessages.COMMAND_PB_LATEST.sendMessage(player);
             }
         } 
