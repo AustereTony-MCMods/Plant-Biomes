@@ -18,6 +18,8 @@ Supported modded plants:
  - Thaumcraft addon saplings
 +Forestry (tested for 5.8.2.382)
  - saplings
+ - fruit pods (papaia, etc.)
+ - fruit leaves (cherry, lime, etc.)
 +Immersive Engineering (tested for 0.12-88)
  - hemp crop
 +Industrial Craft 2 (tested for 2.8.108)
@@ -29,6 +31,11 @@ Supported modded plants:
  - crops
  - saplings
  - fruits
++Rustic (tested for 1.1.0)
+ - saplings
+ - crops
+ - herbs
+ - wildberry bush
 +Thaumcraft (tested for 6.1.BETA26)
  - saplings 
 +Twilight Forest (tested for 3.8.689)

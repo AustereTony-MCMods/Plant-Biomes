@@ -1,3 +1,6 @@
+1.4.10
++Added support fo Forestry fruit leaves and fruit pods.
++Added support for Rustic plants: saplings, crops, herbs and wildberry bush.
 1.4.8
 +Fixed Dynamic Trees saplings identification problems.
 +Fixed absent tile entities (ic2 crops, forestry saplings, etc.) settings overlay when playing 
