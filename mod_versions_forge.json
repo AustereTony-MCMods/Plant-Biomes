@@ -1,0 +1,10 @@
+{
+  "homepage": "https://minecraft.curseforge.com/projects/plant-biomes",
+  "1.12.2": {
+    "1.5.0": "All information available on the homepage." 
+  },
+  "promos": {
+    "1.12.2-latest": "1.5.0",
+    "1.12.2-recommended": "1.5.0"
+  }
+}
