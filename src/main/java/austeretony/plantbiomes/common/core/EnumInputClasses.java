@@ -1,6 +1,8 @@
 package austeretony.plantbiomes.common.core;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -17,87 +19,105 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 public enum EnumInputClasses {
 
-    MC_BLOCK_SAPLING("Minecraft", "BlockSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_CROPS("Minecraft", "BlockCrops", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_MELON("Minecraft", "BlockStem", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_GRASS("Minecraft", "BlockGrass", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_MYCELIUM("Minecraft", "BlockMycelium", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_COCOA("Minecraft", "BlockCocoa", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_NETHER_WART("Minecraft", "BlockNetherWart", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_VINE("Minecraft", "BlockVine", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_MUSHROOM("Minecraft", "BlockMushroom", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_REED("Minecraft", "BlockReed", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_BLOCK_CACTUS("Minecraft", "BlockCactus", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_SAPLING("mc_block_sapling", "Minecraft", "BlockSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_CROPS("mc_block_crops", "Minecraft", "BlockCrops", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_MELON("mc_block_stem", "Minecraft", "BlockStem", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_GRASS("mc_block_grass", "Minecraft", "BlockGrass", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_MYCELIUM("mc_block_mycelium", "Minecraft", "BlockMycelium", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_COCOA("mc_block_cocoa", "Minecraft", "BlockCocoa", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_NETHER_WART("mc_block_nether_wart", "Minecraft", "BlockNetherWart", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_VINE("mc_block_vine", "Minecraft", "BlockVine", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_MUSHROOM("mc_block_mushroom", "Minecraft", "BlockMushroom", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_REED("mc_block_reed", "Minecraft", "BlockReed", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BLOCK_CACTUS("mc_block_cactus", "Minecraft", "BlockCactus", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    MC_BIOME("Minecraft", "Biome", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_ITEM_DYE("Minecraft", "ItemDye", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    MC_RENDER_GLOBAL("Minecraft", "RenderGlobal", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_BIOME("mc_biome", "Minecraft", "Biome", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    MC_ITEM_DYE("mc_item_dye", "Minecraft", "ItemDye", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    AC_TILE_ENTITY_CROP("AgriCraft", "TileEntityCrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),    
-    AC_BLOCK_CROP("AgriCraft", "BlockCrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    AC_TILE_ENTITY_CROP("ac_tile_crop", "AgriCraft", "TileEntityCrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),    
+    AC_BLOCK_CROP("ac_block_crop", "AgriCraft", "BlockCrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    BOP_BLOCK_SAPLING("Biomes O' Plenty", "BlockBOPSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    BOP_BLOCK_GRASS("Biomes O' Plenty", "BlockBOPGrass", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    BOP_BLOCK_BAMBOO("Biomes O' Plenty", "BlockBOPBamboo", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    BOP_BLOCK_SAPLING("bop_block_sapling", "Biomes O' Plenty", "BlockBOPSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    BOP_BLOCK_GRASS("bop_block_grass", "Biomes O' Plenty", "BlockBOPGrass", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    BOP_BLOCK_BAMBOO("bop_block_bamboo", "Biomes O' Plenty", "BlockBOPBamboo", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    DT_SPECIES("DynamicTrees", "Species", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    DT_SPECIES_CACTUS("DynamicTrees", "SpeciesCactus", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    DT_BLOCK_FRUIT("DynamicTrees", "BlockFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    DT_SPECIES("dt_species", "DynamicTrees", "Species", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    DT_SPECIES_CACTUS("dt_species_cactus", "DynamicTrees", "SpeciesCactus", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    DT_BLOCK_FRUIT("dt_block_fruit", "DynamicTrees", "BlockFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    FORESTRY_TILE_FRUIT_POD("Forestry", "TileFruitPod", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    FORESTRY_BLOCK_FRUIT_POD("Forestry", "BlockFruitPod", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    FORESTRY_TILE_LEAVES("Forestry", "TileLeaves", 0, 0),
-    FORESTRY_BLOCK_LEAVES("Forestry", "BlockForestryLeaves", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    FORESTRY_TILE_SAPLING("Forestry", "TileSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    FORESTRY_BLOCK_SAPLING("Forestry", "BlockSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    FORESTRY_TILE_FRUIT_POD("f_tile_fruit", "Forestry", "TileFruitPod", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    FORESTRY_BLOCK_FRUIT_POD("f_block_fruit", "Forestry", "BlockFruitPod", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    FORESTRY_TILE_LEAVES("f_tile_leaves", "Forestry", "TileLeaves", 0, 0),
+    FORESTRY_BLOCK_LEAVES("f_block_leaves", "Forestry", "BlockForestryLeaves", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    FORESTRY_TILE_SAPLING("f_tile_sapling", "Forestry", "TileSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    FORESTRY_BLOCK_SAPLING("f_block_sapling", "Forestry", "BlockSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    MA_BLOCK_MYSTICAL_CROP("Mystical Agriculture", "BlockMysticalCrop", 0, 0),
+    MA_BLOCK_MYSTICAL_CROP("ma_block_crop", "Mystical Agriculture", "BlockMysticalCrop", 0, 0),
 
-    HO_BONEMEAL_MODULE("Hunger Overhaul", "BonemealModule", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    HO_BONEMEAL_MODULE("ho_bonemeal_module", "Hunger Overhaul", "BonemealModule", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    IE_BLOCK_CROP("ImmersiveEngineering", "BlockIECrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IE_BLOCK_CROP("ie_block_crop", "Immersive Engineering", "BlockIECrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    IC2_BLOCK_SAPLING("IndustrialCraft 2", "Ic2Sapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_VANILLA("IndustrialCraft 2", "CropVanilla", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_CARD("IndustrialCraft 2", "CropCard", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_POTATO("IndustrialCraft 2", "CropPotato", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_STICKREED("IndustrialCraft 2", "CropStickreed", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_HOPS("IndustrialCraft 2", "CropHops", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_RED_WHEAT("IndustrialCraft 2", "CropRedWheat", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_BASE_MUSHROOM("IndustrialCraft 2", "CropBaseMushroom", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_VENOMILLA("IndustrialCraft 2", "CropVenomilla", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_COLOR_FLOWER("IndustrialCraft 2", "CropColorFlower", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_BASE_METAL_COMMON("IndustrialCraft 2", "CropBaseMetalCommon", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_BASE_METAL_UNCOMMON("IndustrialCraft 2", "CropBaseMetalUncommon", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
-    IC2_CROP_EATING("IndustrialCraft 2", "CropEating", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_BLOCK_SAPLING("ic_block_sapling", "IndustrialCraft 2", "Ic2Sapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_VANILLA("ic_crop_vanilla", "IndustrialCraft 2", "CropVanilla", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_CARD("ic_crop_card", "IndustrialCraft 2", "CropCard", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_POTATO("ic_crop_potato", "IndustrialCraft 2", "CropPotato", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_STICKREED("ic_crop_stickreed", "IndustrialCraft 2", "CropStickreed", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_HOPS("ic_crop_hops", "IndustrialCraft 2", "CropHops", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_RED_WHEAT("ic_crop_red_wheat", "IndustrialCraft 2", "CropRedWheat", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_BASE_MUSHROOM("ic_crop_mushroom", "IndustrialCraft 2", "CropBaseMushroom", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_VENOMILLA("ic_crop_venomilla", "IndustrialCraft 2", "CropVenomilla", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_COLOR_FLOWER("ic_crop_flower", "IndustrialCraft 2", "CropColorFlower", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_BASE_METAL_COMMON("ic_crop_metal_common", "IndustrialCraft 2", "CropBaseMetalCommon", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_BASE_METAL_UNCOMMON("ic_crop_metal_uncommon", "IndustrialCraft 2", "CropBaseMetalUncommon", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    IC2_CROP_EATING("ic_crop_eating", "IndustrialCraft 2", "CropEating", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    PHC_BLOCK_SAPLING("Pam's HarvestCraft", "BlockPamSapling", 0, 0),
-    PHC_BLOCK_CROP("Pam's HarvestCraft", "BlockPamCrop", 0, 0),
-    PHC_BLOCK_FRUIT("Pam's HarvestCraft", "BlockPamFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    PHC_BLOCK_SAPLING("phc_block_sapling", "Pam's HarvestCraft", "BlockPamSapling", 0, 0),
+    PHC_BLOCK_CROP("phc_block_crop", "Pam's HarvestCraft", "BlockPamCrop", 0, 0),
+    PHC_BLOCK_FRUIT("phc_block_fruit", "Pam's HarvestCraft", "BlockPamFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    RUSTIC_BLOCK_SAPLING("Rustic", "BlockSaplingRustic", 0, 0),
-    RUSTIC_BLOCK_SAPLING_APPLE("Rustic", "BlockSaplingApple", 0, 0),
-    RUSTIC_BLOCK_STAKE_CROP("Rustic", "BlockStakeCrop", 0, 0),
-    RUSTIC_BLOCK_APPLE_SEEDS("Rustic", "BlockAppleSeeds", 0, 0),
-    RUSTIC_BLOCK_BERRY_BUSH("Rustic", "BlockBerryBush", 0, 0),
-    RUSTIC_BLOCK_GRAPE_STEM("Rustic", "BlockGrapeStem", 0, 0),
-    RUSTIC_BLOCK_HERB_BASE("Rustic", "BlockHerbBase", 0, 0),
+    RUSTIC_BLOCK_SAPLING("r_block_sapling", "Rustic", "BlockSaplingRustic", 0, 0),
+    RUSTIC_BLOCK_SAPLING_APPLE("r_block_sapling_apple", "Rustic", "BlockSaplingApple", 0, 0),
+    RUSTIC_BLOCK_STAKE_CROP("r_block_crop", "Rustic", "BlockStakeCrop", 0, 0),
+    RUSTIC_BLOCK_APPLE_SEEDS("r_block_apple_seeds", "Rustic", "BlockAppleSeeds", 0, 0),
+    RUSTIC_BLOCK_BERRY_BUSH("r_block_berry_bush", "Rustic", "BlockBerryBush", 0, 0),
+    RUSTIC_BLOCK_GRAPE_STEM("r_block_grape", "Rustic", "BlockGrapeStem", 0, 0),
+    RUSTIC_BLOCK_HERB_BASE("r_block_herb", "Rustic", "BlockHerbBase", 0, 0),
 
-    TC_BLOCK_SAPLING("Thaumcraft", "BlockSaplingTC", 0, 0),
+    TC_BLOCK_SAPLING("tc_block_sapling", "Thaumcraft", "BlockSaplingTC", 0, 0),
 
-    TF_BLOCK_SAPLING("Twilight Forest", "BlockTFSapling", 0, 0);
+    TF_BLOCK_SAPLING("tf_block_sapling", "Twilight Forest", "BlockTFSapling", 0, 0);
+
+    public static Map<String, EnumInputClasses> classesById;
 
     private static final String HOOKS_CLASS = "austeretony/plantbiomes/common/core/PlantBiomesHooks";
 
-    public final String domain, clazz;
+    public final String transformedBlockId, domain, clazz;
 
     public final int readerFlags, writerFlags;
 
-    EnumInputClasses(String domain, String clazz, int readerFlags, int writerFlags) {
+    private boolean patch = true;
+
+    EnumInputClasses(String id, String domain, String clazz, int readerFlags, int writerFlags) {
+        this.transformedBlockId = id;
         this.domain = domain;
         this.clazz = clazz;
         this.readerFlags = readerFlags;
         this.writerFlags = writerFlags;
+    }
+
+    public static void map() {
+        classesById = new HashMap<String, EnumInputClasses>();
+        for (EnumInputClasses enumClass : values()) 
+            classesById.put(enumClass.transformedBlockId, enumClass);
+    }
+
+    public boolean shouldPatch() {
+        return this.patch;
+    }
+
+    public void setShouldPatch(boolean flag) {
+        this.patch = flag;
     }
 
     public boolean patch(ClassNode classNode) {
@@ -129,8 +149,6 @@ public enum EnumInputClasses {
             return patchMCBiome(classNode); 
         case MC_ITEM_DYE:
             return patchMCItemDye(classNode); 
-        case MC_RENDER_GLOBAL:
-            return patchMCRenderGlobal(classNode); 
 
         case AC_TILE_ENTITY_CROP:
             return patchACTileEntityCrop(classNode); 
@@ -278,11 +296,12 @@ public enum EnumInputClasses {
         String
         updateTickMethodName = PlantBiomesCorePlugin.isObfuscated() ? "b" : "updateTick",
                 growMethodName = PlantBiomesCorePlugin.isObfuscated() ? "b" : "grow",
-                        worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
-                                blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
-                                        iBlockStateClassName = PlantBiomesCorePlugin.isObfuscated() ? "awt" : "net/minecraft/block/state/IBlockState",
-                                                blockClassName = PlantBiomesCorePlugin.isObfuscated() ? "aow" : "net/minecraft/block/Block",
-                                                        randomClassName = "java/util/Random";
+                        getBlockMethodName = PlantBiomesCorePlugin.isObfuscated() ? "u" : "getBlock",
+                                worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
+                                        blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
+                                                iBlockStateClassName = PlantBiomesCorePlugin.isObfuscated() ? "awt" : "net/minecraft/block/state/IBlockState",
+                                                        blockClassName = PlantBiomesCorePlugin.isObfuscated() ? "aow" : "net/minecraft/block/Block",
+                                                                randomClassName = "java/util/Random";
         boolean isSuccessful = false;   
         int ifeqCount = 0;
         AbstractInsnNode currentInsn;
@@ -316,7 +335,9 @@ public enum EnumInputClasses {
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 9));
-                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTallgrass", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";)Z", false));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iBlockStateClassName, getBlockMethodName, "()L" + blockClassName + ";", true));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 9));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
                             nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                             methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious().getPrevious(), nodesList); 
                             isSuccessful = true;                        
@@ -519,11 +540,15 @@ public enum EnumInputClasses {
 
     private boolean patchMCBiome(ClassNode classNode) {
         String
+        stateFieldName = "state",
         plantFlowerMethodName = "plantFlower",
-        worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
-                blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
-                        flowerEntryClassName = PlantBiomesCorePlugin.isObfuscated() ? "anh$FlowerEntry" : "net/minecraft/world/biome/Biome$FlowerEntry",
-                                randomClassName = "java/util/Random";
+        getBlockMethodName = PlantBiomesCorePlugin.isObfuscated() ? "u" : "getBlock",
+                worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
+                        blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
+                                flowerEntryClassName = PlantBiomesCorePlugin.isObfuscated() ? "anh$FlowerEntry" : "net/minecraft/world/biome/Biome$FlowerEntry",
+                                        iBlockStateClassName = PlantBiomesCorePlugin.isObfuscated() ? "awt" : "net/minecraft/block/state/IBlockState",
+                                                blockClassName = PlantBiomesCorePlugin.isObfuscated() ? "aow" : "net/minecraft/block/Block",
+                                                        randomClassName = "java/util/Random";
         boolean isSuccessful = false;        
         AbstractInsnNode currentInsn;
 
@@ -537,7 +562,11 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 4));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedFlower", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + flowerEntryClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, flowerEntryClassName, stateFieldName, "L" + iBlockStateClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iBlockStateClassName, getBlockMethodName, "()L" + blockClassName + ";", true));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 4));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, flowerEntryClassName, stateFieldName, "L" + iBlockStateClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious(), nodesList); 
                         isSuccessful = true;                        
@@ -573,50 +602,12 @@ public enum EnumInputClasses {
                             InsnList nodesList = new InsnList();   
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
-                            nodesList.add(new InsnNode(Opcodes.ICONST_1));
-                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedBonemeal", "(L" + worldClassName + ";L" + blockPosClassName + ";Z)Z", false));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedBonemeal", "(L" + worldClassName + ";L" + blockPosClassName + ";)Z", false));
                             nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                             methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList); 
                             isSuccessful = true;                        
                             break;
                         }
-                    }
-                }                                           
-                break;
-            }
-        }
-        return isSuccessful;
-    }
-
-    private boolean patchMCRenderGlobal(ClassNode classNode) {
-        String
-        worldFieldName = PlantBiomesCorePlugin.isObfuscated() ? "k" : "world",
-                playEventMethodName = PlantBiomesCorePlugin.isObfuscated() ? "a" : "playEvent",
-                        worldClassName = PlantBiomesCorePlugin.isObfuscated() ? "amu" : "net/minecraft/world/World",
-                                blockPosClassName = PlantBiomesCorePlugin.isObfuscated() ? "et" : "net/minecraft/util/math/BlockPos",
-                                        entityPlayerClassName = PlantBiomesCorePlugin.isObfuscated() ? "aed" : "net/minecraft/entity/player/EntityPlayer",
-                                                renderGlobalClassName = PlantBiomesCorePlugin.isObfuscated() ? "buy" : "net/minecraft/client/renderer/RenderGlobal",
-                                                        worldClientClassName = PlantBiomesCorePlugin.isObfuscated() ? "bsb" : "net/minecraft/client/multiplayer/WorldClient",
-                                                                randomClassName = "java/util/Random";
-        boolean isSuccessful = false;        
-        AbstractInsnNode currentInsn;
-
-        for (MethodNode methodNode : classNode.methods) {               
-            if (methodNode.name.equals(playEventMethodName) && methodNode.desc.equals("(L" + entityPlayerClassName + ";IL" + blockPosClassName + ";I)V")) {                         
-                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
-                while (insnIterator.hasNext()) {                        
-                    currentInsn = insnIterator.next();                  
-                    if (currentInsn.getOpcode() == Opcodes.ASTORE) {                             
-                        InsnList nodesList = new InsnList();   
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                        nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, renderGlobalClassName, worldFieldName, "L" + worldClientClassName + ";"));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
-                        nodesList.add(new VarInsnNode(Opcodes.ILOAD, 2));
-                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "spawnParticles", "(L" + worldClassName + ";L" + blockPosClassName + ";IL" + randomClassName + ";)V", false));
-                        methodNode.instructions.insert(currentInsn, nodesList); 
-                        isSuccessful = true;                        
-                        break;
                     }
                 }                                           
                 break;
@@ -638,7 +629,8 @@ public enum EnumInputClasses {
         iAgriPlantClassName = "com/infinityraider/agricraft/api/v1/plant/IAgriPlant",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;
         AbstractInsnNode currentInsn;
 
@@ -657,7 +649,8 @@ public enum EnumInputClasses {
                         nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileCropClassName, seedFieldName, "L" + iAgriSeedClassName + ";"));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, iAgriSeedClassName, getPlantMethodName, "()L" + iAgriPlantClassName + ";", false));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iAgriPlantClassName, getIdMethodName, "()L" + stringClassName + ";", true));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedAgriCraftCrop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)I", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "AGRICRAFT_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecialInt", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)I", false));
                         methodNode.instructions.insertBefore(currentInsn, nodesList); 
                         methodNode.instructions.remove(currentInsn);
                         isSuccessful = true;                        
@@ -683,7 +676,8 @@ public enum EnumInputClasses {
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
         entityPlayerClassName = "net/minecraft/entity/player/EntityPlayer",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;  
         int ifeqCount = 0;
         AbstractInsnNode currentInsn;
@@ -704,7 +698,8 @@ public enum EnumInputClasses {
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, iAgriSeedClassName, getPlantMethodName, "()L" + iAgriPlantClassName + ";", false));
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iAgriPlantClassName, getIdMethodName, "()L" + stringClassName + ";", true));
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 4));
-                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "showAgriCraftCropDeniedBiome", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + entityPlayerClassName + ";)V", false));
+                            nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "AGRICRAFT_CROP", "L" + enumPlantTypeClassName + ";"));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "showDeniedBiomeOnBonemealUseSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + entityPlayerClassName + ";L" + enumPlantTypeClassName + ";)V", false));
                             methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious(), nodesList); 
                             isSuccessful = true;                        
                             break;
@@ -875,7 +870,8 @@ public enum EnumInputClasses {
         iAlleleFruitClassName = "forestry/api/arboriculture/IAlleleFruit",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;        
         AbstractInsnNode currentInsn;
 
@@ -891,7 +887,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
                         nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileFruitPodClassName, alleleFieldName, "L" + iAlleleFruitClassName + ";"));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iAlleleFruitClassName, getUIDMethodName, "()L" + stringClassName + ";", true));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestryFruitPod", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "FORESTRY_FRUIT", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious(), nodesList); 
                         isSuccessful = true;                        
@@ -913,7 +910,8 @@ public enum EnumInputClasses {
         nbtTagCompoundClassName = "net/minecraft/nbt/NBTTagCompound",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;        
         int ldcCount = 0;
         AbstractInsnNode currentInsn;
@@ -933,7 +931,8 @@ public enum EnumInputClasses {
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileFruitPodClassName, serializeNBTMethodName, "()L" + nbtTagCompoundClassName + ";", false));
                             nodesList.add(new LdcInsnNode("UID"));//fruid id key
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, nbtTagCompoundClassName, getStringMethodName, "(L" + stringClassName + ";)L" + stringClassName + ";", false));
-                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedBonemealForestryFruitPod", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)F", false));
+                            nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "FORESTRY_FRUIT", "L" + enumPlantTypeClassName + ";"));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedWithBonemealSpecialFloat", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)F", false));
                             methodNode.instructions.insertBefore(currentInsn, nodesList); 
                             methodNode.instructions.remove(currentInsn);
                             isSuccessful = true;                        
@@ -954,7 +953,8 @@ public enum EnumInputClasses {
         iTreeClassName = "forestry/api/arboriculture/ITree",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;       
         int ifgeCount = 0;
         AbstractInsnNode currentInsn;
@@ -972,7 +972,8 @@ public enum EnumInputClasses {
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
-                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestryLeaves", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                            nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "FORESTRY_LEAVES", "L" + enumPlantTypeClassName + ";"));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                             nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn.getNext()).label));
                             methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList); 
                             isSuccessful = true;                        
@@ -996,7 +997,8 @@ public enum EnumInputClasses {
         tileLeavesClassName = "forestry/arboriculture/tiles/TileLeaves",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;      
         int ldcCount = 0;
         AbstractInsnNode currentInsn;
@@ -1012,10 +1014,11 @@ public enum EnumInputClasses {
                             InsnList nodesList = new InsnList();   
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
-                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));//tile
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileLeavesClassName, getTreeMethodName, "()L" + iTreeClassName + ";", false));
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
-                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedBonemealForestryLeaves", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)F", false));
+                            nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "FORESTRY_LEAVES", "L" + enumPlantTypeClassName + ";"));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedWithBonemealSpecialFloat", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)F", false));
                             methodNode.instructions.insertBefore(currentInsn, nodesList); 
                             methodNode.instructions.remove(currentInsn);
                             isSuccessful = true;                        
@@ -1040,12 +1043,13 @@ public enum EnumInputClasses {
         iTreeClassName = "forestry/api/arboriculture/ITree",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;        
         AbstractInsnNode currentInsn;
 
         for (MethodNode methodNode : classNode.methods) {
-            if (methodNode.name.equals(canAcceptBoneMealMethodName) || methodNode.name.equals(tryGrowMethodName)) {                         
+            if (methodNode.name.equals(canAcceptBoneMealMethodName)) {                         
                 Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
                 while (insnIterator.hasNext()) {                        
                     currentInsn = insnIterator.next();                  
@@ -1055,20 +1059,35 @@ public enum EnumInputClasses {
                         nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileSaplingClassName, worldFieldName, "L" + worldClassName + ";"));
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
                         nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileSaplingClassName, posFieldName, "L" + blockPosClassName + ";"));
-                        if (methodNode.name.equals(canAcceptBoneMealMethodName))
-                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
-                        else
-                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
-                        if (methodNode.name.equals(canAcceptBoneMealMethodName))
-                            nodesList.add(new InsnNode(Opcodes.ICONST_1));     
-                        else
-                            nodesList.add(new InsnNode(Opcodes.ICONST_0));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestrySapling", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";Z)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "FORESTRY_SAPLING", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedWithBonemealSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFNE, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious(), nodesList);                   
+                        break;
+                    }
+                } 
+                if (methodNode.name.equals(tryGrowMethodName))
+                    break;
+            }
+            if (methodNode.name.equals(tryGrowMethodName)) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IFNONNULL) {     
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileSaplingClassName, worldFieldName, "L" + worldClassName + ";"));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETFIELD, tileSaplingClassName, posFieldName, "L" + blockPosClassName + ";"));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "FORESTRY_SAPLING", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFNE, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious(), nodesList); 
-                        if (methodNode.name.equals(tryGrowMethodName))
-                            isSuccessful = true;                        
+                        isSuccessful = true;                        
                         break;
                     }
                 } 
@@ -1088,7 +1107,8 @@ public enum EnumInputClasses {
         iTreeClassName = "forestry/api/arboriculture/ITree",
         worldClassName = "net/minecraft/world/World",
         blockPosClassName = "net/minecraft/util/math/BlockPos",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;        
         AbstractInsnNode currentInsn;
 
@@ -1104,8 +1124,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 5));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, tileSaplingClassName, getTreeMethodName, "()L" + iTreeClassName + ";", false));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iTreeClassName, getIdentMethodName, "()L" + stringClassName + ";", true));
-                        nodesList.add(new InsnNode(Opcodes.ICONST_1));     
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedForestrySapling", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";Z)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "FORESTRY_SAPLING", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedWithBonemealSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new InsnNode(Opcodes.IRETURN));
                         methodNode.instructions.insert(currentInsn, nodesList); 
                         isSuccessful = true;                        
@@ -1147,8 +1167,7 @@ public enum EnumInputClasses {
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, bonemealEventClassName, getWorldMethodName, "()L" + worldClassName + ";", false));
                             nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                             nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, bonemealEventClassName, getPosMethodName, "()L" + blockPosClassName + ";", false));
-                            nodesList.add(new InsnNode(Opcodes.ICONST_0));
-                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedBonemeal", "(L" + worldClassName + ";L" + blockPosClassName + ";Z)Z", false));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedBonemeal", "(L" + worldClassName + ";L" + blockPosClassName + ";)Z", false));
                             nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                             methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious(), nodesList); 
                             isSuccessful = true;                        
@@ -1214,7 +1233,8 @@ public enum EnumInputClasses {
         iCropTileClassName = "ic2/api/crops/ICropTile",
         iLocatableClassName = "ic2/api/info/ILocatable",
         cropCardClassName = "ic2/api/crops/CropCard",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;   
         AbstractInsnNode currentInsn;
 
@@ -1232,7 +1252,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious(), nodesList);
                         isSuccessful = true;                        
@@ -1259,7 +1280,8 @@ public enum EnumInputClasses {
         iCropTileClassName = "ic2/api/crops/ICropTile",
         iLocatableClassName = "ic2/api/info/ILocatable",
         cropCardClassName = "ic2/api/crops/CropCard",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;   
         AbstractInsnNode currentInsn;
 
@@ -1277,7 +1299,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious(), nodesList);                   
                         break;
@@ -1298,7 +1321,8 @@ public enum EnumInputClasses {
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "showIC2CropDeniedBiome", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + entityPlayerClassName + ";)V", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "showDeniedBiomeOnBonemealUseSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + entityPlayerClassName + ";L" + enumPlantTypeClassName + ";)V", false));
                         methodNode.instructions.insertBefore(currentInsn, nodesList);
                         isSuccessful = true;                        
                         break;
@@ -1322,7 +1346,8 @@ public enum EnumInputClasses {
         iCropTileClassName = "ic2/api/crops/ICropTile",
         iLocatableClassName = "ic2/api/info/ILocatable",
         cropCardClassName = "ic2/api/crops/CropCard",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;   
         AbstractInsnNode currentInsn;
 
@@ -1340,7 +1365,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
                         isSuccessful = true;                        
@@ -1378,7 +1404,8 @@ public enum EnumInputClasses {
         iCropTileClassName = "ic2/api/crops/ICropTile",
         iLocatableClassName = "ic2/api/info/ILocatable",
         cropCardClassName = "ic2/api/crops/CropCard",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;   
         AbstractInsnNode currentInsn;
 
@@ -1396,7 +1423,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious(), nodesList);
                         isSuccessful = true;                        
@@ -1422,7 +1450,8 @@ public enum EnumInputClasses {
         iCropTileClassName = "ic2/api/crops/ICropTile",
         iLocatableClassName = "ic2/api/info/ILocatable",
         cropCardClassName = "ic2/api/crops/CropCard",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;   
         AbstractInsnNode currentInsn;
 
@@ -1440,7 +1469,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
                         isSuccessful = true;                        
@@ -1469,7 +1499,8 @@ public enum EnumInputClasses {
         iCropTileClassName = "ic2/api/crops/ICropTile",
         iLocatableClassName = "ic2/api/info/ILocatable",
         cropCardClassName = "ic2/api/crops/CropCard",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;   
         AbstractInsnNode currentInsn;
 
@@ -1487,7 +1518,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
                     } else if (currentInsn.getOpcode() == Opcodes.IF_ICMPNE) {                             
@@ -1499,7 +1531,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
                         isSuccessful = true;                        
@@ -1528,7 +1561,8 @@ public enum EnumInputClasses {
         iCropTileClassName = "ic2/api/crops/ICropTile",
         iLocatableClassName = "ic2/api/info/ILocatable",
         cropCardClassName = "ic2/api/crops/CropCard",
-        stringClassName = "java/lang/String";
+        stringClassName = "java/lang/String",
+        enumPlantTypeClassName = "austeretony/plantbiomes/common/main/EnumPlantType";
         boolean isSuccessful = false;   
         AbstractInsnNode currentInsn;
 
@@ -1546,7 +1580,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
                     } else if (currentInsn.getOpcode() == Opcodes.IF_ICMPLE) {                             
@@ -1558,7 +1593,8 @@ public enum EnumInputClasses {
                         nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, iCropTileClassName, getCropMethodName, "()L" + cropCardClassName + ";", true));
                         nodesList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cropCardClassName, getIdMethodName, "()L" + stringClassName + ";", false));
-                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedIC2Crop", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";)Z", false));
+                        nodesList.add(new FieldInsnNode(Opcodes.GETSTATIC, enumPlantTypeClassName, "IC2_CROP", "L" + enumPlantTypeClassName + ";"));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTickSpecial", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + stringClassName + ";L" + enumPlantTypeClassName + ";)Z", false));
                         nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
                         methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious(), nodesList);
                         isSuccessful = true;                        

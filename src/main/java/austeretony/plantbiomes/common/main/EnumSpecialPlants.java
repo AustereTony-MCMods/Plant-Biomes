@@ -6,22 +6,35 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public enum EnumSpecialPlants {
 
-    AGRICRAFT_CROP("com.infinityraider.agricraft.tiles.TileEntityCrop"),
-    FORESTRY_FRUIT("forestry.arboriculture.tiles.TileFruitPod"),
-    FORESTRY_LEAVES("forestry.arboriculture.tiles.TileLeaves"),
-    FORESTRY_SAPLING("forestry.arboriculture.tiles.TileSapling"),
-    DYNAMIC_TREES_SAPLING("com.ferreusveritas.dynamictrees.tileentity.TileEntitySpecies"),
-    IC2_CROP("ic2.core.crop.TileEntityCrop");
+    AGRICRAFT_CROP("ac_tile_crop", "com.infinityraider.agricraft.tiles.TileEntityCrop"),
+    FORESTRY_FRUIT("f_tile_fruit", "forestry.arboriculture.tiles.TileFruitPod"),
+    FORESTRY_LEAVES("f_tile_leaves", "forestry.arboriculture.tiles.TileLeaves"),
+    FORESTRY_SAPLING("f_tile_sapling", "forestry.arboriculture.tiles.TileSapling"),
+    DYNAMIC_TREES_SAPLING("dt_species", "com.ferreusveritas.dynamictrees.tileentity.TileEntitySpecies"),
+    IC2_CROP("ic_crop_card", "ic2.core.crop.TileEntityCrop");
 
     public static final int SPECIALS_META = 16;
 
-    public final String tileClassName;
+    public final String transformedBlockId, tileClassName;
 
-    EnumSpecialPlants(String tileClassName) {
+    private boolean enabled = true;
+
+    EnumSpecialPlants(String id, String tileClassName) {
+        this.transformedBlockId = id;
         this.tileClassName = tileClassName;
+    }
+
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    public void setEnabled(boolean flag) {
+        this.enabled = flag;
     }
 
     public boolean getData(NBTTagCompound tagCompound, World world, BlockPos pos) {
@@ -46,13 +59,13 @@ public enum EnumSpecialPlants {
         String id = tagCompound.getString("agri_seed");
         if (id.isEmpty())
             return false;
-        PBManager.latestPlant = new LatestPlant(
-                EnumPBPlantType.AGRICRAFT_CROP,
+        DataManager.latestPlantServer = new LatestPlant(
+                EnumPlantType.AGRICRAFT_CROP,
                 new ResourceLocation("agricraft", id.replace(':', '.')), 
                 SPECIALS_META, 
                 id,
                 id,
-                PBManager.getBiomeRegistryName(world, pos), 
+                DataManager.getBiomeRegistryName(world, pos), 
                 pos);
         return true;
     }
@@ -62,13 +75,13 @@ public enum EnumSpecialPlants {
         if (uid.isEmpty())
             return false;
         String[] uidSplitted = uid.split("[.]");
-        PBManager.latestPlant = new LatestPlant(
-                EnumPBPlantType.FORESTRY_FRUIT,
+        DataManager.latestPlantServer = new LatestPlant(
+                EnumPlantType.FORESTRY_FRUIT,
                 new ResourceLocation(uidSplitted[0], uidSplitted[1]), 
                 SPECIALS_META, 
                 uid,
                 uid,
-                PBManager.getBiomeRegistryName(world, pos), 
+                DataManager.getBiomeRegistryName(world, pos), 
                 pos);
         return true;
     }
@@ -85,13 +98,13 @@ public enum EnumSpecialPlants {
             if (uid.isEmpty())
                 return false;
             String[] uidSplitted = uid.split("[.]");
-            PBManager.latestPlant = new LatestPlant(
-                    EnumPBPlantType.FORESTRY_LEAVES,
+            DataManager.latestPlantServer = new LatestPlant(
+                    EnumPlantType.FORESTRY_LEAVES,
                     new ResourceLocation(uidSplitted[0], uidSplitted[1] + ".fruit"), 
                     SPECIALS_META, 
                     uid,
                     uid,
-                    PBManager.getBiomeRegistryName(world, pos), 
+                    DataManager.getBiomeRegistryName(world, pos), 
                     pos);
             return true;
         }
@@ -109,13 +122,13 @@ public enum EnumSpecialPlants {
         if (ident.isEmpty())
             return false;
         String[] identSplitted = ident.split("[.]");
-        PBManager.latestPlant = new LatestPlant(
-                EnumPBPlantType.FORESTRY_SAPLING,
+        DataManager.latestPlantServer = new LatestPlant(
+                EnumPlantType.FORESTRY_SAPLING,
                 new ResourceLocation(identSplitted[0], identSplitted[1]), 
                 SPECIALS_META, 
                 ident,
                 ident,
-                PBManager.getBiomeRegistryName(world, pos), 
+                DataManager.getBiomeRegistryName(world, pos), 
                 pos);
         return true;
     }
@@ -124,13 +137,13 @@ public enum EnumSpecialPlants {
         String speciesName = tagCompound.getString("species");
         if (speciesName.isEmpty())
             return false;
-        PBManager.latestPlant = new LatestPlant(
-                EnumPBPlantType.DYNAMIC_TREES_SAPLING,
+        DataManager.latestPlantServer = new LatestPlant(
+                EnumPlantType.DYNAMIC_TREES_SAPLING,
                 new ResourceLocation(speciesName), 
                 SPECIALS_META, 
                 speciesName,
                 speciesName,
-                PBManager.getBiomeRegistryName(world, pos), 
+                DataManager.getBiomeRegistryName(world, pos), 
                 pos);
         return true;
     }
@@ -141,25 +154,26 @@ public enum EnumSpecialPlants {
         cropId = tagCompound.getString("cropId");
         if (cropId.isEmpty())
             return false;
-        PBManager.latestPlant = new LatestPlant(
-                EnumPBPlantType.IC2_CROP,
+        DataManager.latestPlantServer = new LatestPlant(
+                EnumPlantType.IC2_CROP,
                 new ResourceLocation(owner, cropId), 
                 SPECIALS_META, 
                 cropId,
                 owner + ".crop." + cropId,
-                PBManager.getBiomeRegistryName(world, pos), 
+                DataManager.getBiomeRegistryName(world, pos), 
                 pos);
         return true;
     }
 
+    @SideOnly(Side.CLIENT)
     public ResourceLocation createRegistryName(NBTTagCompound tagCompound) {
         switch (this) {
         case AGRICRAFT_CROP:
-            return new ResourceLocation("agricraft", tagCompound.getString("agri_seed").replace(':', '.'));
+            return !tagCompound.getString("agri_seed").isEmpty() ? new ResourceLocation("agricraft", tagCompound.getString("agri_seed").replace(':', '.')) : null;
         case FORESTRY_FRUIT:
             String uid = tagCompound.getString("UID");
             String[] uidSplitted = uid.split("[.]");
-            return new ResourceLocation(uidSplitted[0], uidSplitted[1]);
+            return !uid.isEmpty() ? new ResourceLocation(uidSplitted[0], uidSplitted[1]) : null;
         case FORESTRY_LEAVES:
             NBTTagCompound 
             containedTreeCompound1 = tagCompound.getCompoundTag("ContainedTree"),
@@ -169,7 +183,7 @@ public enum EnumSpecialPlants {
             alleleCompound1 = chromosomesTagList1.getCompoundTagAt(0);
             String uid1 = alleleCompound1.getString("UID1");
             String[] uidSplitted1 = uid1.split("[.]");
-            return tagCompound.getBoolean("FL") ? new ResourceLocation(uidSplitted1[0], uidSplitted1[1] + ".fruit") : null;
+            return tagCompound.getBoolean("FL") ? (!uid1.isEmpty() ? new ResourceLocation(uidSplitted1[0], uidSplitted1[1] + ".fruit") : null) : null;
         case FORESTRY_SAPLING:
             NBTTagCompound 
             containedTreeCompound = tagCompound.getCompoundTag("ContainedTree"),
@@ -179,11 +193,11 @@ public enum EnumSpecialPlants {
             alleleCompound = chromosomesTagList.getCompoundTagAt(0);
             String ident = alleleCompound.getString("UID1");
             String[] identSplitted = ident.split("[.]");
-            return new ResourceLocation(identSplitted[0], identSplitted[1]);
+            return !ident.isEmpty() ? new ResourceLocation(identSplitted[0], identSplitted[1]) : null;
         case DYNAMIC_TREES_SAPLING:
-            return new ResourceLocation(tagCompound.getString("species"));
+            return !tagCompound.getString("species").isEmpty() ? new ResourceLocation(tagCompound.getString("species")) : null;
         case IC2_CROP:
-            return new ResourceLocation(tagCompound.getString("cropOwner"), tagCompound.getString("cropId"));
+            return !tagCompound.getString("cropId").isEmpty() ? new ResourceLocation(tagCompound.getString("cropOwner"), tagCompound.getString("cropId")) : null;
         }
         return null;
     }
@@ -191,7 +205,7 @@ public enum EnumSpecialPlants {
     public static EnumSpecialPlants identify(TileEntity tile) {
         String className = tile.getClass().getName();
         for (EnumSpecialPlants enumPlant : values())
-            if (enumPlant.tileClassName.equals(className))
+            if (enumPlant.isEnabled() && enumPlant.tileClassName.equals(className))
                 return enumPlant;
         return null;
     }

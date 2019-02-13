@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class SpecialPlantsContainer {
 
-    public final EnumPBPlantType enumPlant;
+    public final EnumPlantType enumPlant;
 
     public final String domain, plant;
 
@@ -15,7 +15,7 @@ public class SpecialPlantsContainer {
 
     private boolean hasData;
 
-    public SpecialPlantsContainer(EnumPBPlantType enumPlant) {
+    public SpecialPlantsContainer(EnumPlantType enumPlant) {
         this.enumPlant = enumPlant;
         this.domain = enumPlant.domain;
         this.plant = enumPlant.type;

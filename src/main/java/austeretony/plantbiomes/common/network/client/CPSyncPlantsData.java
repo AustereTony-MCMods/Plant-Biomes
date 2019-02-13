@@ -1,8 +1,8 @@
 package austeretony.plantbiomes.common.network.client;
 
-import austeretony.plantbiomes.common.main.EnumPBPlantType;
+import austeretony.plantbiomes.common.main.DataManager;
+import austeretony.plantbiomes.common.main.EnumPlantType;
 import austeretony.plantbiomes.common.main.MetaPlant;
-import austeretony.plantbiomes.common.main.PBManager;
 import austeretony.plantbiomes.common.main.PlantData;
 import austeretony.plantbiomes.common.network.ProxyPacket;
 import net.minecraft.network.INetHandler;
@@ -20,12 +20,12 @@ public class CPSyncPlantsData extends ProxyPacket {
     }
 
     @Override
-    public void write(PacketBuffer buffer) {       
+    public void write(PacketBuffer buffer) { 
         buffer.writeByte(this.action);
         if (this.action == EnumAction.SYNC_ALL.ordinal()) {
-            String regNameStr, biomeRegNameStr;
-            buffer.writeByte(PBManager.getDataServer().size());
-            for (PlantData plantData : PBManager.getDataServer().values()) {
+            String regNameStr, biomeRegNameStr, boundItemRegNameStr;
+            buffer.writeByte(DataManager.getDataServer().size());
+            for (PlantData plantData : DataManager.getDataServer().values()) {
                 regNameStr = plantData.registryName.toString();
                 buffer.writeByte(regNameStr.length());
                 buffer.writeString(regNameStr);
@@ -37,7 +37,9 @@ public class CPSyncPlantsData extends ProxyPacket {
                     buffer.writeByte(metaPlant.meta);
                     buffer.writeByte(metaPlant.specialName.length());
                     buffer.writeString(metaPlant.specialName);
-                    buffer.writeByte(metaPlant.isDeniedGlobal() ? 1 : 0);
+                    buffer.writeBoolean(metaPlant.isDeniedGlobal());
+                    buffer.writeBoolean(metaPlant.canGrowOverTime());
+                    buffer.writeBoolean(metaPlant.canGrowWithBonemeal());
                     buffer.writeByte(metaPlant.getDeniedBiomes().size());
                     for (ResourceLocation biomeRegName : metaPlant.getDeniedBiomes()) {
                         biomeRegNameStr = biomeRegName.toString();
@@ -50,11 +52,15 @@ public class CPSyncPlantsData extends ProxyPacket {
                         buffer.writeByte(biomeRegNameStr.length());
                         buffer.writeString(biomeRegNameStr);
                     }
+                    boundItemRegNameStr = metaPlant.hasBoundItem() ? metaPlant.getBoundItemRegistryName().toString() : "";
+                    buffer.writeByte(boundItemRegNameStr.length());
+                    buffer.writeString(boundItemRegNameStr);
+                    buffer.writeByte(metaPlant.getBoundItemMeta());
                 }
             }  
         } else if (this.action == EnumAction.SYNC_LATEST.ordinal()) {
-            String regNameStr, biomeRegNameStr;
-            PlantData plantData = PBManager.getServer(PBManager.latestPlant.registryName);
+            String regNameStr, biomeRegNameStr, boundItemRegNameStr;
+            PlantData plantData = DataManager.getServer(DataManager.latestPlantServer.registryName);
             regNameStr = plantData.registryName.toString();
             buffer.writeByte(regNameStr.length());
             buffer.writeString(regNameStr);
@@ -66,7 +72,9 @@ public class CPSyncPlantsData extends ProxyPacket {
                 buffer.writeByte(metaPlant.meta);
                 buffer.writeByte(metaPlant.specialName.length());
                 buffer.writeString(metaPlant.specialName);
-                buffer.writeByte(metaPlant.isDeniedGlobal() ? 1 : 0);
+                buffer.writeBoolean(metaPlant.isDeniedGlobal());
+                buffer.writeBoolean(metaPlant.canGrowOverTime());
+                buffer.writeBoolean(metaPlant.canGrowWithBonemeal());
                 buffer.writeByte(metaPlant.getDeniedBiomes().size());
                 for (ResourceLocation biomeRegName : metaPlant.getDeniedBiomes()) {
                     biomeRegNameStr = biomeRegName.toString();
@@ -79,12 +87,16 @@ public class CPSyncPlantsData extends ProxyPacket {
                     buffer.writeByte(biomeRegNameStr.length());
                     buffer.writeString(biomeRegNameStr);
                 }
+                boundItemRegNameStr = metaPlant.hasBoundItem() ? metaPlant.getBoundItemRegistryName().toString() : "";
+                buffer.writeByte(boundItemRegNameStr.length());
+                buffer.writeString(boundItemRegNameStr);
+                buffer.writeByte(metaPlant.getBoundItemMeta());
             }
         } else if (this.action == EnumAction.REMOVE_LATEST.ordinal()) {
-            String regNameStr = PBManager.latestPlant.registryName.toString();
+            String regNameStr = DataManager.latestPlantServer.registryName.toString();
             buffer.writeByte(regNameStr.length());
             buffer.writeString(regNameStr);
-            buffer.writeByte(PBManager.latestPlant.meta);
+            buffer.writeByte(DataManager.latestPlantServer.meta);
         }
     }
 
@@ -92,100 +104,113 @@ public class CPSyncPlantsData extends ProxyPacket {
     public void read(PacketBuffer buffer) {
         this.action = buffer.readByte();
         if (this.action == EnumAction.SYNC_ALL.ordinal()) {
-            PBManager.clearDataClient();
-            String regNameStr, plantTypeStr, specName, biomeRegNameStr;
-            String[] regNameStrSplitted, biomeRegNameStrSplitted;
-            ResourceLocation registryName, biomeRegName;
-            int amount, metaAmount, deniedAmount, validAmount, mainMeta, meta;
+            DataManager.clearDataClient();
+            if (DataManager.isSettingsTooltipsAllowedClient())
+                DataManager.clearBoundItemsClient();
+            String regNameStr, plantTypeStr, specName, biomeRegNameStr, boundItemRegNameStr;
+            ResourceLocation registryName;
+            int amount, metaAmount, deniedAmount, validAmount, mainMeta, meta, itemMeta;
+            MetaPlant metaPlant;
             amount = buffer.readByte();
             for (int i = 0; i < amount; i++) {
                 regNameStr = buffer.readString(buffer.readByte());
-                regNameStrSplitted = regNameStr.split("[:]");
-                registryName = new ResourceLocation(regNameStrSplitted[0], regNameStrSplitted[1]);
+                registryName = new ResourceLocation(regNameStr);
                 plantTypeStr = buffer.readString(buffer.readByte());
                 mainMeta = buffer.readByte();
                 metaAmount = buffer.readByte();
                 for (int j = 0; j < metaAmount; j++) {
                     meta = buffer.readByte();
                     specName = buffer.readString(buffer.readByte());
-                    PBManager.createMetaClient(
-                            EnumPBPlantType.getOf(plantTypeStr), 
+                    DataManager.createMetaClient(
+                            EnumPlantType.getOf(plantTypeStr), 
                             registryName, 
                             meta, 
                             specName, 
                             "");
-                    PBManager.getClient(registryName).setMainMeta(mainMeta);
-                    if (buffer.readByte() == 1)
-                        PBManager.getClient(registryName).getMeta(meta).denyGlobal();
+                    metaPlant = DataManager.getClient(registryName).getMeta(meta);
+                    metaPlant.setDeniedGlobal(buffer.readBoolean());
+                    metaPlant.setCanGrowOverTime(buffer.readBoolean());
+                    metaPlant.setCanGrowWithBonemeal(buffer.readBoolean());
                     deniedAmount = buffer.readByte();
                     for (int k = 0; k < deniedAmount; k++) {
                         biomeRegNameStr = buffer.readString(buffer.readByte());
-                        biomeRegNameStrSplitted = biomeRegNameStr.split("[:]");
-                        biomeRegName = new ResourceLocation(biomeRegNameStrSplitted[0], biomeRegNameStrSplitted[1]); 
-                        PBManager.getClient(registryName).getMeta(meta).denyBiome(biomeRegName);
+                        metaPlant.denyBiome(new ResourceLocation(biomeRegNameStr));
                     }
                     validAmount = buffer.readByte();;
                     for (int k = 0; k < validAmount; k++) {
                         biomeRegNameStr = buffer.readString(buffer.readByte());
-                        biomeRegNameStrSplitted = biomeRegNameStr.split("[:]");
-                        biomeRegName = new ResourceLocation(biomeRegNameStrSplitted[0], biomeRegNameStrSplitted[1]); 
-                        PBManager.getClient(registryName).getMeta(meta).addValidBiome(biomeRegName);
+                        metaPlant.addValidBiome(new ResourceLocation(biomeRegNameStr));
                     }
+                    boundItemRegNameStr = buffer.readString(buffer.readByte());
+                    itemMeta = buffer.readByte();
+                    if (!boundItemRegNameStr.isEmpty()) {
+                        metaPlant.setBoundItem(new ResourceLocation(boundItemRegNameStr), itemMeta);
+                        if (DataManager.isSettingsTooltipsAllowedClient())
+                            DataManager.createBoundItemClient(registryName, meta);
+                    }                  
                 }
+                DataManager.getClient(registryName).setMainMeta(mainMeta);
             }
         } else if (this.action == EnumAction.SYNC_LATEST.ordinal()) {
-            String regNameStr, plantTypeStr, specName, biomeRegNameStr;
-            String[] regNameStrSplitted, biomeRegNameStrSplitted;
-            ResourceLocation registryName, biomeRegName;
-            int metaAmount, deniedAmount, validAmount, mainMeta, meta;
+            String regNameStr, plantTypeStr, specName, biomeRegNameStr, boundItemRegNameStr;
+            ResourceLocation registryName;
+            int metaAmount, deniedAmount, validAmount, mainMeta, meta, itemMeta;
+            MetaPlant metaPlant;
             regNameStr = buffer.readString(buffer.readByte());
-            regNameStrSplitted = regNameStr.split("[:]");
-            registryName = new ResourceLocation(regNameStrSplitted[0], regNameStrSplitted[1]);
-            if (PBManager.existClient(registryName))
-                PBManager.removeClient(registryName);
+            registryName = new ResourceLocation(regNameStr);
+            if (DataManager.existClient(registryName))
+                DataManager.removeClient(registryName);
             plantTypeStr = buffer.readString(buffer.readByte());
             mainMeta = buffer.readByte();
             metaAmount = buffer.readByte();
             for (int j = 0; j < metaAmount; j++) {
                 meta = buffer.readByte();
                 specName = buffer.readString(buffer.readByte());
-                PBManager.createMetaClient(
-                        EnumPBPlantType.getOf(plantTypeStr), 
+                DataManager.createMetaClient(
+                        EnumPlantType.getOf(plantTypeStr), 
                         registryName, 
                         meta, 
                         specName, 
                         "");
-                PBManager.getClient(registryName).setMainMeta(mainMeta);
-                if (buffer.readByte() == 1)
-                    PBManager.getClient(registryName).getMeta(meta).denyGlobal();
+                metaPlant = DataManager.getClient(registryName).getMeta(meta);
+                metaPlant.setDeniedGlobal(buffer.readBoolean());
+                metaPlant.setCanGrowOverTime(buffer.readBoolean());
+                metaPlant.setCanGrowWithBonemeal(buffer.readBoolean());
                 deniedAmount = buffer.readByte();
                 for (int k = 0; k < deniedAmount; k++) {
                     biomeRegNameStr = buffer.readString(buffer.readByte());
-                    biomeRegNameStrSplitted = biomeRegNameStr.split("[:]");
-                    biomeRegName = new ResourceLocation(biomeRegNameStrSplitted[0], biomeRegNameStrSplitted[1]); 
-                    PBManager.getClient(registryName).getMeta(meta).denyBiome(biomeRegName);
+                    DataManager.getClient(registryName).getMeta(meta).denyBiome(new ResourceLocation(biomeRegNameStr));
                 }
                 validAmount = buffer.readByte();;
                 for (int k = 0; k < validAmount; k++) {
                     biomeRegNameStr = buffer.readString(buffer.readByte());
-                    biomeRegNameStrSplitted = biomeRegNameStr.split("[:]");
-                    biomeRegName = new ResourceLocation(biomeRegNameStrSplitted[0], biomeRegNameStrSplitted[1]); 
-                    PBManager.getClient(registryName).getMeta(meta).addValidBiome(biomeRegName);
+                    DataManager.getClient(registryName).getMeta(meta).addValidBiome(new ResourceLocation(biomeRegNameStr));
+                }
+                boundItemRegNameStr = buffer.readString(buffer.readByte());
+                itemMeta = buffer.readByte();
+                if (!boundItemRegNameStr.isEmpty()) {
+                    DataManager.getClient(registryName).getMeta(meta).setBoundItem(new ResourceLocation(boundItemRegNameStr), itemMeta);
+                    if (DataManager.isSettingsTooltipsAllowedClient())
+                        DataManager.createBoundItemClient(registryName, meta);
                 }
             }
+            DataManager.getClient(registryName).setMainMeta(mainMeta);
         } else if (this.action == EnumAction.REMOVE_LATEST.ordinal()) {
             String regNameStr = buffer.readString(buffer.readByte());
             String[] regNameStrSplitted = regNameStr.split("[:]");
             ResourceLocation registryName = new ResourceLocation(regNameStrSplitted[0], regNameStrSplitted[1]);
-            if (PBManager.existClient(registryName))
-                PBManager.removeMetaClient(registryName, buffer.readByte());
+            if (DataManager.existClient(registryName))
+                DataManager.removeMetaClient(registryName, buffer.readByte());
         }
     }
 
     @Override
     public void process(INetHandler netHandler) {
-        if (this.action == EnumAction.REMOVE_ALL.ordinal())
-            PBManager.clearDataClient();
+        if (this.action == EnumAction.REMOVE_ALL.ordinal()) {
+            DataManager.clearDataClient();
+            if (DataManager.isSettingsTooltipsAllowedClient())
+                DataManager.clearBoundItemsClient();
+        }
     }
 
     public enum EnumAction {

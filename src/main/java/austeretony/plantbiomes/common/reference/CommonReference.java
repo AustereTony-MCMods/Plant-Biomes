@@ -1,10 +1,12 @@
 package austeretony.plantbiomes.common.reference;
 
 import java.io.File;
+import java.util.List;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -30,7 +32,11 @@ public class CommonReference {
     }
 
     public static boolean isMainHandEmpty(EntityPlayer player) {
-        return player.getHeldItemMainhand().getItem() == Items.AIR;
+        return player.getHeldItemMainhand() == ItemStack.EMPTY;
+    }
+    
+    public static List<EntityPlayerMP> getPlayersListServer() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
     }
 
     public static void sendMessage(EntityPlayer player, ITextComponent textComponent) {

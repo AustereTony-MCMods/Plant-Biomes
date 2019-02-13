@@ -7,6 +7,7 @@ import com.google.common.collect.HashBiMap;
 import austeretony.plantbiomes.common.main.PlantBiomesMain;
 import austeretony.plantbiomes.common.network.client.CPSetOverlayStatus;
 import austeretony.plantbiomes.common.network.client.CPSyncPlantsData;
+import austeretony.plantbiomes.common.network.client.CPSyncSettings;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,6 +35,7 @@ public class NetworkHandler {
     }
 
     private static void registerPackets() {
+        register(CPSyncSettings.class);
         register(CPSyncPlantsData.class);
         register(CPSetOverlayStatus.class);
     }

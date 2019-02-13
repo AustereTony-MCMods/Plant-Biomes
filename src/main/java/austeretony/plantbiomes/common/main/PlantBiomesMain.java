@@ -16,15 +16,18 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
         modid = PlantBiomesMain.MODID, 
         name = PlantBiomesMain.NAME, 
         version = PlantBiomesMain.VERSION,
-        certificateFingerprint = "@FINGERPRINT@")
+        certificateFingerprint = "@FINGERPRINT@",
+        updateJSON = PlantBiomesMain.VERSIONS_FORGE_URL)
 public class PlantBiomesMain {
 
     public static final String 
     MODID = "plantbiomes",
     NAME = "Plant Biomes",
-    VERSION = "1.4.10",
+    VERSION = "1.5.0",
+    VERSION_CUSTOM = VERSION + ":beta:0",
     GAME_VERSION = "1.12.2",
-    VERSIONS_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/versions.json",
+    VERSIONS_FORGE_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/mod_versions_forge.json",
+    VERSIONS_CUSTOM_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/mod_versions_custom.json",
     PROJECT_LOCATION = "minecraft.curseforge.com",
     PROJECT_URL = "https://minecraft.curseforge.com/projects/plant-biomes";
 
@@ -34,15 +37,14 @@ public class PlantBiomesMain {
     public void init(FMLInitializationEvent event) { 
         NetworkHandler.init();
         CommonReference.registerEvent(new PlantBiomesEvents());
-        UpdateChecker updateChecker = new UpdateChecker();              
         CommonReference.registerEvent(new UpdateChecker());
-        new Thread(updateChecker, "Plant Biomes Update Check").start();  
         CommonReference.registerEvent(new OverlayRenderer());
     }
 
     @EventHandler
-    public void serverStarting(FMLServerStartingEvent event) {                 
-        PBManager.initServerData();
+    public void serverStarting(FMLServerStartingEvent event) {  
+        DataManager.initServerData();
         CommonReference.registerCommand(event, new CommandPB());
+        new Thread(new UpdateChecker(), "Plant Biomes Update Check").start();  
     }
 }

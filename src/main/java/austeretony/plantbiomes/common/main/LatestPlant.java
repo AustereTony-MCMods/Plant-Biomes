@@ -5,7 +5,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class LatestPlant {
 
-    public final EnumPBPlantType enumType;
+    public final EnumPlantType enumType;
 
     public final ResourceLocation registryName, biomeRegistryName;
 
@@ -15,7 +15,7 @@ public class LatestPlant {
 
     public final BlockPos blockPos;
 
-    public LatestPlant(EnumPBPlantType enumType, ResourceLocation registryName, int meta, String specialName, String unlocalizedName, ResourceLocation biomeRegistryName, BlockPos blockPos) {
+    public LatestPlant(EnumPlantType enumType, ResourceLocation registryName, int meta, String specialName, String unlocalizedName, ResourceLocation biomeRegistryName, BlockPos blockPos) {
         this.enumType = enumType;
         this.registryName = registryName;
         this.meta = meta;

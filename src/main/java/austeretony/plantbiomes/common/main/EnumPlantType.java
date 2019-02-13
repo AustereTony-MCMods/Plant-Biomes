@@ -1,6 +1,6 @@
 package austeretony.plantbiomes.common.main;
 
-public enum EnumPBPlantType {
+public enum EnumPlantType {
 
     STANDARD("various", "standard"),//any plant using Block#updateTick() method for growth mechanic, domain is never used
     AGRICRAFT_CROP("agricraft", "agricraft_crop"),
@@ -12,13 +12,13 @@ public enum EnumPBPlantType {
 
     public final String domain, type;
 
-    EnumPBPlantType(String domain, String type) {
+    EnumPlantType(String domain, String type) {
         this.domain = domain;
         this.type = type;
     }
 
-    public static EnumPBPlantType getOf(String type) {
-        for (EnumPBPlantType enumType : values())
+    public static EnumPlantType getOf(String type) {
+        for (EnumPlantType enumType : values())
             if (type.equals(enumType.type))
                 return enumType;        
         return STANDARD;

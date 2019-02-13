@@ -11,14 +11,21 @@ public class MetaPlant {
 
     public final String specialName, unlocalizedName;
 
+    private ResourceLocation boundItemName;
+
+    private int boundItemMeta;
+
     private final Set<ResourceLocation> 
     denied = new HashSet<ResourceLocation>(),
     valid = new HashSet<ResourceLocation>();
 
     private boolean 
     deniedGlobal,
-    hasDenied,
-    hasValid;
+    canGrowOverTime,
+    canGrowWithBonemeal,
+    hasDeniedBiomes,
+    hasValidBiomes,
+    hasBoundItem;
 
     public MetaPlant(int meta, String specialName, String unlocalizedName) {
         this.meta = meta;
@@ -26,43 +33,59 @@ public class MetaPlant {
         this.unlocalizedName = unlocalizedName;
     }
 
+    public boolean isDeniedBiomesExist() {
+        return this.hasDeniedBiomes;
+    }
+    
     public Set<ResourceLocation> getDeniedBiomes() {
         return this.denied;
     }
 
-    public boolean isDeniedBiomesExist() {
-        return this.hasDenied;
-    }
-    
     public boolean isDeniedBiome(ResourceLocation biomeRegistryName) {
         return this.denied.contains(biomeRegistryName);
     }
 
     public void denyBiome(ResourceLocation biomeRegistryName) {
         this.denied.add(biomeRegistryName);
-        this.hasDenied = true;
+        this.hasDeniedBiomes = true;
     }
 
     public void allowBiome(ResourceLocation biomeRegistryName) {
         this.denied.remove(biomeRegistryName);
-        this.hasDenied = !this.denied.isEmpty();
+        this.hasDeniedBiomes = !this.denied.isEmpty();
     }
 
     public void clearDeniedBiomes() {
         this.denied.clear();
-        this.hasDenied = false;
+        this.hasDeniedBiomes = false;
     }
 
     public boolean isDeniedGlobal() {
         return this.deniedGlobal;
     }
 
-    public void denyGlobal() {
-        this.deniedGlobal = true;
+    public void setDeniedGlobal(boolean flag) {
+        this.deniedGlobal = flag;
     }
 
-    public void allowGlobal() {
-        this.deniedGlobal = false;
+    public boolean canGrowOverTime() {
+        return this.canGrowOverTime;
+    }
+
+    public void setCanGrowOverTime(boolean flag) {
+        this.canGrowOverTime = flag;
+    }
+
+    public boolean canGrowWithBonemeal() {
+        return this.canGrowWithBonemeal;
+    }
+
+    public void setCanGrowWithBonemeal(boolean flag) {
+        this.canGrowWithBonemeal = flag;
+    }
+
+    public boolean isValidBiomesExist() {
+        return this.hasValidBiomes;
     }
 
     public Set<ResourceLocation> getValidBiomes() {
@@ -73,26 +96,50 @@ public class MetaPlant {
         return this.valid.contains(biomeRegistryName);
     }
 
-    public boolean isValidBiomesExist() {
-        return this.hasValid;
-    }
-
     public void addValidBiome(ResourceLocation biomeRegistryName) {
         this.valid.add(biomeRegistryName);
-        this.hasValid = true;
+        this.hasValidBiomes = true;
     }
 
     public void removeValidBiome(ResourceLocation biomeRegistryName) {
         this.valid.remove(biomeRegistryName);
-        this.hasValid = !this.valid.isEmpty();
+        this.hasValidBiomes = !this.valid.isEmpty();
     }
 
     public void clearValidBiomes() {
         this.valid.clear();
-        this.hasValid = false;
+        this.hasValidBiomes = false;
+    }
+    
+    public boolean hasBoundItem() {
+        return this.hasBoundItem;
     }
 
-    public boolean isPermittedBiome(ResourceLocation biomeRegistryName) {
-        return this.hasValid ? this.valid.contains(biomeRegistryName) : !this.deniedGlobal && (!this.hasDenied || !this.denied.contains(biomeRegistryName));
+    public ResourceLocation getBoundItemRegistryName() {
+        return this.boundItemName;
+    }
+
+    public int getBoundItemMeta() {
+        return this.boundItemMeta;
+    }
+
+    public void setBoundItem(ResourceLocation boundItemRegistryName, int meta) {
+        this.boundItemName = boundItemRegistryName;
+        this.boundItemMeta = meta;
+        this.hasBoundItem = true;
+    }
+
+    public void resetBoundItem() {
+        this.boundItemName = null;
+        this.boundItemMeta = 0;
+        this.hasBoundItem = false;
+    }
+
+    public boolean canGrowOverTime(ResourceLocation biomeRegistryName) {
+        return this.canGrowOverTime || (this.hasValidBiomes ? this.valid.contains(biomeRegistryName) : !this.deniedGlobal && (!this.hasDeniedBiomes || !this.denied.contains(biomeRegistryName)));
+    }
+
+    public boolean canGrowWithBonemeal(ResourceLocation biomeRegistryName) {
+        return this.canGrowWithBonemeal || (this.hasValidBiomes ? this.valid.contains(biomeRegistryName) : !this.deniedGlobal && (!this.hasDeniedBiomes || !this.denied.contains(biomeRegistryName)));
     }
 }

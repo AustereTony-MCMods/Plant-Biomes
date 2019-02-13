@@ -6,19 +6,24 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
+import austeretony.plantbiomes.common.config.ConfigLoader;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 public class PlantBiomesClassTransformer implements IClassTransformer {
 
     public static final Logger CORE_LOGGER = LogManager.getLogger("Plant Biomes Core");
 
+    public PlantBiomesClassTransformer() {
+        ConfigLoader.loadTransformerSettings();
+    }
+
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {   
         switch (transformedName) {
         //***vanilla plants support***
-        case "net.minecraft.block.BlockSapling"://saplings   			
-            return patch(basicClass, EnumInputClasses.MC_BLOCK_SAPLING);   			 			
-        case "net.minecraft.block.BlockCrops"://crops (wheat, potato, carrot, etc.)							
+        case "net.minecraft.block.BlockSapling"://saplings                      
+            return patch(basicClass, EnumInputClasses.MC_BLOCK_SAPLING);                                                
+        case "net.minecraft.block.BlockCrops"://crops (wheat, potato, carrot, etc.)                                                     
             return patch(basicClass, EnumInputClasses.MC_BLOCK_CROPS);                                                 
         case "net.minecraft.block.BlockStem"://melon, pumpkin                                                      
             return patch(basicClass, EnumInputClasses.MC_BLOCK_MELON);                                                 
@@ -41,9 +46,7 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
         case "net.minecraft.world.biome.Biome"://flowers and grass growth with bonemeal                                                      
             return patch(basicClass, EnumInputClasses.MC_BIOME);   
         case "net.minecraft.item.ItemDye"://bonemeal behavior 
-            return patch(basicClass, EnumInputClasses.MC_ITEM_DYE);   
-        case "net.minecraft.client.renderer.RenderGlobal"://gray particles for client
-            return patch(basicClass, EnumInputClasses.MC_RENDER_GLOBAL);   
+            return patch(basicClass, EnumInputClasses.MC_ITEM_DYE);    
             //***non-vanilla plants support***
             //AgriCraft (tested for 2.12.0-1.12.0-a6)
         case "com.infinityraider.agricraft.tiles.TileEntityCrop"://crops
@@ -142,19 +145,24 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             //Twilight Forest (tested for 3.8.689)
         case "twilightforest.block.BlockTFSapling"://saplings
             return patch(basicClass, EnumInputClasses.TF_BLOCK_SAPLING);
-        }   	
+        }       
         return basicClass;
     }
 
     private byte[] patch(byte[] basicClass, EnumInputClasses enumInput) {
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(basicClass);
-        classReader.accept(classNode, enumInput.readerFlags);
-        if (enumInput.patch(classNode))
-            CORE_LOGGER.info(enumInput.domain + " <" + enumInput.clazz + ".class> patched!");
-        ClassWriter writer = new ClassWriter(enumInput.writerFlags);        
-        classNode.accept(writer);
-        return writer.toByteArray();    
+        if (enumInput.shouldPatch()) {
+            ClassNode classNode = new ClassNode();
+            ClassReader classReader = new ClassReader(basicClass);
+            classReader.accept(classNode, enumInput.readerFlags);
+            if (enumInput.patch(classNode))
+                CORE_LOGGER.info(enumInput.domain + " <" + enumInput.clazz + ".class> patched!");
+            ClassWriter writer = new ClassWriter(enumInput.writerFlags);        
+            classNode.accept(writer);
+            return writer.toByteArray();  
+        } else {
+            CORE_LOGGER.info(enumInput.domain + " <" + enumInput.clazz + ".class> SKIPPED!");
+        }
+        return basicClass;
     }
 }
 

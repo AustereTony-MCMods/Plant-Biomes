@@ -3,9 +3,9 @@ package austeretony.plantbiomes.client.render;
 import java.util.HashMap;
 import java.util.Map;
 
+import austeretony.plantbiomes.common.main.DataManager;
 import austeretony.plantbiomes.common.main.EnumSpecialPlants;
 import austeretony.plantbiomes.common.main.EnumStandardPlants;
-import austeretony.plantbiomes.common.main.PBManager;
 import austeretony.plantbiomes.common.util.WorldPosition;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -39,7 +39,7 @@ public class OverlayRenderer {
     private MutableBlockPos blockPos = new MutableBlockPos();
 
     private WorldPosition tilePos = new WorldPosition();
-    
+
     private TileEntity tile;
 
     private IBlockState state;
@@ -52,12 +52,18 @@ public class OverlayRenderer {
 
     private String blockClassName;
 
-    public static final Map<WorldPosition, ResourceLocation> SPECIAL_NAMES = new HashMap<WorldPosition, ResourceLocation>();
+    private AxisAlignedBB blockAABB;
 
-    @SubscribeEvent
+    private Tessellator tesselator;
+
+    private BufferBuilder buffBuilder;
+
+    public static final Map<WorldPosition, ResourceLocation> TILES = new HashMap<WorldPosition, ResourceLocation>();
+
     @SideOnly(Side.CLIENT)
+    @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent event) {
-        if (PBManager.shouldRenderOverlayClient()) {
+        if (DataManager.shouldRenderOverlayClient()) {
             this.world = Minecraft.getMinecraft().world;
             this.player = Minecraft.getMinecraft().player;
             for (this.x = this.player.posX - RANGE; this.x < this.player.posX + RANGE; this.x++) {
@@ -78,26 +84,27 @@ public class OverlayRenderer {
         if (this.block != Blocks.AIR) {
             this.blockName = this.block.getRegistryName();
             this.meta = this.block.getMetaFromState(this.state);
-            if (PBManager.isTilesAllowedClient() && PBManager.shouldCheckSpecialPlantsClient()) {  
+            if (DataManager.isTilesOverlayAllowedClient() && DataManager.shouldCheckSpecialPlantsClient()) {  
                 if (this.block.hasTileEntity(this.state)) {
                     this.tile = this.world.getTileEntity(this.blockPos);
                     EnumSpecialPlants special = EnumSpecialPlants.identify(this.tile);
                     if (special != null) {
                         this.tilePos.setPosition(this.blockPos);
                         this.meta = EnumSpecialPlants.SPECIALS_META;
-                        if (!this.SPECIAL_NAMES.containsKey(this.tilePos)) {
+                        if (!this.TILES.containsKey(this.tilePos)) {
                             this.blockName = special.createRegistryName(this.tile.serializeNBT());
-                            this.SPECIAL_NAMES.put(new WorldPosition(this.tilePos), this.blockName);
+                            this.TILES.put(new WorldPosition(this.tilePos), this.blockName);
                         } else {
-                            this.blockName = this.SPECIAL_NAMES.get(this.tilePos);
+                            this.blockName = this.TILES.get(this.tilePos);
                         }
-                        if (this.blockName == null) return;
                     }
                 }
             } 
-            if (PBManager.existClient(this.blockName)) {
+            if (this.blockName == null) return;
+            if ((DataManager.existClient(this.blockName) && DataManager.getClient(this.blockName).hasMetaData(this.meta)) 
+                    || (DataManager.existClient(this.blockName) && DataManager.getClient(this.blockName).hasMainMeta())) {
                 this.blockClassName = this.block.getClass().getName();
-                this.biomeName = PBManager.getBiomeRegistryName(this.world, this.blockPos);
+                this.biomeName = DataManager.getBiomeRegistryName(this.world, this.blockPos);
                 this.offsetX = this.player.prevPosX + (this.player.posX - this.player.prevPosX) * (double) partialTicks;
                 this.offsetY = this.player.prevPosY + (this.player.posY - this.player.prevPosY) * (double) partialTicks;
                 this.offsetZ = this.player.prevPosZ + (this.player.posZ - this.player.prevPosZ) * (double) partialTicks;
@@ -105,63 +112,47 @@ public class OverlayRenderer {
                 GlStateManager.translate(this.blockPos.getX() - this.offsetX, this.blockPos.getY() - this.offsetY + 0.03125F, this.blockPos.getZ() - this.offsetZ);
                 GlStateManager.disableTexture2D();
                 GlStateManager.color(0.0F, 0.9F, 0.0F);
-                if (PBManager.getClient(this.blockName).hasMainMeta()) {
-                    if (PBManager.getClient(this.blockName).getMainMetaPlant().isValidBiomesExist()) {
-                        if (PBManager.getClient(this.blockName).getMainMetaPlant().isValidBiome(this.biomeName)) {
-                            GlStateManager.color(0.0F, 0.5F, 0.05F);
-                            GlStateManager.translate(0.0F, 0.005F, 0.0F);
-                        } else {
-                            GlStateManager.color(0.5F, 0.0F, 0.0F);
-                        }
-                    } else if (PBManager.getClient(this.blockName).getMainMetaPlant().isDeniedBiome(this.biomeName) || PBManager.getClient(this.blockName).getMainMetaPlant().isDeniedGlobal()) {
-                        GlStateManager.color(0.9F, 0.0F, 0.0F);
-                        GlStateManager.translate(0.0F, - 0.005F, 0.0F);
+                if (DataManager.getClient(this.blockName).isValidBiomesExist(this.meta)) {
+                    if (DataManager.getClient(this.blockName).isValidBiome(this.meta, this.biomeName)) {
+                        GlStateManager.color(0.0F, 0.5F, 0.05F);
+                        GlStateManager.translate(0.0F, 0.005F, 0.0F);
+                    } else {
+                        GlStateManager.color(0.5F, 0.0F, 0.0F);
                     }
-                } else {
-                    if (PBManager.getClient(this.blockName).hasMetaData(this.meta)) {
-                        if (PBManager.getClient(this.blockName).getMeta(this.meta).isValidBiomesExist()) {
-                            if (PBManager.getClient(this.blockName).getMeta(this.meta).isValidBiome(this.biomeName)) {
-                                GlStateManager.color(0.0F, 0.5F, 0.05F);
-                                GlStateManager.translate(0.0F, 0.005F, 0.0F);
-                            } else {
-                                GlStateManager.color(0.5F, 0.0F, 0.0F);
-                            }
-                        } else if (PBManager.getClient(this.blockName).getMeta(this.meta).isDeniedBiome(this.biomeName) || PBManager.getClient(this.blockName).getMeta(meta).isDeniedGlobal()) {
-                            GlStateManager.color(0.9F, 0.0F, 0.0F);
-                            GlStateManager.translate(0.0F, - 0.005F, 0.0F);
-                        }
-                    }
+                } else if (DataManager.getClient(this.blockName).isDeniedBiome(this.meta, this.biomeName) || DataManager.getClient(this.blockName).isDeniedGlobal(this.meta)) {
+                    GlStateManager.color(0.9F, 0.0F, 0.0F);
+                    GlStateManager.translate(0.0F, - 0.005F, 0.0F);
                 }
-                AxisAlignedBB blockAABB = this.block.getBoundingBox(this.state, this.world, this.blockPos);
-                Tessellator tesselator = Tessellator.getInstance();
-                BufferBuilder buffBuilder = tesselator.getBuffer();
-                buffBuilder.begin(3, DefaultVertexFormats.POSITION);
-                buffBuilder.pos(blockAABB.minX, blockAABB.maxY, blockAABB.minZ).endVertex();
-                buffBuilder.pos(blockAABB.maxX, blockAABB.maxY, blockAABB.minZ).endVertex();
-                buffBuilder.pos(blockAABB.maxX, blockAABB.maxY, blockAABB.maxZ).endVertex();
-                buffBuilder.pos(blockAABB.minX, blockAABB.maxY, blockAABB.maxZ).endVertex();
-                buffBuilder.pos(blockAABB.minX, blockAABB.maxY, blockAABB.minZ).endVertex();
-                tesselator.draw();
+                this.blockAABB = this.block.getBoundingBox(this.state, this.world, this.blockPos);
+                this.tesselator = Tessellator.getInstance();
+                this.buffBuilder = this.tesselator.getBuffer();
+                this.buffBuilder.begin(3, DefaultVertexFormats.POSITION);
+                this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.maxY, this.blockAABB.minZ).endVertex();
+                this.buffBuilder.pos(this.blockAABB.maxX, this.blockAABB.maxY, this.blockAABB.minZ).endVertex();
+                this.buffBuilder.pos(this.blockAABB.maxX, this.blockAABB.maxY, this.blockAABB.maxZ).endVertex();
+                this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.maxY, this.blockAABB.maxZ).endVertex();
+                this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.maxY, this.blockAABB.minZ).endVertex();
+                this.tesselator.draw();
                 if (!(this.blockClassName.equals(EnumStandardPlants.MC_GRASS_BLOCK.className) 
                         || this.blockClassName.equals(EnumStandardPlants.MC_MYCELIUM_BLOCK.className)
                         || this.blockClassName.equals(EnumStandardPlants.BOP_BLOCK_GRASS.className))) {
-                    buffBuilder.begin(3, DefaultVertexFormats.POSITION);
-                    buffBuilder.pos(blockAABB.minX, blockAABB.minY, blockAABB.minZ).endVertex();
-                    buffBuilder.pos(blockAABB.maxX, blockAABB.minY, blockAABB.minZ).endVertex();
-                    buffBuilder.pos(blockAABB.maxX, blockAABB.minY, blockAABB.maxZ).endVertex();
-                    buffBuilder.pos(blockAABB.minX, blockAABB.minY, blockAABB.maxZ).endVertex();
-                    buffBuilder.pos(blockAABB.minX, blockAABB.minY, blockAABB.minZ).endVertex();
-                    tesselator.draw();
-                    buffBuilder.begin(1, DefaultVertexFormats.POSITION);
-                    buffBuilder.pos(blockAABB.minX, blockAABB.minY, blockAABB.minZ).endVertex();
-                    buffBuilder.pos(blockAABB.minX, blockAABB.maxY, blockAABB.minZ).endVertex();
-                    buffBuilder.pos(blockAABB.maxX, blockAABB.minY, blockAABB.minZ).endVertex();
-                    buffBuilder.pos(blockAABB.maxX, blockAABB.maxY, blockAABB.minZ).endVertex();
-                    buffBuilder.pos(blockAABB.maxX, blockAABB.minY, blockAABB.maxZ).endVertex();
-                    buffBuilder.pos(blockAABB.maxX, blockAABB.maxY, blockAABB.maxZ).endVertex();
-                    buffBuilder.pos(blockAABB.minX, blockAABB.minY, blockAABB.maxZ).endVertex();
-                    buffBuilder.pos(blockAABB.minX, blockAABB.maxY, blockAABB.maxZ).endVertex();
-                    tesselator.draw();
+                    this.buffBuilder.begin(3, DefaultVertexFormats.POSITION);
+                    this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.minY, this.blockAABB.minZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.maxX, this.blockAABB.minY, this.blockAABB.minZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.maxX, this.blockAABB.minY, this.blockAABB.maxZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.minY, this.blockAABB.maxZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.minY, this.blockAABB.minZ).endVertex();
+                    this.tesselator.draw();
+                    this.buffBuilder.begin(1, DefaultVertexFormats.POSITION);
+                    this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.minY, this.blockAABB.minZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.maxY, this.blockAABB.minZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.maxX, this.blockAABB.minY, this.blockAABB.minZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.maxX, this.blockAABB.maxY, this.blockAABB.minZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.maxX, this.blockAABB.minY, this.blockAABB.maxZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.maxX, this.blockAABB.maxY, this.blockAABB.maxZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.minY, this.blockAABB.maxZ).endVertex();
+                    this.buffBuilder.pos(this.blockAABB.minX, this.blockAABB.maxY, this.blockAABB.maxZ).endVertex();
+                    this.tesselator.draw();
                 }
                 GlStateManager.enableTexture2D();
                 GlStateManager.popMatrix();
