@@ -1,3 +1,17 @@
+1.5.0b
++Added configuration file for transformers. Every class transformer can be disabled.
+File disabled by default.
++Added ability to bound plant settings to any item. Settings will be displayed in item tooltip.
+Tooltips can be disabled.
++Added ability to enable growth over time in disabled biomes.
++Added ability to enable growth with bonemeal in disabled biomes.
++Smoke particles for plant in blacklisted biomes (spawns over time). Disabled by default.
++Smoke particles on bonemeal usage for plants in disabled biomes. Enabled by default.
++Added forge update checker.
++Improved custom update checker. Enabled by default.
++Fixes:
+ - All settings for any subtype will be applied to main subtype if it was set.
+ - Custom smoke particles spawn replaced with vanilla.
 1.4.10
 +Added support fo Forestry fruit leaves and fruit pods.
 +Added support for Rustic plants: saplings, crops, herbs and wildberry bush.
