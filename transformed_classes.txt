@@ -1,0 +1,79 @@
+Minecraft
+- net.minecraft.block.BlockSapling
+- net.minecraft.block.BlockCrops
+- net.minecraft.block.BlockStem
+- net.minecraft.block.BlockGrass
+- net.minecraft.block.BlockMycelium
+- net.minecraft.block.BlockCocoa
+- net.minecraft.block.BlockNetherWart
+- net.minecraft.block.BlockVine
+- net.minecraft.block.BlockMushroom
+- net.minecraft.block.BlockReed
+- net.minecraft.block.BlockCactus
+- net.minecraft.world.biome.Biome
+- net.minecraft.item.ItemDye
+
+AgriCraft
+- com.infinityraider.agricraft.tiles.TileEntityCrop
+
+Biomes O' Plenty
+- biomesoplenty.common.block.BlockBOPSapling
+- biomesoplenty.common.block.BlockBOPGrass
+- biomesoplenty.common.block.BlockBOPBamboo
+
+Dynamic Trees
+- com.ferreusveritas.dynamictrees.trees.Species
+- com.ferreusveritas.dynamictrees.trees.TreeCactus$SpeciesCactus
+- com.ferreusveritas.dynamictrees.blocks.BlockFruit
+
+Forestry
+- forestry.arboriculture.tiles.TileFruitPod
+- forestry.arboriculture.blocks.BlockFruitPod
+- forestry.arboriculture.tiles.TileLeaves
+- forestry.arboriculture.blocks.BlockForestryLeaves
+- forestry.arboriculture.tiles.TileSapling
+- forestry.arboriculture.blocks.BlockSapling
+
+Hunger Overhaul
+- iguanaman.hungeroverhaul.module.bonemeal.BonemealModule
+
+Immersive Engineering
+- blusunrize.immersiveengineering.common.blocks.plant.BlockIECrop
+
+IndustrialCraft 2
+- ic2.core.block.Ic2Sapling
+- ic2.core.crop.CropVanilla
+- ic2.api.crops.CropCard
+- ic2.core.crop.cropcard.CropPotato
+- ic2.core.crop.cropcard.CropStickreed
+- ic2.core.crop.cropcard.CropVenomilia
+- ic2.core.crop.cropcard.CropBaseMushroom
+- ic2.core.crop.cropcard.CropBaseMetalCommon
+- ic2.core.crop.cropcard.CropBaseMetalUncommon
+- ic2.core.crop.cropcard.CropEating
+- ic2.core.crop.cropcard.CropHops
+- ic2.core.crop.cropcard.CropColorFlower
+- ic2.core.crop.cropcard.CropRedWheat
+
+Mystical Agriculture
+- com.blakebr0.mysticalagriculture.blocks.crop.BlockMysticalCrop
+
+Pam's HarvestCraft
+- com.pam.harvestcraft.blocks.growables.BlockPamSapling
+- com.pam.harvestcraft.blocks.growables.BlockPamCrop
+- com.pam.harvestcraft.blocks.growables.BlockPamFruit
+
+Rustic
+- rustic.common.blocks.BlockSaplingRustic
+- rustic.common.blocks.crops.BlockSaplingApple
+- rustic.common.blocks.crops.BlockStakeCrop
+- rustic.common.blocks.crops.BlockAppleSeeds
+- rustic.common.blocks.crops.BlockBerryBush
+- rustic.common.blocks.crops.BlockGrapeStem
+- rustic.common.blocks.crops.BlockHerbBase
+
+Thaumcraft
+- thaumcraft.common.blocks.world.plants.BlockSaplingTC
+
+Twilight Forest
+- twilightforest.block.BlockTFSapling
