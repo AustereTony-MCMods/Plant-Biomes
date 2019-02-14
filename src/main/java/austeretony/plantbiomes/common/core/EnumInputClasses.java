@@ -76,6 +76,13 @@ public enum EnumInputClasses {
     PHC_BLOCK_CROP("phc_block_crop", "Pam's HarvestCraft", "BlockPamCrop", 0, 0),
     PHC_BLOCK_FRUIT("phc_block_fruit", "Pam's HarvestCraft", "BlockPamFruit", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
+    PLANTS_BLOCK_ENUM_SAPLING("p_block_enum_sapling", "Plants", "BlockEnumSapling", 0, 0),
+    PLANTS_BLOCK_ENUM_HARVEST_BUSH("p_block_enum_harvest_bush", "Plants", "BlockEnumHarvestBush", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    PLANTS_BLOCK_BUSHLING("p_block_bushling", "Plants", "BlockBushling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    PLANTS_BLOCK_ENUM_NETHER_HARVEST("p_block_enum_nether_harvest", "Plants", "BlockEnumNetherHarvest", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    PLANTS_BLOCK_ENUM_CROP("p_block_enum_crop", "Plants", "BlockEnumCrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+    PLANTS_BLOCK_ENUM_DOUBLE_HARVEST_BUSH("p_block_enum_double_harvest_bush", "Plants", "BlockEnumDoubleHarvestBush", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+
     RUSTIC_BLOCK_SAPLING("r_block_sapling", "Rustic", "BlockSaplingRustic", 0, 0),
     RUSTIC_BLOCK_SAPLING_APPLE("r_block_sapling_apple", "Rustic", "BlockSaplingApple", 0, 0),
     RUSTIC_BLOCK_STAKE_CROP("r_block_crop", "Rustic", "BlockStakeCrop", 0, 0),
@@ -92,14 +99,14 @@ public enum EnumInputClasses {
 
     private static final String HOOKS_CLASS = "austeretony/plantbiomes/common/core/PlantBiomesHooks";
 
-    public final String transformedBlockId, domain, clazz;
+    public final String transformedClassId, domain, clazz;
 
     public final int readerFlags, writerFlags;
 
     private boolean patch = true;
 
     EnumInputClasses(String id, String domain, String clazz, int readerFlags, int writerFlags) {
-        this.transformedBlockId = id;
+        this.transformedClassId = id;
         this.domain = domain;
         this.clazz = clazz;
         this.readerFlags = readerFlags;
@@ -109,7 +116,7 @@ public enum EnumInputClasses {
     public static void map() {
         classesById = new HashMap<String, EnumInputClasses>();
         for (EnumInputClasses enumClass : values()) 
-            classesById.put(enumClass.transformedBlockId, enumClass);
+            classesById.put(enumClass.transformedClassId, enumClass);
     }
 
     public boolean shouldPatch() {
@@ -224,6 +231,19 @@ public enum EnumInputClasses {
             return patchPHCBlockPamCrop(classNode); 
         case PHC_BLOCK_FRUIT:
             return patchPHCBlockPamFruit(classNode); 
+
+        case PLANTS_BLOCK_ENUM_SAPLING:
+            return patchPlantsBlockEnumSapling(classNode); 
+        case PLANTS_BLOCK_ENUM_HARVEST_BUSH:
+            return patchPlantsBlockEnumHarvestBush(classNode); 
+        case PLANTS_BLOCK_BUSHLING:
+            return patchPlantsBlockBushling(classNode); 
+        case PLANTS_BLOCK_ENUM_NETHER_HARVEST:
+            return patchPlantsBlockEnumNetherHarvest(classNode); 
+        case PLANTS_BLOCK_ENUM_CROP:
+            return patchPlantsBlockEnumCrop(classNode); 
+        case PLANTS_BLOCK_ENUM_DOUBLE_HARVEST_BUSH:
+            return patchPlantsBlockDoubleHarvetBush(classNode); 
 
         case RUSTIC_BLOCK_SAPLING:
             return patchRusticBlockSapling(classNode);
@@ -1617,6 +1637,65 @@ public enum EnumInputClasses {
 
     private boolean patchPHCBlockPamFruit(ClassNode classNode) {
         return patchBOPBlockBamboo(classNode);
+    }
+
+    private boolean patchPlantsBlockEnumSapling(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchPlantsBlockEnumHarvestBush(ClassNode classNode) {
+        String
+        updateTickMethodName = "func_180650_b",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        iBlockStateClassName = "net/minecraft/block/state/IBlockState",
+        blockClassName = "net/minecraft/block/Block",
+        randomClassName = "java/util/Random";
+        boolean isSuccessful = false;  
+        int ifeqCount = 0;
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {               
+            if (methodNode.name.equals(updateTickMethodName) && methodNode.desc.equals("(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";L" + randomClassName + ";)V")) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IFEQ) {  
+                        ifeqCount++;
+                        if (ifeqCount == 2) {
+                            InsnList nodesList = new InsnList();   
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                            nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                            nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
+                            nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                            methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious().getPrevious(), nodesList); 
+                            isSuccessful = true;                        
+                            break;
+                        }
+                    }
+                }    
+                break;
+            }
+        }
+        return isSuccessful;
+    }
+
+    private boolean patchPlantsBlockBushling(ClassNode classNode) {
+        return patchPlantsBlockEnumHarvestBush(classNode);
+    }
+
+    private boolean patchPlantsBlockEnumNetherHarvest(ClassNode classNode) {
+        return patchPlantsBlockEnumHarvestBush(classNode);
+    }
+
+    private boolean patchPlantsBlockEnumCrop(ClassNode classNode) {
+        return patchPlantsBlockEnumHarvestBush(classNode);
+    }
+
+    private boolean patchPlantsBlockDoubleHarvetBush(ClassNode classNode) {
+        return patchPlantsBlockEnumHarvestBush(classNode);
     }
 
     private boolean patchRusticBlockSapling(ClassNode classNode) {

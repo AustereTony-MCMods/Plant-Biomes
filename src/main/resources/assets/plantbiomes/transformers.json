@@ -6,356 +6,392 @@
     [
       {
         "mod": "Minecraft",
-    	"classes": 
-    	  [
-    	    {
-    	      "id": "mc_block_sapling",    	    
+        "classes": 
+          [
+            {
+              "id": "mc_block_sapling",         
               "class": "BlockSapling",
               "transform": true
-    		},
-    		{
-    		  "id": "mc_block_crops",           	
+            },
+            {
+              "id": "mc_block_crops",               
               "class": "BlockCrops",
               "transform": true
-    		},
-    		{
-			  "id": "mc_block_stem",
+            },
+            {
+              "id": "mc_block_stem",
               "class": "BlockStem",
               "transform": true
-    		},
-			{
-			  "id": "mc_block_grass",
+            },
+            {
+              "id": "mc_block_grass",
               "class": "BlockGrass",
               "transform": true
-    		},
-    		{
-			  "id": "mc_block_mycelium",
+            },
+            {
+              "id": "mc_block_mycelium",
               "class": "BlockMycelium",
               "transform": true
-    		},
-    		{
-			  "id": "mc_block_cocoa",
+            },
+            {
+              "id": "mc_block_cocoa",
               "class": "BlockCocoa",
               "transform": true
-    		},
-    		{
-			  "id": "mc_block_nether_wart",
+            },
+            {
+              "id": "mc_block_nether_wart",
               "class": "BlockNetherWart",
               "transform": true
-    		},
-    		{
-			  "id": "mc_block_vine",
+            },
+            {
+              "id": "mc_block_vine",
               "class": "BlockVine",
               "transform": true
-    		},
-    		{
-			  "id": "mc_block_mushroom",
+            },
+            {
+              "id": "mc_block_mushroom",
               "class": "BlockMushroom",
               "transform": true
-    		},
-    		{
-			  "id": "mc_block_reed",
+            },
+            {
+              "id": "mc_block_reed",
               "class": "BlockReed",
               "transform": true
-    		},
-    		{
-			  "id": "mc_block_cactus",
+            },
+            {
+              "id": "mc_block_cactus",
               "class": "BlockCactus",
               "transform": true
-    		},
-    		{
-			  "id": "mc_biome",
+            },
+            {
+              "id": "mc_biome",
               "class": "Biome",
               "transform": true
-    		},
-    		{
-			  "id": "mc_item_dye",
+            },
+            {
+              "id": "mc_item_dye",
               "class": "ItemDye",
               "transform": true
-    		}
-    	  ]	
+            }
+          ] 
       },
       {
         "mod": "AgriCraft",
-    	"classes":
-    	  [
-    		{
-			  "id": "ac_tile_crop",
+        "classes":
+          [
+            {
+              "id": "ac_tile_crop",
               "class": "TileEntityCrop",
               "transform": true
-    		},
-    		{
-			  "id": "ac_block_crop",
+            },
+            {
+              "id": "ac_block_crop",
               "class": "BlockCrop",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "Biomes O' Plenty",
-    	"classes":
-    	  [
-    		{
-			  "id": "bop_block_sapling",
+        "classes":
+          [
+            {
+              "id": "bop_block_sapling",
               "class": "BlockBOPSapling",
               "transform": true
-    		},
-    		{
-			  "id": "bop_block_grass",
+            },
+            {
+              "id": "bop_block_grass",
               "class": "BlockBOPGrass",
               "transform": true
-    		},
-    		{
-			  "id": "bop_block_bamboo",
+            },
+            {
+              "id": "bop_block_bamboo",
               "class": "BlockBOPBamboo",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "Forestry",
-    	"classes":
-    	  [
-    		{
-			  "id": "f_tile_fruit",
+        "classes":
+          [
+            {
+              "id": "f_tile_fruit",
               "class": "TileFruitPod",
               "transform": true
-    		},
-    		{
-			  "id": "f_block_fruit",
+            },
+            {
+              "id": "f_block_fruit",
               "class": "BlockFruitPod",
               "transform": true
-    		},
-    		{
-			  "id": "f_tile_leaves",
+            },
+            {
+              "id": "f_tile_leaves",
               "class": "TileLeaves",
               "transform": true
-    		},
-    		{
-			  "id": "f_block_leaves",
+            },
+            {
+              "id": "f_block_leaves",
               "class": "BlockForestryLeaves",
               "transform": true
-    		},
-    		{
-			  "id": "f_tile_sapling",
+            },
+            {
+              "id": "f_tile_sapling",
               "class": "TileSapling",
               "transform": true
-    		},
-    		{
-			  "id": "f_block_sapling",
+            },
+            {
+              "id": "f_block_sapling",
               "class": "BlockSapling",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
-	  {
+      {
         "mod": "Dynamic Trees",
-    	"classes":
-    	  [
-    		{
-			  "id": "dt_species",
+        "classes":
+          [
+            {
+              "id": "dt_species",
               "class": "Species",
               "transform": true
-    		},
-    		{
-			  "id": "dt_species_cactus",
+            },
+            {
+              "id": "dt_species_cactus",
               "class": "SpeciesCactus",
               "transform": true
-    		},
-    		{
-			  "id": "dt_block_fruit",
+            },
+            {
+              "id": "dt_block_fruit",
               "class": "BlockFruit",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "Mystical Agriculture",
-    	"classes":
-    	  [
-    		{
-			  "id": "ma_block_crop",
+        "classes":
+          [
+            {
+              "id": "ma_block_crop",
               "class": "BlockMysticalCrop",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "Hunger Overhaul",
-    	"classes":
-    	  [
-    		{
-			  "id": "ho_bonemeal_module",
+        "classes":
+          [
+            {
+              "id": "ho_bonemeal_module",
               "class": "BonemealModule",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "Immersive Engineering",
-    	"classes":
-    	  [
-    		{
-			  "id": "ie_block_crop",
+        "classes":
+          [
+            {
+              "id": "ie_block_crop",
               "class": "BlockIECrop",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "IndustrialCraft 2",
-    	"classes":
-    	  [
-    		{
-			  "id": "ic_block_sapling",
+        "classes":
+          [
+            {
+              "id": "ic_block_sapling",
               "class": "Ic2Sapling",
               "transform": true
-    		},
-    		{
-			 "id": "ic_crop_vanilla",
+            },
+            {
+             "id": "ic_crop_vanilla",
               "class": "CropVanilla",
               "transform": true
-    		},	
-    		{
-			  "id": "ic_crop_card",
+            },  
+            {
+              "id": "ic_crop_card",
               "class": "CropCard",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_potato",
+            },
+            {
+              "id": "ic_crop_potato",
               "class": "CropPotato",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_stickreed",
+            },
+            {
+              "id": "ic_crop_stickreed",
               "class": "CropStickreed",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_hops",
+            },
+            {
+              "id": "ic_crop_hops",
               "class": "CropHops",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_red_wheat",
+            },
+            {
+              "id": "ic_crop_red_wheat",
               "class": "CropRedWheat",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_mushroom",
+            },
+            {
+              "id": "ic_crop_mushroom",
               "class": "CropBaseMushroom",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_venomilla",
+            },
+            {
+              "id": "ic_crop_venomilla",
               "class": "CropVenomilla",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_flower",
+            },
+            {
+              "id": "ic_crop_flower",
               "class": "CropColorFlower",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_metal_common",
+            },
+            {
+              "id": "ic_crop_metal_common",
               "class": "CropBaseMetalCommon",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_metal_uncommon",
+            },
+            {
+              "id": "ic_crop_metal_uncommon",
               "class": "CropBaseMetalUncommon",
               "transform": true
-    		},
-    		{
-			  "id": "ic_crop_eating",
+            },
+            {
+              "id": "ic_crop_eating",
               "class": "CropEating",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
-        "mod": "Pam's HarvestCraft",
-    	"classes":
-    	  [
-    		{
-			  "id": "phc_block_sapling",
+        "mod": "Pam HarvestCraft",
+        "classes":
+          [
+            {
+              "id": "phc_block_sapling",
               "class": "BlockPamSapling",
               "transform": true
-    		},
-    		{
-			  "id": "phc_block_crop",
+            },
+            {
+              "id": "phc_block_crop",
               "class": "BlockPamCrop",
               "transform": true
-    		},
-    		{
-			  "id": "phc_block_fruit",
+            },
+            {
+              "id": "phc_block_fruit",
               "class": "BlockPamFruit",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "Rustic",
-    	"classes":
-    	  [
-    		{
-			  "id": "r_block_sapling",
+        "classes":
+          [
+            {
+              "id": "r_block_sapling",
               "class": "BlockSaplingRustic",
               "transform": true
-    		},
-    		{
-			  "id": "r_block_sapling_apple",
+            },
+            {
+              "id": "r_block_sapling_apple",
               "class": "BlockSaplingApple",
               "transform": true
-    		},
-    		{
-			  "id": "r_block_crop",
+            },
+            {
+              "id": "r_block_crop",
               "class": "BlockStakeCrop",
               "transform": true
-    		},
-    		{
-			  "id": "r_block_apple_seeds",
+            },
+            {
+              "id": "r_block_apple_seeds",
               "class": "BlockAppleSeeds",
               "transform": true
-    		},
-    		{
-			  "id": "r_block_berry_bush",
+            },
+            {
+              "id": "r_block_berry_bush",
               "class": "BlockBerryBush",
               "transform": true
-    		},
-    		{
-			  "id": "r_block_grape",
+            },
+            {
+              "id": "r_block_grape",
               "class": "BlockGrapeStem",
               "transform": true
-    		},
-    		{
-			  "id": "r_block_herb",
+            },
+            {
+              "id": "r_block_herb",
               "class": "BlockHerbBase",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "Thaumcraft",
-    	"classes":
-    	  [
-    		{
-			  "id": "tc_block_sapling",
+        "classes":
+          [
+            {
+              "id": "tc_block_sapling",
               "class": "BlockSaplingTC",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
       },
       {
         "mod": "Twilight Forest",
-    	"classes":
-    	  [
-    		{
-			  "id": "tf_block_sapling",
+        "classes":
+          [
+            {
+              "id": "tf_block_sapling",
               "class": "BlockTFSapling",
               "transform": true
-    		}
-    	  ]
+            }
+          ]
+      },
+      {
+        "mod": "Plants",
+        "classes":
+          [
+            {
+              "id": "p_block_enum_sapling",
+              "class": "BlockEnumSapling",
+              "transform": true
+            },
+            {
+              "id": "p_block_enum_harvest_bush",
+              "class": "BlockEnumHarvestBush",
+              "transform": true
+            },
+            {
+              "id": "p_block_bushling",
+              "class": "BlockBushling",
+              "transform": true
+            },
+            {
+              "id": "p_block_enum_nether_harvest",
+              "class": "BlockEnumNetherHarvest",
+              "transform": true
+            },
+            {
+              "id": "p_block_enum_crop",
+              "class": "BlockEnumCrop",
+              "transform": true
+            },
+            {
+              "id": "p_block_enum_double_harvest_bush",
+              "class": "BlockEnumDoubleHarvestBush",
+              "transform": true
+            }
+          ]
       }
     ]
 }

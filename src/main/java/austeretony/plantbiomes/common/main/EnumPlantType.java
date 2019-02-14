@@ -2,7 +2,7 @@ package austeretony.plantbiomes.common.main;
 
 public enum EnumPlantType {
 
-    STANDARD("various", "standard"),//any plant using Block#updateTick() method for growth mechanic, domain is never used
+    STANDARD("various", "standard"),//any plant using Block#updateTick() method for growth mechanic, modid is never used
     AGRICRAFT_CROP("agricraft", "agricraft_crop"),
     FORESTRY_FRUIT("forestry", "forestry_fruit"),
     FORESTRY_LEAVES("forestry", "forestry_leaves"),
@@ -10,10 +10,10 @@ public enum EnumPlantType {
     DYNAMIC_TREES_SAPLING("dynamictrees", "dynamic_sapling"),
     IC2_CROP("ic2", "ic2_crop");
 
-    public final String domain, type;
+    public final String modId, type;
 
-    EnumPlantType(String domain, String type) {
-        this.domain = domain;
+    EnumPlantType(String modId, String type) {
+        this.modId = modId;
         this.type = type;
     }
 

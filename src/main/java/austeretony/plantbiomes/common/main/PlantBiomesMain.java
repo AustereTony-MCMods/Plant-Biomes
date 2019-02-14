@@ -23,7 +23,7 @@ public class PlantBiomesMain {
     public static final String 
     MODID = "plantbiomes",
     NAME = "Plant Biomes",
-    VERSION = "1.5.0",
+    VERSION = "1.5.3",
     VERSION_CUSTOM = VERSION + ":beta:0",
     GAME_VERSION = "1.12.2",
     VERSIONS_FORGE_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/mod_versions_forge.json",

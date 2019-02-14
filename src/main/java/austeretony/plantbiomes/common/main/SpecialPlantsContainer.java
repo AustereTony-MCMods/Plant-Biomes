@@ -17,7 +17,7 @@ public class SpecialPlantsContainer {
 
     public SpecialPlantsContainer(EnumPlantType enumPlant) {
         this.enumPlant = enumPlant;
-        this.domain = enumPlant.domain;
+        this.domain = enumPlant.modId;
         this.plant = enumPlant.type;
     }
 

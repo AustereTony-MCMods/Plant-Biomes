@@ -124,6 +124,19 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             return patch(basicClass, EnumInputClasses.PHC_BLOCK_CROP);
         case "com.pam.harvestcraft.blocks.growables.BlockPamFruit"://fruits
             return patch(basicClass, EnumInputClasses.PHC_BLOCK_FRUIT);
+            //Plants (tested for 2.10.4)
+        case "shadows.plants2.block.BlockEnumSapling"://saplings
+            return patch(basicClass, EnumInputClasses.PLANTS_BLOCK_ENUM_SAPLING);
+        case "shadows.plants2.block.BlockEnumHarvestBush"://bushes
+            return patch(basicClass, EnumInputClasses.PLANTS_BLOCK_ENUM_HARVEST_BUSH);
+        case "shadows.plants2.block.forgotten.BlockBushling"://busling
+            return patch(basicClass, EnumInputClasses.PLANTS_BLOCK_BUSHLING);
+        case "shadows.plants2.block.BlockEnumNetherHarvest"://???
+            return patch(basicClass, EnumInputClasses.PLANTS_BLOCK_ENUM_NETHER_HARVEST);
+        case "shadows.plants2.block.BlockEnumCrop"://crops
+            return patch(basicClass, EnumInputClasses.PLANTS_BLOCK_ENUM_CROP);
+        case "shadows.plants2.block.BlockEnumDoubleHarvestBush"://double bushes
+            return patch(basicClass, EnumInputClasses.PLANTS_BLOCK_ENUM_DOUBLE_HARVEST_BUSH);
             //Rustic (tested for 1.1.0)
         case "rustic.common.blocks.BlockSaplingRustic"://saplings
             return patch(basicClass, EnumInputClasses.RUSTIC_BLOCK_SAPLING);

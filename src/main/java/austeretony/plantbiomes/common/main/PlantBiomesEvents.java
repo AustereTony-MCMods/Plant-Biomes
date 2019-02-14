@@ -108,7 +108,7 @@ public class PlantBiomesEvents {
     private void addBiomeSettingsTooltip(ResourceLocation itemRegistryName, int itemMeta, List<String> tooltip) {
         BoundMeta boundItem = DataManager.getBoundItemsMapClient().get(itemRegistryName).getMeta(itemMeta);
         PlantData plantData = DataManager.getClient(boundItem.plantRegistryName);
-        if (plantData.getBoundItemRegistryName(boundItem.plantMeta).equals(itemRegistryName)) {
+        if (plantData.hasBoundItem(boundItem.plantMeta) && plantData.getBoundItemRegistryName(boundItem.plantMeta).equals(itemRegistryName)) {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                 if (!DataManager.isSettingsEnabledClient())
                     tooltip.add(TextFormatting.AQUA.toString() + TextFormatting.ITALIC.toString() + I18n.format("pb.tooltip.settingsDisabled"));

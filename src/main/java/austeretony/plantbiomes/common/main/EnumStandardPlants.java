@@ -43,6 +43,16 @@ public enum EnumStandardPlants {
     PHC_SAPLING("phc_block_sapling", "com.pam.harvestcraft.blocks.growables.BlockPamSapling"),
     PHC_CROP("phc_block_crop", "com.pam.harvestcraft.blocks.growables.BlockPamCrop"),
     PHC_FRUIT("phc_block_fruit", "com.pam.harvestcraft.blocks.growables.BlockPamFruit"),
+    //Plants
+    PLANTS_SAPLING("p_block_enum_sapling", "shadows.plants2.block.BlockEnumSapling"),
+    PLANTS_NETHER_SAPLING("p_block_enum_sapling", "shadows.plants2.block.forgotten.BlockNetherSapling"),
+    PLANTS_HARVEST_BUSH("p_block_enum_harvest_bush", "shadows.plants2.block.BlockEnumHarvestBush"),
+    PLANTS_BUSHLING("p_block_bushling", "shadows.plants2.block.forgotten.BlockBushling"),
+    PLANTS_NETHER_HARVEST("p_block_enum_nether_harvest", "shadows.plants2.block.BlockEnumNetherHarvest"),
+    PLANTS_CROP("p_block_enum_crop", "shadows.plants2.block.BlockEnumCrop"),
+    PLANTS_DOUBLE_HARVEST_BUSH("p_block_enum_double_harvest_bush", "shadows.plants2.block.BlockEnumDoubleHarvestBush"),
+    PLANTS_VINE("mc_block_vine", "shadows.plants2.block.BlockCustomVine"),
+    PLANTS_CRYSTAL_SAPLING("p_block_enum_sapling", "shadows.plants2.block.forgotten.BlockCrystal$Sapling"),
     //Rustic
     RUSTIC_SAPLING("r_block_sapling", "rustic.common.blocks.BlockSaplingRustic"),
     RUSTIC_APPLE_SAPLING("r_block_sapling_apple", "rustic.common.blocks.crops.BlockSaplingApple"),
@@ -71,26 +81,26 @@ public enum EnumStandardPlants {
     //Twilight Forest
     TF_SAPLING("tf_block_sapling", "twilightforest.block.BlockTFSapling");
 
-    public final String transformedBlockId, className;
+    public final String transformedClassId, className;
 
-    private boolean enabled = true;
+    private boolean supported = true;
 
     EnumStandardPlants(String id, String className) {
-        this.transformedBlockId = id;
+        this.transformedClassId = id;
         this.className = className;
     }
 
-    public boolean isEnabled() {
-        return this.enabled;
+    public boolean isSupported() {
+        return this.supported;
     }
 
-    public void setEnabled(boolean flag) {
-        this.enabled = flag;
+    public void setSupported(boolean flag) {
+        this.supported = flag;
     }
 
     public static EnumStandardPlants identify(Block block) {
         for (EnumStandardPlants enumPlant : values())
-            if (enumPlant.isEnabled() && enumPlant.className.equals(block.getClass().getName()))
+            if (enumPlant.isSupported() && enumPlant.className.equals(block.getClass().getName()))
                 return enumPlant;   
         return null;
     }

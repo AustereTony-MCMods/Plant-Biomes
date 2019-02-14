@@ -20,21 +20,21 @@ public enum EnumSpecialPlants {
 
     public static final int SPECIALS_META = 16;
 
-    public final String transformedBlockId, tileClassName;
+    public final String transformedClassId, tileClassName;
 
-    private boolean enabled = true;
+    private boolean supported = true;
 
     EnumSpecialPlants(String id, String tileClassName) {
-        this.transformedBlockId = id;
+        this.transformedClassId = id;
         this.tileClassName = tileClassName;
     }
 
-    public boolean isEnabled() {
-        return this.enabled;
+    public boolean isSupported() {
+        return this.supported;
     }
 
-    public void setEnabled(boolean flag) {
-        this.enabled = flag;
+    public void setSupported(boolean flag) {
+        this.supported = flag;
     }
 
     public boolean getData(NBTTagCompound tagCompound, World world, BlockPos pos) {
@@ -205,7 +205,7 @@ public enum EnumSpecialPlants {
     public static EnumSpecialPlants identify(TileEntity tile) {
         String className = tile.getClass().getName();
         for (EnumSpecialPlants enumPlant : values())
-            if (enumPlant.isEnabled() && enumPlant.tileClassName.equals(className))
+            if (enumPlant.isSupported() && enumPlant.tileClassName.equals(className))
                 return enumPlant;
         return null;
     }

@@ -307,7 +307,6 @@ public enum EnumChatMessages {
             biomeName.getStyle().setColor(TextFormatting.WHITE);  
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName));           
             break;
-            //TODO
         case COMMAND_PB_ALLOW_GROW_OVER_TIME:
             msg1 = new TextComponentTranslation("pb.command.allowGOT");
             msg2 = new TextComponentString(": ");

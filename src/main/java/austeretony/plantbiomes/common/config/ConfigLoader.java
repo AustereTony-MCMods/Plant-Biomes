@@ -63,19 +63,19 @@ public class ConfigLoader {
                 return;
             }
             if (EnumConfigSettings.TRANSFORMERS_FILE.initBoolean(externalConfig)) {
-                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer settings enabled!");
+                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer config enabled!");
                 EnumInputClasses.map();          
                 loadExternalTransformerSettings();
             } else {
-                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer settings disabled!");
+                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer config disabled!");
             }
         } else {
             if (EnumConfigSettings.TRANSFORMERS_FILE.initBoolean(internalConfig)) {
-                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer settings enabled!");
+                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer config enabled!");
                 EnumInputClasses.map();             
                 loadInternalTransformerSettings();
             } else {
-                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer settings disabled!");
+                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer config disabled!");
             }
         }
     }
@@ -97,7 +97,7 @@ public class ConfigLoader {
         if (Files.exists(configPath)) {
             JsonObject transformersConfig;
             try {                   
-                transformersConfig = (JsonObject) PBUtils.getExternalJsonData(EXT_TRANSFORMERS_FILE);       
+                transformersConfig = updateTransformers();       
             } catch (IOException exception) {  
                 PlantBiomesClassTransformer.CORE_LOGGER.error("External transformers configuration file damaged!");
                 exception.printStackTrace();
@@ -114,6 +114,81 @@ public class ConfigLoader {
                 exception.printStackTrace();
             }                       
         }
+    }
+
+    private static JsonObject updateTransformers() throws IOException {
+        JsonObject    
+        internalFile = (JsonObject) PBUtils.getInternalJsonData("assets/plantbiomes/transformers.json"),
+        externalFileOld = (JsonObject) PBUtils.getExternalJsonData(EXT_TRANSFORMERS_FILE),
+        externalFileNew;
+        JsonElement versionElement = externalFileOld.get("version");
+        if (versionElement == null || UpdateChecker.isOutdated(versionElement.getAsString(), PlantBiomesMain.VERSION_CUSTOM)) {
+            PlantBiomesClassTransformer.CORE_LOGGER.error("Updating external transformers config...");
+            externalFileNew = new JsonObject();
+            externalFileNew.add("version", new JsonPrimitive(PlantBiomesMain.VERSION_CUSTOM));
+            JsonArray 
+            intModsArr = internalFile.get("settings").getAsJsonArray(),
+            extModsArr = externalFileOld.get("settings").getAsJsonArray(),
+            newModsArr = new JsonArray(),
+            newClassesArr, intClassesArr, extClassesArr;
+            int 
+            i = 0, 
+            j = 0,
+            k = 0,
+            l = 0,
+            intModsSize = intModsArr.size(), 
+            extModsSize = extModsArr.size(),
+            intClassesSize, extClassesSize;
+            JsonElement[] 
+                    intMods = new JsonElement[intModsSize],
+                    extMods = new JsonElement[extModsSize],
+                    intClasses, extClasses;
+            for (JsonElement e : intModsArr)
+                intMods[i++] = e;      
+            for (JsonElement e : extModsArr)
+                extMods[j++] = e;    
+            JsonObject oIntMod, oExtMod, newExtMod;
+            for (k = 0; k < intModsSize; k++) {
+                i = 0;
+                j = 0;
+                l = 0;
+                oIntMod = (JsonObject) intMods[k];
+                if (k < extModsSize) {
+                    newExtMod = new JsonObject();
+                    newClassesArr = new JsonArray();
+                    oExtMod = (JsonObject) extMods[k];  
+                    intClassesArr = oIntMod.get("classes").getAsJsonArray();
+                    extClassesArr = oExtMod.get("classes").getAsJsonArray();
+                    intClassesSize = intClassesArr.size();
+                    extClassesSize = extClassesArr.size();
+                    intClasses = new JsonElement[intClassesSize];
+                    extClasses = new JsonElement[extClassesSize];
+                    for (JsonElement e : intClassesArr)
+                        intClasses[i++] = e;  
+                    for (JsonElement e : extClassesArr)
+                        extClasses[j++] = e;
+                    for (l = 0; l < intClassesSize; l++) {
+                        if (l < extClassesSize)
+                            newClassesArr.add(extClasses[l]);
+                        else
+                            newClassesArr.add(intClasses[l]);
+                    } 
+                    newExtMod.add("mod", new JsonPrimitive(oExtMod.get("mod").getAsString()));
+                    newExtMod.add("classes", newClassesArr);
+                    newModsArr.add(newExtMod);                    
+                } else {
+                    newModsArr.add(intMods[k]);
+                }
+            }
+            externalFileNew.add("_comment0", new JsonPrimitive(internalFile.get("_comment0").getAsString()));
+            externalFileNew.add("_comment1", new JsonPrimitive(internalFile.get("_comment1").getAsString()));
+            externalFileNew.add("_comment2", new JsonPrimitive(internalFile.get("_comment2").getAsString()));
+            externalFileNew.add("settings", newModsArr);
+            PBUtils.createExternalJsonFile(EXT_TRANSFORMERS_FILE, externalFileNew);
+            return externalFileNew;
+        }
+        PlantBiomesClassTransformer.CORE_LOGGER.error("External transformers config up-to-date!");
+        return externalFileOld;
     }
 
     private static void loadTransformerSettings(JsonObject transformersConfig) { 
@@ -143,14 +218,15 @@ public class ConfigLoader {
         }
         //if some class transformer disabled, disable appropriate plant identification (plant will not be supported)
         for (EnumStandardPlants enumPlant : EnumStandardPlants.values())
-            if (EnumInputClasses.classesById.containsKey(enumPlant.transformedBlockId)) 
-                enumPlant.setEnabled(EnumInputClasses.classesById.get(enumPlant.transformedBlockId).shouldPatch());
+            if (EnumInputClasses.classesById.containsKey(enumPlant.transformedClassId)) 
+                enumPlant.setSupported(EnumInputClasses.classesById.get(enumPlant.transformedClassId).shouldPatch());
         for (EnumSpecialPlants enumPlant : EnumSpecialPlants.values())
-            if (EnumInputClasses.classesById.containsKey(enumPlant.transformedBlockId)) 
-                enumPlant.setEnabled(EnumInputClasses.classesById.get(enumPlant.transformedBlockId).shouldPatch());
+            if (EnumInputClasses.classesById.containsKey(enumPlant.transformedClassId)) 
+                enumPlant.setSupported(EnumInputClasses.classesById.get(enumPlant.transformedClassId).shouldPatch());
     }
 
     public static void loadOverallSettings() {
+        PlantBiomesMain.LOGGER.error("Loading overall settings and data...");
         JsonObject internalConfig, internalSettings;
         try {       
             internalConfig = (JsonObject) PBUtils.getInternalJsonData("assets/plantbiomes/config.json");  
@@ -202,6 +278,7 @@ public class ConfigLoader {
         }
         JsonElement versionElement = externalConfigOld.get("version");
         if (versionElement == null || UpdateChecker.isOutdated(versionElement.getAsString(), PlantBiomesMain.VERSION_CUSTOM)) {
+            PlantBiomesMain.LOGGER.error("Updating external config file...");
             externalConfigNew = new JsonObject();
             externalConfigNew.add("version", new JsonPrimitive(PlantBiomesMain.VERSION_CUSTOM));
             Map<String, JsonElement> 
@@ -236,6 +313,7 @@ public class ConfigLoader {
             }
             return externalConfigNew;
         }
+        PlantBiomesMain.LOGGER.error("External config up-to-date!");
         return externalConfigOld;
     }
 
@@ -270,7 +348,7 @@ public class ConfigLoader {
             }
             plantObject = plantEntry.getValue().getAsJsonObject();
             enumPlantType = EnumPlantType.getOf(plantObject.get("type").getAsString());
-            if (enumPlantType != EnumPlantType.STANDARD && !Loader.isModLoaded(enumPlantType.domain)) continue;
+            if (enumPlantType != EnumPlantType.STANDARD && !Loader.isModLoaded(enumPlantType.modId)) continue;
             registryName = new ResourceLocation(plantEntry.getKey());
             for (Map.Entry<String, JsonElement> metaEntry : plantObject.entrySet()) { 
                 if (metaEntry.getKey().equals("type") || metaEntry.getKey().equals("main_meta")) continue;

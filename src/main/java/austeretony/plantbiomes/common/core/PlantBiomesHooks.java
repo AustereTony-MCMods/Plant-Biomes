@@ -54,17 +54,24 @@ public class PlantBiomesHooks {
         }
         return true;
     }
-    
-    //TODO Make it more flexible, change returned integer according to plant type.
+
     public static int isGrowthAllowedTickSpecialInt(World world, BlockPos pos, String id, EnumPlantType plantType) {
+        int allowed = 0;
+        switch (plantType) {
+        case AGRICRAFT_CROP:
+            allowed = 1;
+            break;
+        default:
+            break;
+        }
         if (DataManager.existSpecial(id, plantType)) {
             if (DataManager.getSpecial(id, plantType).canGrowOverTime(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
-                return 1;
+                return allowed;
             if (EnumConfigSettings.SMOKE_OVER_TIME.isEnabled())
                 world.playEvent(2000, pos, 4);
             return 0;           
         }
-        return 1;
+        return allowed;
     }
 
     public static boolean isGrowthAllowedWithBonemealSpecial(World world, BlockPos pos, String id, EnumPlantType plantType) {
@@ -78,16 +85,24 @@ public class PlantBiomesHooks {
         return true;
     }
 
-    //TODO Make it more flexible, change returned float according to plant type.
     public static float isGrowthAllowedWithBonemealSpecialFloat(World world, BlockPos pos, String id, EnumPlantType plantType) {
+        float allowed = 0.0F;
+        switch (plantType) {
+        case FORESTRY_FRUIT:
+        case FORESTRY_LEAVES:
+            allowed = 0.5F;
+            break;
+        default:
+            break;
+        }
         if (DataManager.existSpecial(id, plantType)) {
             if (DataManager.getSpecial(id, plantType).canGrowWithBonemeal(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
-                return 0.5F;
+                return allowed;
             if (EnumConfigSettings.SMOKE_ON_BONEMEAL.isEnabled())
                 world.playEvent(2000, pos, 4);  
             return 0.0F;
         }
-        return 0.5F;
+        return allowed;
     }
 
     public static void showDeniedBiomeOnBonemealUseSpecial(World world, BlockPos pos, String id, EntityPlayer player, EnumPlantType plantType) {

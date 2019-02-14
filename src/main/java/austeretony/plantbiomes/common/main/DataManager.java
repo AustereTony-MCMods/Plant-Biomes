@@ -52,7 +52,7 @@ public class DataManager {
 
     public static void checkForSpecialPlantsServer() {
         for (EnumPlantType enumPlant : EnumPlantType.values()) {
-            if (enumPlant != EnumPlantType.STANDARD && Loader.isModLoaded(enumPlant.domain)) {
+            if (enumPlant != EnumPlantType.STANDARD && Loader.isModLoaded(enumPlant.modId)) {
                 if (specialPlantsServer == null)
                     specialPlantsServer = new HashMap<String, SpecialPlantsContainer>();
                 specialPlantsServer.put(enumPlant.type, new SpecialPlantsContainer(enumPlant));
@@ -70,7 +70,7 @@ public class DataManager {
     @SideOnly(Side.CLIENT)
     public static void checkForSpecialPlantsClient() {
         for (EnumPlantType enumPlant : EnumPlantType.values()) {
-            if (enumPlant != EnumPlantType.STANDARD && Loader.isModLoaded(enumPlant.domain)) {
+            if (enumPlant != EnumPlantType.STANDARD && Loader.isModLoaded(enumPlant.modId)) {
                 if (specialPlantsClient == null)
                     specialPlantsClient = new HashMap<String, SpecialPlantsContainer>();
                 specialPlantsClient.put(enumPlant.type, new SpecialPlantsContainer(enumPlant));
