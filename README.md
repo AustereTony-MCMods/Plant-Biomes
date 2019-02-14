@@ -1,3 +1,3 @@
 # Plant-Biomes
-Create biomes blacklists, whitelists for every plant to manage its growth.
+Utility used to create biomes whitelists or blacklists for any plant.
 Project page: https://minecraft.curseforge.com/projects/plant-biomes

@@ -63,6 +63,14 @@ Pam's HarvestCraft
 - com.pam.harvestcraft.blocks.growables.BlockPamCrop
 - com.pam.harvestcraft.blocks.growables.BlockPamFruit
 
+Plants 
+- shadows.plants2.block.BlockEnumSapling
+- shadows.plants2.block.BlockEnumHarvestBush
+- shadows.plants2.block.forgotten.BlockBushling
+- shadows.plants2.block.BlockEnumNetherHarvest
+- shadows.plants2.block.BlockEnumCrop
+- shadows.plants2.block.BlockEnumDoubleHarvestBush
+
 Rustic
 - rustic.common.blocks.BlockSaplingRustic
 - rustic.common.blocks.crops.BlockSaplingApple

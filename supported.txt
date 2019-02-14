@@ -31,6 +31,12 @@ Supported modded plants:
  - crops
  - saplings
  - fruits
++Plants (tested for 2.10.4)
+ - saplings
+ - bushlings
+ - crops
+ - harvestable plants
+ - vines
 +Rustic (tested for 1.1.0)
  - saplings
  - crops
