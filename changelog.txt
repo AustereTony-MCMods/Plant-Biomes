@@ -1,3 +1,7 @@
+1.5.4
++Added support for Oreberries mod ore bushes.
++Custom update checker disbled by default.
++Code cleanup.
 1.5.3b
 +Added transformers settings external file verification and updating on new mod version loading.
 +Added support for Plants mod saplings, bushlings, crops and harvestable plants.

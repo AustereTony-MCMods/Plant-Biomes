@@ -58,6 +58,9 @@ IndustrialCraft 2
 Mystical Agriculture
 - com.blakebr0.mysticalagriculture.blocks.crop.BlockMysticalCrop
 
+Oreberries
+- josephcsible.oreberries.BlockOreberryBush
+
 Pam's HarvestCraft
 - com.pam.harvestcraft.blocks.growables.BlockPamSapling
 - com.pam.harvestcraft.blocks.growables.BlockPamCrop

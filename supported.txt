@@ -27,6 +27,8 @@ Supported modded plants:
  - crops 
 +Mystical Agriculture (tested for 1.7.1)
  - crops
++Oreberries (tested for 0.5.0)
+ - bushes
 +Pam's HarvestCraft (tested for 1.12.2zb)
  - crops
  - saplings
