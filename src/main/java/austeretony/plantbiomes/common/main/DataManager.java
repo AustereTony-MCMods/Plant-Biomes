@@ -2,15 +2,18 @@ package austeretony.plantbiomes.common.main;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import austeretony.plantbiomes.client.render.OverlayRenderer;
 import austeretony.plantbiomes.common.config.ConfigLoader;
 import austeretony.plantbiomes.common.network.client.CPSetOverlayStatus;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -101,25 +104,50 @@ public class DataManager {
         return hasPlantsDataServer && plantsDataServer.containsKey(registryName);
     }
 
+    public static boolean existServer(Block block) {
+        return existServer(block.getRegistryName());
+    }
+
+    public static boolean existLatestServer() {
+        return existServer(latestPlantServer.registryName);
+    }
+
+    public static boolean existMetaLatestServer() {
+        return existServer(latestPlantServer.registryName) && getServer(latestPlantServer.registryName).hasMetaData(latestPlantServer.meta);
+    }
+
+    public static boolean existSpecialServer(String specialName, EnumPlantType enumPlant) {
+        return specialPlantsServer.containsKey(enumPlant.type) && specialPlantsServer.get(enumPlant.type).contains(specialName);
+    }
+
     @SideOnly(Side.CLIENT)
     public static boolean existClient(ResourceLocation registryName) {
         return hasPlantsDataClient && plantsDataClient.containsKey(registryName);
     }
 
-    public static boolean exist(Block block) {
-        return existServer(block.getRegistryName());
+    public static PlantData getServer(ResourceLocation registryName) {
+        return plantsDataServer.get(registryName);
     }
 
-    public static boolean existLatest() {
-        return existServer(latestPlantServer.registryName);
+    public static PlantData getServer(Block block) {
+        return getServer(block.getRegistryName());
     }
 
-    public static boolean existMetaLatest() {
-        return existServer(latestPlantServer.registryName) && getServer(latestPlantServer.registryName).hasMetaData(latestPlantServer.meta);
+    public static PlantData getLatestServer() {
+        return getServer(latestPlantServer.registryName);
     }
 
-    public static boolean existSpecial(String specialName, EnumPlantType enumPlant) {
-        return specialPlantsServer.containsKey(enumPlant.type) && specialPlantsServer.get(enumPlant.type).contains(specialName);
+    public static PlantData getSpecialServer(String specialName, EnumPlantType enumPlant) {
+        return getServer(specialPlantsServer.get(enumPlant.type).get(specialName));
+    }
+
+    public static MetaPlant getMetaLatestServer() {
+        return getServer(latestPlantServer.registryName).getMeta(latestPlantServer.meta);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static PlantData getClient(ResourceLocation registryName) {
+        return plantsDataClient.get(registryName);
     }
 
     public static void createMetaServer(EnumPlantType enumType, ResourceLocation registryName, int meta, String specialName, String unlocalizedName) {   
@@ -135,7 +163,7 @@ public class DataManager {
         hasPlantsDataServer = true;
     }
 
-    public static void createMetaLatest() {
+    public static void createMetaLatestServer() {
         createMetaServer(
                 latestPlantServer.enumType,
                 latestPlantServer.registryName,
@@ -158,6 +186,35 @@ public class DataManager {
         hasPlantsDataClient = true;
     }
 
+    public static void removeServer(ResourceLocation registryName) {
+        PlantData plantData = plantsDataServer.remove(registryName);
+        hasPlantsDataServer = !plantsDataServer.isEmpty();
+    }
+
+    public static void removeMetaLatestServer() {
+        getServer(latestPlantServer.registryName).removeMeta(latestPlantServer.meta);
+        if (latestPlantServer.enumType != EnumPlantType.STANDARD && hasSpecialPlantsServer)
+            specialPlantsServer.get(latestPlantServer.enumType.type).remove(latestPlantServer.specialName);
+        if (!getServer(latestPlantServer.registryName).hasData())
+            removeServer(latestPlantServer.registryName);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void removeClient(ResourceLocation registryName) {
+        PlantData plantData = plantsDataClient.remove(registryName);
+        hasPlantsDataClient = !plantsDataClient.isEmpty();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void removeMetaClient(ResourceLocation registryName, int meta) {
+        PlantData plantData = getClient(registryName);
+        if (plantData.enumType != EnumPlantType.STANDARD && hasSpecialPlantsClient)
+            specialPlantsClient.get(plantData.enumType.type).remove(plantData.getMeta(meta).specialName);
+        plantData.removeMeta(meta);
+        if (!getClient(registryName).hasData())
+            removeClient(registryName);
+    }
+
     public static void clearDataServer() {
         plantsDataServer.clear();
         hasPlantsDataServer = false;
@@ -173,60 +230,6 @@ public class DataManager {
         if (hasSpecialPlantsClient)
             for (SpecialPlantsContainer container : specialPlantsClient.values())
                 container.clear();
-    }
-
-    public static PlantData getServer(ResourceLocation registryName) {
-        return plantsDataServer.get(registryName);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static PlantData getClient(ResourceLocation registryName) {
-        return plantsDataClient.get(registryName);
-    }
-
-    public static PlantData get(Block block) {
-        return getServer(block.getRegistryName());
-    }
-
-    public static PlantData getLatest() {
-        return getServer(latestPlantServer.registryName);
-    }
-
-    public static PlantData getSpecial(String specialName, EnumPlantType enumPlant) {
-        return getServer(specialPlantsServer.get(enumPlant.type).get(specialName));
-    }
-
-    public static MetaPlant getMetaLatest() {
-        return getServer(latestPlantServer.registryName).getMeta(latestPlantServer.meta);
-    }
-
-    public static void removeServer(ResourceLocation registryName) {
-        PlantData plantData = plantsDataServer.remove(registryName);
-        hasPlantsDataServer = plantsDataServer.isEmpty();
-    }
-
-    public static void removeMetaLatest() {
-        getServer(latestPlantServer.registryName).removeMeta(latestPlantServer.meta);
-        if (latestPlantServer.enumType != EnumPlantType.STANDARD && hasSpecialPlantsServer)
-            specialPlantsServer.get(latestPlantServer.enumType.type).remove(latestPlantServer.specialName);
-        if (!getServer(latestPlantServer.registryName).hasData())
-            removeServer(latestPlantServer.registryName);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void removeClient(ResourceLocation registryName) {
-        PlantData plantData = plantsDataClient.remove(registryName);
-        hasPlantsDataClient = plantsDataClient.isEmpty();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void removeMetaClient(ResourceLocation registryName, int meta) {
-        PlantData plantData = getClient(registryName);
-        if (plantData.enumType != EnumPlantType.STANDARD && hasSpecialPlantsClient)
-            specialPlantsClient.get(plantData.enumType.type).remove(plantData.getMeta(meta).specialName);
-        plantData.removeMeta(meta);
-        if (!getClient(registryName).hasData())
-            removeClient(registryName);
     }
 
     public static ResourceLocation getBiomeRegistryName(World world, BlockPos pos) {
@@ -275,7 +278,7 @@ public class DataManager {
     public static void clearBoundItemsClient() {
         boundItems.clear();
     }
-    
+
     @SideOnly(Side.CLIENT)
     public static boolean isSettingsEnabledClient() {
         return settingsEnabledClient;
@@ -334,5 +337,19 @@ public class DataManager {
 
     public static void setConfigModeEnabled(boolean isEnabled) {            
         isConfigModeEnabled = isEnabled;
+    }
+
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+        if(!worldIn.isRemote && ageAndLightOkayToGrow(worldIn, pos, state) && ForgeHooks.onCropsGrowPre(worldIn, pos, state, rand.nextDouble() < 0.0D)) {
+            grow(worldIn, pos, state);
+            ForgeHooks.onCropsGrowPost(worldIn, pos, state, worldIn.getBlockState(pos));
+        }
+    }
+
+    private void grow(World worldIn, BlockPos pos, IBlockState state) {        
+    }
+
+    private boolean ageAndLightOkayToGrow(World worldIn, BlockPos pos, IBlockState state) {
+        return false;
     }
 }

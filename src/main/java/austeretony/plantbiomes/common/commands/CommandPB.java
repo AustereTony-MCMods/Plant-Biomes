@@ -44,21 +44,23 @@ public class CommandPB extends CommandBase {
         EnumCommandPBArgs arg;
         if (args.length != 1 || (arg = EnumCommandPBArgs.get(args[0])) == null)        
             throw new WrongUsageException(this.getUsage(sender));   
-        EntityPlayer player = getCommandSenderAsPlayer(sender);  
+        EntityPlayerMP player = getCommandSenderAsPlayer(sender);  
         switch(arg) {
         case HELP:
             EnumChatMessages.COMMAND_PB_HELP.sendMessage(player);
             break;
         case ENABLE:
             DataManager.setSettingsEnabled(true);
-            this.save();
-            NetworkHandler.sendTo(new CPSyncSettings(), (EntityPlayerMP) player);
+            if (EnumConfigSettings.EXTERNAL_CONFIG.isEnabled())
+                this.save();
+            NetworkHandler.sendTo(new CPSyncSettings(), player);
             EnumChatMessages.COMMAND_PB_ENABLE.sendMessage(player);
             break;
         case DISABLE:
             DataManager.setSettingsEnabled(false);
-            this.save();
-            NetworkHandler.sendTo(new CPSyncSettings(), (EntityPlayerMP) player);
+            if (EnumConfigSettings.EXTERNAL_CONFIG.isEnabled())
+                this.save();
+            NetworkHandler.sendTo(new CPSyncSettings(), player);
             EnumChatMessages.COMMAND_PB_DISABLE.sendMessage(player);
             break;  
         case STATUS:
@@ -67,13 +69,13 @@ public class CommandPB extends CommandBase {
         case ENABLE_CONFIG_MODE:
             if (!this.validAction(player, false, false, false, false)) break;
             DataManager.setConfigModeEnabled(true);
-            EnumChatMessages.COMMAND_PB_ENABLE_CONFIG.sendMessage(player);
+            EnumChatMessages.COMMAND_PB_ENABLE_CONFIGURATION_MODE.sendMessage(player);
             break;
         case DISABLE_CONFIG_MODE:
             if (!this.validAction(player, false, false, false, false)) break;
             DataManager.setConfigModeEnabled(false);
             DataManager.latestPlantServer = null;
-            EnumChatMessages.COMMAND_PB_DISABLE_CONFIG.sendMessage(player);
+            EnumChatMessages.COMMAND_PB_DISABLE_CONFIGURATION_MODE.sendMessage(player);
             break;  
         case ENABLE_OVERLAY:
             if (!EnumConfigSettings.SETTINGS_OVERLAY.isEnabled()) {
@@ -103,90 +105,90 @@ public class CommandPB extends CommandBase {
             break;
         case DENY:
             if (!this.validAction(player, true, true, false, false))  break;
-            if (!DataManager.existMetaLatest())
-                DataManager.createMetaLatest();
-            DataManager.getLatest().denyBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName);
+            if (!DataManager.existMetaLatestServer())
+                DataManager.createMetaLatestServer();
+            DataManager.getLatestServer().denyBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_DENY.sendMessage(player);
             break;
         case ALLOW:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().allowBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName);
+            DataManager.getLatestServer().allowBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_ALLOW.sendMessage(player);
             break;
         case DENY_GLOBAL:
             if (!this.validAction(player, true, true, false, false)) break;
-            if (!DataManager.existMetaLatest())
-                DataManager.createMetaLatest();
-            DataManager.getLatest().setDeniedGlobal(DataManager.latestPlantServer.meta, true);
+            if (!DataManager.existMetaLatestServer())
+                DataManager.createMetaLatestServer();
+            DataManager.getLatestServer().setDeniedGlobal(DataManager.latestPlantServer.meta, true);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_DENY_GLOBAL.sendMessage(player);
             break;
         case ALLOW_GLOBAL:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().setDeniedGlobal(DataManager.latestPlantServer.meta, false);
+            DataManager.getLatestServer().setDeniedGlobal(DataManager.latestPlantServer.meta, false);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_ALLOW_GLOBAL.sendMessage(player);
             break;
         case ADD_VALID:
             if (!this.validAction(player, true, true, false, false)) break;
-            if (!DataManager.existMetaLatest())
-                DataManager.createMetaLatest();
-            DataManager.getLatest().addValidBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName);
+            if (!DataManager.existMetaLatestServer())
+                DataManager.createMetaLatestServer();
+            DataManager.getLatestServer().addValidBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_ADD_VALID.sendMessage(player);
             break;
         case REMOVE_VALID:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().removeValidBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName);
+            DataManager.getLatestServer().removeValidBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_REMOVE_VALID.sendMessage(player);
             break;
         case ALLOW_GROW_OVER_TIME:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().setCanGrowOverTime(DataManager.latestPlantServer.meta, true);
+            DataManager.getLatestServer().setCanGrowOverTime(DataManager.latestPlantServer.meta, true);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_ALLOW_GROW_OVER_TIME.sendMessage(player);
             break;   
         case DENY_GROW_OVER_TIME:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().setCanGrowOverTime(DataManager.latestPlantServer.meta, false);
+            DataManager.getLatestServer().setCanGrowOverTime(DataManager.latestPlantServer.meta, false);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_DENY_GROW_OVER_TIME.sendMessage(player);
             break;   
         case ALLOW_GROW_WITH_BONEMEAL:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().setCanGrowWithBonemeal(DataManager.latestPlantServer.meta, true);
+            DataManager.getLatestServer().setCanGrowWithBonemeal(DataManager.latestPlantServer.meta, true);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_ALLOW_GROW_WITH_BONEMEAL.sendMessage(player);
             break;   
         case DENY_GROW_WITH_BONEMEAL:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().setCanGrowWithBonemeal(DataManager.latestPlantServer.meta, false);
+            DataManager.getLatestServer().setCanGrowWithBonemeal(DataManager.latestPlantServer.meta, false);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_DENY_GROW_WITH_BONEMEAL.sendMessage(player);
             break;            
         case SET_MAIN:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().setMainMeta(DataManager.latestPlantServer.meta);
+            DataManager.getLatestServer().setMainMeta(DataManager.latestPlantServer.meta);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_SET_MAIN.sendMessage(player);
             break;
         case RESET_MAIN:
             if (!this.validAction(player, true, true, false, false)) break;
-            DataManager.getLatest().resetMainMeta();
+            DataManager.getLatestServer().resetMainMeta();
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_RESET_MAIN.sendMessage(player);
@@ -198,38 +200,36 @@ public class CommandPB extends CommandBase {
                 break;
             }
             ItemStack itemStack = player.getHeldItemMainhand();
-            DataManager.getLatest().setBoundItem(DataManager.latestPlantServer.meta, itemStack.getItem().getRegistryName(), itemStack.getMetadata());
+            DataManager.getLatestServer().setBoundItem(DataManager.latestPlantServer.meta, itemStack.getItem().getRegistryName(), itemStack.getMetadata());
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_BIND_ITEM.sendMessage(player);
             break;
         case UNBIND_ITEM:
             if (!this.validAction(player, true, true, true, false)) break;
-            DataManager.getLatest().resetBoundItem(DataManager.latestPlantServer.meta);
+            DataManager.getLatestServer().resetBoundItem(DataManager.latestPlantServer.meta);
             this.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_UNBIND_ITEM.sendMessage(player);
             break;
         case CLEAR_DENIED:
             if (!this.validAction(player, true, false, true, false)) break;
-            DataManager.getLatest().clearDeniedBiomes(DataManager.latestPlantServer.meta);
+            DataManager.getLatestServer().clearDeniedBiomes(DataManager.latestPlantServer.meta);
             ConfigLoader.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_CLEAR_DENIED.sendMessage(player);                                                   
             break;
         case CLEAR_VALID:
             if (!this.validAction(player, true, false, true, false)) break;
-            DataManager.getLatest().clearValidBiomes(DataManager.latestPlantServer.meta);
+            DataManager.getLatestServer().clearValidBiomes(DataManager.latestPlantServer.meta);
             ConfigLoader.save();
             this.sync(player, CPSyncPlantsData.EnumAction.SYNC_LATEST);
             EnumChatMessages.COMMAND_PB_CLEAR_VALID.sendMessage(player);                                                   
             break;
         case CLEAR_LATEST:
             if (!this.validAction(player, true, false, true, false)) break;
-            DataManager.removeMetaLatest();//TODO This cause settings mess up (map data disappear), need to investigate why.
-            ConfigLoader.save();
-            DataManager.initServerData();//Fast fix. 
-            this.sync(player, CPSyncPlantsData.EnumAction.SYNC_ALL);//REMOVE_LATEST should be used instead, but it will break overlay render.
+            DataManager.removeMetaLatestServer(); 
+            this.sync(player, CPSyncPlantsData.EnumAction.REMOVE_LATEST);
             EnumChatMessages.COMMAND_PB_CLEAR_LATEST.sendMessage(player);                                                   
             break;
         case CLEAR_ALL:
@@ -268,7 +268,7 @@ public class CommandPB extends CommandBase {
         } else if (checkLatest && DataManager.latestPlantServer == null) {   
             EnumChatMessages.COMMAND_PB_ERR_NO_LATEST.sendMessage(player);
             return false;
-        } else if (checkDataLatest && !DataManager.existMetaLatest()) {
+        } else if (checkDataLatest && !DataManager.existMetaLatestServer()) {
             EnumChatMessages.COMMAND_PB_ERR_NO_DATA_FOR_LATEST.sendMessage(player);
             return false;
         } else if (checkDataAll && DataManager.getDataServer().isEmpty()) {
@@ -283,12 +283,12 @@ public class CommandPB extends CommandBase {
             ConfigLoader.save();
     }
 
-    private void sync(EntityPlayer player, CPSyncPlantsData.EnumAction enumAction) {
+    private void sync(EntityPlayerMP player, CPSyncPlantsData.EnumAction enumAction) {
         if (EnumConfigSettings.SETTINGS_TOOLTIPS.isEnabled()) {
             for (EntityPlayerMP playerMP : CommonReference.getPlayersListServer())
                 NetworkHandler.sendTo(new CPSyncPlantsData(enumAction), playerMP);
         } else if (EnumConfigSettings.SETTINGS_OVERLAY.isEnabled()) {
-            NetworkHandler.sendTo(new CPSyncPlantsData(enumAction), (EntityPlayerMP) player);
+            NetworkHandler.sendTo(new CPSyncPlantsData(enumAction), player);
         }
     }
 }

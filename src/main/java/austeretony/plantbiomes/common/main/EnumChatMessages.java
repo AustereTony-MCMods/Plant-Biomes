@@ -18,18 +18,13 @@ public enum EnumChatMessages {
     COMMAND_PB_ENABLE,
     COMMAND_PB_DISABLE,
     COMMAND_PB_STATUS,
-    COMMAND_PB_ERR_EXTERNAL_CONFIG_DISABLED,
-    COMMAND_PB_ENABLE_CONFIG,
-    COMMAND_PB_DISABLE_CONFIG,
-    COMMAND_PB_ERR_OVERLAY_DENIED,
+    COMMAND_PB_ENABLE_CONFIGURATION_MODE,
+    COMMAND_PB_DISABLE_CONFIGURATION_MODE,
     COMMAND_PB_ENABLE_OVERLAY,
     COMMAND_PB_DISABLE_OVERLAY,
-    COMMAND_PB_BIOME,
     COMMAND_PB_SETTINGS,
-    COMMAND_PB_ERR_UNSUPPORTED_PLANT,
+    COMMAND_PB_BIOME,
     COMMAND_PB_LATEST,
-    COMMAND_PB_ERR_NEED_ENABLE_CONFIG,
-    COMMAND_PB_ERR_NO_LATEST,
     COMMAND_PB_DENY,
     COMMAND_PB_ALLOW,
     COMMAND_PB_DENY_GLOBAL,
@@ -48,18 +43,22 @@ public enum EnumChatMessages {
     COMMAND_PB_CLEAR_LATEST,    
     COMMAND_PB_CLEAR_DENIED,
     COMMAND_PB_CLEAR_VALID,
-    COMMAND_PB_ERR_NO_DATA_FOR_LATEST,
-    COMMAND_PB_ERR_NO_DATA,
     COMMAND_PB_CLEAR_ALL,
     COMMAND_PB_SAVE,
     COMMAND_PB_RELOAD,
-    COMMAND_PB_BACKUP;
+    COMMAND_PB_BACKUP,
+    COMMAND_PB_ERR_EXTERNAL_CONFIG_DISABLED,
+    COMMAND_PB_ERR_NEED_ENABLE_CONFIG,
+    COMMAND_PB_ERR_OVERLAY_DENIED,
+    COMMAND_PB_ERR_UNSUPPORTED_PLANT,
+    COMMAND_PB_ERR_NO_LATEST,
+    COMMAND_PB_ERR_NO_DATA_FOR_LATEST,
+    COMMAND_PB_ERR_NO_DATA;
 
     public static final ITextComponent PREFIX;
 
     static {
-
-        PREFIX = new TextComponentString("[Plant Biomes] ");
+        PREFIX = new TextComponentString("[" + PlantBiomesMain.NAME + "] ");
         PREFIX.getStyle().setColor(TextFormatting.AQUA);                   
     }
 
@@ -111,37 +110,24 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.disable")));
             break;
         case COMMAND_PB_STATUS:
-            msg1 = DataManager.isSettingsEnabled() ? new TextComponentTranslation("pb.status.enabled") : new TextComponentTranslation("pb.status.disabled");
+            msg1 = DataManager.isSettingsEnabled() ? new TextComponentTranslation("pb.command.status.enabled") : new TextComponentTranslation("pb.command.status.disabled");
             msg1.getStyle().setColor(DataManager.isSettingsEnabled() ? TextFormatting.GREEN : TextFormatting.RED);        
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.status").appendSibling(new TextComponentString(": ")).appendSibling(msg1)));
             break;
-        case COMMAND_PB_ERR_EXTERNAL_CONFIG_DISABLED:
-            msg1 = new TextComponentTranslation("pb.config.invalidState");
-            msg1.getStyle().setColor(TextFormatting.RED);        
-            CommonReference.sendMessage(player, prefix().appendSibling(msg1)); 
-            break;
-        case COMMAND_PB_ENABLE_CONFIG:
+        case COMMAND_PB_ENABLE_CONFIGURATION_MODE:
             if (EnumConfigSettings.AUTOSAVE.isEnabled())
-                CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable.conf")).appendSibling(new TextComponentString(" ")).appendSibling(new TextComponentTranslation("pb.autosave.enabled")));
+                CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable-conf")).appendSibling(new TextComponentString(" ")).appendSibling(new TextComponentTranslation("pb.command.enable-conf.autosaveEnabled")));
             else
-                CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable.conf")).appendSibling(new TextComponentString(" ")).appendSibling(new TextComponentTranslation("pb.autosave.disabled")));  
+                CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable-conf")).appendSibling(new TextComponentString(" ")).appendSibling(new TextComponentTranslation("pb.command.enable-conf.autosaveDisabled")));  
             break;
-        case COMMAND_PB_DISABLE_CONFIG:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.disable.conf")));
-            break;
-        case COMMAND_PB_ERR_OVERLAY_DENIED:
-            msg1 = new TextComponentTranslation("pb.command.err.overlay");                        
-            msg1.getStyle().setColor(TextFormatting.RED);                       
-            CommonReference.sendMessage(player, prefix().appendSibling(msg1));             
+        case COMMAND_PB_DISABLE_CONFIGURATION_MODE:
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.disable-conf")));
             break;
         case COMMAND_PB_ENABLE_OVERLAY:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable.overlay")));
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.enable-overlay")));
             break;
         case COMMAND_PB_DISABLE_OVERLAY:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.disable.overlay")));
-            break;
-        case COMMAND_PB_BIOME:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.biome", args[0])));
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.disable-overlay")));
             break;
         case COMMAND_PB_SETTINGS:
             COMMAND_PB_STATUS.sendMessage(player, args);
@@ -150,7 +136,7 @@ public enum EnumChatMessages {
                 CommonReference.sendMessage(player, new TextComponentTranslation("pb.command.settings.empty"));
             for (PlantData plantData : DataManager.getDataServer().values()) {
                 if (plantData.hasMainMeta()) {
-                    msg1 = new TextComponentTranslation("pb.mainMetaSet", plantData.getMainMeta());
+                    msg1 = new TextComponentTranslation("pb.command.settings.mainMetaSet", plantData.getMainMeta());
                     msg1.getStyle().setColor(TextFormatting.YELLOW); 
                     CommonReference.sendMessage(player, msg1);
                 }
@@ -194,10 +180,8 @@ public enum EnumChatMessages {
                 CommonReference.sendMessage(player, new TextComponentString(""));
             }
             break;
-        case COMMAND_PB_ERR_UNSUPPORTED_PLANT:
-            msg1 = new TextComponentTranslation("pb.plantUnsupported");
-            msg1.getStyle().setColor(TextFormatting.RED);        
-            CommonReference.sendMessage(player, prefix().appendSibling(msg1));
+        case COMMAND_PB_BIOME:
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.biome", args[0])));
             break;
         case COMMAND_PB_LATEST:
             msg1 = new TextComponentTranslation("pb.command.latest");
@@ -211,25 +195,15 @@ public enum EnumChatMessages {
             plantName.getStyle().setColor(TextFormatting.WHITE);  
             biomeName = new TextComponentString(DataManager.latestPlantServer.biomeRegistryName.toString());
             TextFormatting biomeColor = TextFormatting.GREEN;
-            if ((DataManager.existLatest() && DataManager.getServer(DataManager.latestPlantServer.registryName).hasMetaData(DataManager.latestPlantServer.meta)) 
-                    || (DataManager.existLatest() && DataManager.getServer(DataManager.latestPlantServer.registryName).hasMainMeta())) {
-                if (DataManager.getLatest().isValidBiomesExist(DataManager.latestPlantServer.meta))
-                    biomeColor = DataManager.getLatest().isValidBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName) ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
-                else if (DataManager.getLatest().isDeniedBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName) || DataManager.getLatest().isDeniedGlobal(DataManager.latestPlantServer.meta))
+            if ((DataManager.existLatestServer() && DataManager.getServer(DataManager.latestPlantServer.registryName).hasMetaData(DataManager.latestPlantServer.meta)) 
+                    || (DataManager.existLatestServer() && DataManager.getServer(DataManager.latestPlantServer.registryName).hasMainMeta())) {
+                if (DataManager.getLatestServer().isValidBiomesExist(DataManager.latestPlantServer.meta))
+                    biomeColor = DataManager.getLatestServer().isValidBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName) ? TextFormatting.DARK_GREEN : TextFormatting.DARK_RED;
+                else if (DataManager.getLatestServer().isDeniedBiome(DataManager.latestPlantServer.meta, DataManager.latestPlantServer.biomeRegistryName) || DataManager.getLatestServer().isDeniedGlobal(DataManager.latestPlantServer.meta))
                     biomeColor = TextFormatting.RED; 
             }
             biomeName.getStyle().setColor(biomeColor);  
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName).appendSibling(msg4).appendSibling(biomeName));
-            break;
-        case COMMAND_PB_ERR_NEED_ENABLE_CONFIG:
-            msg1 = new TextComponentTranslation("pb.command.err.debugMode");                        
-            msg1.getStyle().setColor(TextFormatting.RED);                       
-            CommonReference.sendMessage(player, prefix().appendSibling(msg1));            
-            break;
-        case COMMAND_PB_ERR_NO_LATEST:
-            msg1 = new TextComponentTranslation("pb.command.latest.notExist");                   
-            msg1.getStyle().setColor(TextFormatting.RED);                       
-            CommonReference.sendMessage(player, prefix().appendSibling(msg1)); 
             break;
         case COMMAND_PB_DENY:
             msg1 = new TextComponentTranslation("pb.command.deny");
@@ -260,7 +234,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName));            
             break;   
         case COMMAND_PB_DENY_GLOBAL:
-            msg1 = new TextComponentTranslation("pb.command.deny.global");
+            msg1 = new TextComponentTranslation("pb.command.deny-global");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" / ");
             plantKey = new TextComponentString(DataManager.createDisplayKey(DataManager.latestPlantServer.registryName, DataManager.latestPlantServer.meta));
@@ -270,7 +244,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName));
             break;
         case COMMAND_PB_ALLOW_GLOBAL:
-            msg1 = new TextComponentTranslation("pb.command.allow.global");
+            msg1 = new TextComponentTranslation("pb.command.allow-global");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" / ");
             plantKey = new TextComponentString(DataManager.createDisplayKey(DataManager.latestPlantServer.registryName, DataManager.latestPlantServer.meta));
@@ -280,7 +254,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName));
             break;
         case COMMAND_PB_ADD_VALID:
-            msg1 = new TextComponentTranslation("pb.command.addValid");
+            msg1 = new TextComponentTranslation("pb.command.add-valid");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" -> "); 
             msg4 = new TextComponentString(" / ");
@@ -294,7 +268,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName));
             break;
         case COMMAND_PB_REMOVE_VALID:
-            msg1 = new TextComponentTranslation("pb.command.removeValid");
+            msg1 = new TextComponentTranslation("pb.command.rem-valid");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" -> "); 
             msg4 = new TextComponentString(" / ");
@@ -308,7 +282,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(biomeName).appendSibling(msg3).appendSibling(plantKey).appendSibling(msg4).appendSibling(plantName));           
             break;
         case COMMAND_PB_ALLOW_GROW_OVER_TIME:
-            msg1 = new TextComponentTranslation("pb.command.allowGOT");
+            msg1 = new TextComponentTranslation("pb.command.allow-got");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
@@ -319,7 +293,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName));           
             break;
         case COMMAND_PB_DENY_GROW_OVER_TIME:
-            msg1 = new TextComponentTranslation("pb.command.denyGOT");
+            msg1 = new TextComponentTranslation("pb.command.deny-got");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
@@ -330,7 +304,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName));           
             break;
         case COMMAND_PB_ALLOW_GROW_WITH_BONEMEAL:
-            msg1 = new TextComponentTranslation("pb.command.allowGWB");
+            msg1 = new TextComponentTranslation("pb.command.allow-gwb");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
@@ -341,7 +315,7 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(msg1).appendSibling(msg2).appendSibling(plantKey).appendSibling(msg3).appendSibling(plantName));           
             break;
         case COMMAND_PB_DENY_GROW_WITH_BONEMEAL:
-            msg1 = new TextComponentTranslation("pb.command.denyGWB");
+            msg1 = new TextComponentTranslation("pb.command.deny-gwb");
             msg2 = new TextComponentString(": ");
             msg3 = new TextComponentString(" / ");
             msg3.getStyle().setColor(TextFormatting.AQUA);                   
@@ -367,37 +341,22 @@ public enum EnumChatMessages {
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.reset-main")));
             break;
         case COMMAND_PB_BIND_ITEM:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.bindItem")));
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.bind-item")));
             break;
         case COMMAND_PB_UNBIND_ITEM:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.unbindItem")));
-            break;
-        case COMMAND_PB_ERR_NO_HELD_ITEM:
-            msg1 = new TextComponentTranslation("pb.сommand.err.noHeldItem");                    
-            msg1.getStyle().setColor(TextFormatting.RED);       
-            CommonReference.sendMessage(player, prefix().appendSibling(msg1)); 
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.unbind-item")));
             break;
         case COMMAND_PB_CLEAR_LATEST:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.clear.latest")));    
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.clear-latest")));    
             break;
         case COMMAND_PB_CLEAR_DENIED:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.clear.denied")));    
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.clear-denied")));    
             break;
         case COMMAND_PB_CLEAR_VALID:
-            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.clear.valid")));    
-            break;
-        case COMMAND_PB_ERR_NO_DATA_FOR_LATEST:
-            msg1 = new TextComponentTranslation("pb.command.err.noDataPlant");                    
-            msg1.getStyle().setColor(TextFormatting.RED);       
-            CommonReference.sendMessage(player, prefix().appendSibling(msg1)); 
-            break;
-        case COMMAND_PB_ERR_NO_DATA:
-            msg1 = new TextComponentTranslation("pb.command.err.noData");                    
-            msg1.getStyle().setColor(TextFormatting.RED);    
-            CommonReference.sendMessage(player, prefix().appendSibling(msg1));  
+            CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.clear-valid")));    
             break;
         case COMMAND_PB_CLEAR_ALL:
-            CommonReference.sendMessage(player, prefix().createCopy().appendSibling(new TextComponentTranslation("pb.command.clear.all")));    
+            CommonReference.sendMessage(player, prefix().createCopy().appendSibling(new TextComponentTranslation("pb.command.clear-all")));    
             break;
         case COMMAND_PB_SAVE:
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.save")));    
@@ -407,6 +366,46 @@ public enum EnumChatMessages {
             break;
         case COMMAND_PB_BACKUP:
             CommonReference.sendMessage(player, prefix().appendSibling(new TextComponentTranslation("pb.command.backup")));    
+            break;
+        case COMMAND_PB_ERR_EXTERNAL_CONFIG_DISABLED:
+            msg1 = new TextComponentTranslation("pb.command.enable-conf.err.extConfigDisabled");
+            msg1.getStyle().setColor(TextFormatting.RED);        
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1)); 
+            break;
+        case COMMAND_PB_ERR_NEED_ENABLE_CONFIG:
+            msg1 = new TextComponentTranslation("pb.command.err.needEnableConfig");                        
+            msg1.getStyle().setColor(TextFormatting.RED);                       
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1));            
+            break;
+        case COMMAND_PB_ERR_OVERLAY_DENIED:
+            msg1 = new TextComponentTranslation("pb.command.enable-overlay.err.denied");                        
+            msg1.getStyle().setColor(TextFormatting.RED);                       
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1));             
+            break;
+        case COMMAND_PB_ERR_UNSUPPORTED_PLANT:
+            msg1 = new TextComponentTranslation("pb.err.plantUnsupported");
+            msg1.getStyle().setColor(TextFormatting.RED);        
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1));
+            break;
+        case COMMAND_PB_ERR_NO_LATEST:
+            msg1 = new TextComponentTranslation("pb.command.latest.err.notExist");                   
+            msg1.getStyle().setColor(TextFormatting.RED);                       
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1)); 
+            break;
+        case COMMAND_PB_ERR_NO_DATA_FOR_LATEST:
+            msg1 = new TextComponentTranslation("pb.command.clear-latest.err.noDataPlant");                    
+            msg1.getStyle().setColor(TextFormatting.RED);       
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1)); 
+            break;
+        case COMMAND_PB_ERR_NO_DATA:
+            msg1 = new TextComponentTranslation("pb.command.clear-all.err.noData");                    
+            msg1.getStyle().setColor(TextFormatting.RED);    
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1));  
+            break;
+        case COMMAND_PB_ERR_NO_HELD_ITEM:
+            msg1 = new TextComponentTranslation("pb.сommand.bind-item.err.noHeldItem");                    
+            msg1.getStyle().setColor(TextFormatting.RED);       
+            CommonReference.sendMessage(player, prefix().appendSibling(msg1)); 
             break;
         }
     }

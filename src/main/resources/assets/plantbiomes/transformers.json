@@ -392,6 +392,17 @@
               "transform": true
             }
           ]
+      },
+      {
+        "mod": "Oreberries",
+        "classes":
+          [
+            {
+              "id": "o_block_oreberry_bush",
+              "class": "BlockOreberryBush",
+              "transform": true
+            }
+          ]
       }
     ]
 }

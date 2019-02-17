@@ -3,7 +3,7 @@
   "modid": "plantbiomes",
   "name": "Plant Biomes",
   "description": "Create biomes blacklists and whitelists for every plant to manage its growth.",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "mcversion": "1.12.2",
   "url": "https://minecraft.curseforge.com/projects/plant-biomes",
   "updateUrl": "",

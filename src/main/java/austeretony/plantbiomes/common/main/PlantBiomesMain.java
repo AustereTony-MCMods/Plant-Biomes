@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import austeretony.plantbiomes.client.render.OverlayRenderer;
 import austeretony.plantbiomes.common.commands.CommandPB;
+import austeretony.plantbiomes.common.config.EnumConfigSettings;
 import austeretony.plantbiomes.common.network.NetworkHandler;
 import austeretony.plantbiomes.common.reference.CommonReference;
 import net.minecraftforge.fml.common.Mod;
@@ -23,8 +24,8 @@ public class PlantBiomesMain {
     public static final String 
     MODID = "plantbiomes",
     NAME = "Plant Biomes",
-    VERSION = "1.5.3",
-    VERSION_CUSTOM = VERSION + ":beta:0",
+    VERSION = "1.5.4",
+    VERSION_CUSTOM = VERSION + ":release:0",
     GAME_VERSION = "1.12.2",
     VERSIONS_FORGE_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/mod_versions_forge.json",
     VERSIONS_CUSTOM_URL = "https://raw.githubusercontent.com/AustereTony-MCMods/Plant-Biomes/info/mod_versions_custom.json",
@@ -45,6 +46,7 @@ public class PlantBiomesMain {
     public void serverStarting(FMLServerStartingEvent event) {  
         DataManager.initServerData();
         CommonReference.registerCommand(event, new CommandPB());
-        new Thread(new UpdateChecker(), "Plant Biomes Update Check").start();  
+        if (EnumConfigSettings.CHECK_UPDATES.isEnabled())
+            new Thread(new UpdateChecker(), "Plant Biomes Update Check").start();  
     }
 }

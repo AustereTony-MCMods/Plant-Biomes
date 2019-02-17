@@ -54,20 +54,23 @@ public class ConfigLoader {
             return;
         }
         if (EnumConfigSettings.EXTERNAL_CONFIG.initBoolean(internalConfig)) {
-            JsonObject externalConfig;
-            try {       
-                externalConfig = (JsonObject) PBUtils.getExternalJsonData(EXT_CONFIGURATION_FILE);  
-            } catch (IOException exception) {       
-                PlantBiomesClassTransformer.CORE_LOGGER.error("External configuration files damaged!");
-                exception.printStackTrace();
-                return;
-            }
-            if (EnumConfigSettings.TRANSFORMERS_FILE.initBoolean(externalConfig)) {
-                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer config enabled!");
-                EnumInputClasses.map();          
-                loadExternalTransformerSettings();
-            } else {
-                PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer config disabled!");
+            Path configPath = Paths.get(EXT_TRANSFORMERS_FILE);      
+            if (Files.exists(configPath)) {
+                JsonObject externalConfig;
+                try {       
+                    externalConfig = (JsonObject) PBUtils.getExternalJsonData(EXT_CONFIGURATION_FILE);  
+                } catch (IOException exception) {       
+                    PlantBiomesClassTransformer.CORE_LOGGER.error("External configuration files damaged!");
+                    exception.printStackTrace();
+                    return;
+                }
+                if (EnumConfigSettings.TRANSFORMERS_FILE.initBoolean(externalConfig)) {
+                    PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer config enabled!");
+                    EnumInputClasses.map();          
+                    loadExternalTransformerSettings();
+                } else {
+                    PlantBiomesClassTransformer.CORE_LOGGER.error("Transformer config disabled!");
+                }
             }
         } else {
             if (EnumConfigSettings.TRANSFORMERS_FILE.initBoolean(internalConfig)) {

@@ -17,8 +17,8 @@ import net.minecraft.world.World;
 public class PlantBiomesHooks {
 
     public static boolean isGrowthAllowedTick(World world, BlockPos pos, Block block, IBlockState blockState) {
-        if (DataManager.exist(block)) {
-            if (DataManager.get(block).canGrowOverTime(block, blockState, DataManager.getBiomeRegistryName(world, pos)))
+        if (DataManager.existServer(block)) {
+            if (DataManager.getServer(block).canGrowOverTime(block, blockState, DataManager.getBiomeRegistryName(world, pos)))
                 return true;
             if (EnumConfigSettings.SMOKE_OVER_TIME.isEnabled())
                 world.playEvent(2000, pos, 4);  
@@ -30,8 +30,8 @@ public class PlantBiomesHooks {
     public static boolean isGrowthAllowedBonemeal(World world, BlockPos pos) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
-        if (DataManager.exist(block)) {
-            if (DataManager.get(block).canGrowWithBonemeal(block, blockState, DataManager.getBiomeRegistryName(world, pos)))
+        if (DataManager.existServer(block)) {
+            if (DataManager.getServer(block).canGrowWithBonemeal(block, blockState, DataManager.getBiomeRegistryName(world, pos)))
                 return true;
             if (block.getClass().getName().equals(EnumStandardPlants.MC_GRASS_BLOCK.className) 
                     || block.getClass().getName().equals(EnumStandardPlants.MC_MYCELIUM_BLOCK.className)
@@ -45,8 +45,8 @@ public class PlantBiomesHooks {
     }
 
     public static boolean isGrowthAllowedTickSpecial(World world, BlockPos pos, String id, EnumPlantType plantType) {
-        if (DataManager.existSpecial(id, plantType)) {
-            if (DataManager.getSpecial(id, plantType).canGrowOverTime(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
+        if (DataManager.existSpecialServer(id, plantType)) {
+            if (DataManager.getSpecialServer(id, plantType).canGrowOverTime(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
                 return true;
             if (EnumConfigSettings.SMOKE_OVER_TIME.isEnabled())
                 world.playEvent(2000, pos, 4);
@@ -64,8 +64,8 @@ public class PlantBiomesHooks {
         default:
             break;
         }
-        if (DataManager.existSpecial(id, plantType)) {
-            if (DataManager.getSpecial(id, plantType).canGrowOverTime(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
+        if (DataManager.existSpecialServer(id, plantType)) {
+            if (DataManager.getSpecialServer(id, plantType).canGrowOverTime(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
                 return allowed;
             if (EnumConfigSettings.SMOKE_OVER_TIME.isEnabled())
                 world.playEvent(2000, pos, 4);
@@ -75,8 +75,8 @@ public class PlantBiomesHooks {
     }
 
     public static boolean isGrowthAllowedWithBonemealSpecial(World world, BlockPos pos, String id, EnumPlantType plantType) {
-        if (DataManager.existSpecial(id, plantType)) {
-            if (DataManager.getSpecial(id, plantType).canGrowWithBonemeal(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
+        if (DataManager.existSpecialServer(id, plantType)) {
+            if (DataManager.getSpecialServer(id, plantType).canGrowWithBonemeal(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
                 return true;
             if (EnumConfigSettings.SMOKE_ON_BONEMEAL.isEnabled())
                 world.playEvent(2000, pos, 4);  
@@ -95,8 +95,8 @@ public class PlantBiomesHooks {
         default:
             break;
         }
-        if (DataManager.existSpecial(id, plantType)) {
-            if (DataManager.getSpecial(id, plantType).canGrowWithBonemeal(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
+        if (DataManager.existSpecialServer(id, plantType)) {
+            if (DataManager.getSpecialServer(id, plantType).canGrowWithBonemeal(EnumSpecialPlants.SPECIALS_META, DataManager.getBiomeRegistryName(world, pos)))
                 return allowed;
             if (EnumConfigSettings.SMOKE_ON_BONEMEAL.isEnabled())
                 world.playEvent(2000, pos, 4);  

@@ -1,7 +1,7 @@
 {
   "main": {
     "external_config": true,  
-    "custom_update_checker": true,
+    "custom_update_checker": false,
     "transformers_file": false,
     "settings_tooltips": true
   }, 

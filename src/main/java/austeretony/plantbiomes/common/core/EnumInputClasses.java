@@ -52,8 +52,6 @@ public enum EnumInputClasses {
     FORESTRY_TILE_SAPLING("f_tile_sapling", "Forestry", "TileSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
     FORESTRY_BLOCK_SAPLING("f_block_sapling", "Forestry", "BlockSapling", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
-    MA_BLOCK_MYSTICAL_CROP("ma_block_crop", "Mystical Agriculture", "BlockMysticalCrop", 0, 0),
-
     HO_BONEMEAL_MODULE("ho_bonemeal_module", "Hunger Overhaul", "BonemealModule", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
     IE_BLOCK_CROP("ie_block_crop", "Immersive Engineering", "BlockIECrop", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
@@ -71,6 +69,10 @@ public enum EnumInputClasses {
     IC2_CROP_BASE_METAL_COMMON("ic_crop_metal_common", "IndustrialCraft 2", "CropBaseMetalCommon", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
     IC2_CROP_BASE_METAL_UNCOMMON("ic_crop_metal_uncommon", "IndustrialCraft 2", "CropBaseMetalUncommon", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
     IC2_CROP_EATING("ic_crop_eating", "IndustrialCraft 2", "CropEating", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
+
+    MA_BLOCK_MYSTICAL_CROP("ma_block_crop", "Mystical Agriculture", "BlockMysticalCrop", 0, 0),
+
+    OREBERRIES_BLOCK_OREBERRY_BUSH("o_block_oreberry_bush", "Oreberries", "BlockOreberryBush", 0, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES),
 
     PHC_BLOCK_SAPLING("phc_block_sapling", "Pam's HarvestCraft", "BlockPamSapling", 0, 0),
     PHC_BLOCK_CROP("phc_block_crop", "Pam's HarvestCraft", "BlockPamCrop", 0, 0),
@@ -189,9 +191,6 @@ public enum EnumInputClasses {
         case FORESTRY_BLOCK_SAPLING:
             return patchForestryBlockSapling(classNode); 
 
-        case MA_BLOCK_MYSTICAL_CROP:
-            return patchMABlockMysticalCrop(classNode); 
-
         case HO_BONEMEAL_MODULE:
             return patchHOBonemealModule(classNode); 
 
@@ -224,6 +223,12 @@ public enum EnumInputClasses {
             return patchIC2CropBaseMetalUncommon(classNode);
         case IC2_CROP_EATING:
             return patchIC2CropEating(classNode);
+
+        case MA_BLOCK_MYSTICAL_CROP:
+            return patchMABlockMysticalCrop(classNode); 
+
+        case OREBERRIES_BLOCK_OREBERRY_BUSH:
+            return patchOreberriesBlockOreberryBush(classNode); 
 
         case PHC_BLOCK_SAPLING:
             return patchPHCBlockPamSapling(classNode); 
@@ -1158,10 +1163,6 @@ public enum EnumInputClasses {
         return isSuccessful;
     }
 
-    private boolean patchMABlockMysticalCrop(ClassNode classNode) {
-        return patchBOPBlockSapling(classNode);
-    }
-
     private boolean patchHOBonemealModule(ClassNode classNode) {
         String
         onBonemealUsedMethodName = "onBonemealUsed",
@@ -1624,6 +1625,45 @@ public enum EnumInputClasses {
                 break;
             }
         }    
+        return isSuccessful;
+    }
+
+    private boolean patchMABlockMysticalCrop(ClassNode classNode) {
+        return patchBOPBlockSapling(classNode);
+    }
+
+    private boolean patchOreberriesBlockOreberryBush(ClassNode classNode) {
+        String
+        updateTickMethodName = "func_180650_b",
+        worldClassName = "net/minecraft/world/World",
+        blockPosClassName = "net/minecraft/util/math/BlockPos",
+        iBlockStateClassName = "net/minecraft/block/state/IBlockState",
+        blockClassName = "net/minecraft/block/Block",
+        randomClassName = "java/util/Random";
+        boolean isSuccessful = false;  
+        AbstractInsnNode currentInsn;
+
+        for (MethodNode methodNode : classNode.methods) {               
+            if (methodNode.name.equals(updateTickMethodName) && methodNode.desc.equals("(L" + worldClassName + ";L" + blockPosClassName + ";L" + iBlockStateClassName + ";L" + randomClassName + ";)V")) {                         
+                Iterator<AbstractInsnNode> insnIterator = methodNode.instructions.iterator();              
+                while (insnIterator.hasNext()) {                        
+                    currentInsn = insnIterator.next();                  
+                    if (currentInsn.getOpcode() == Opcodes.IFEQ) {  
+                        InsnList nodesList = new InsnList();   
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 2));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        nodesList.add(new VarInsnNode(Opcodes.ALOAD, 3));
+                        nodesList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS_CLASS, "isGrowthAllowedTick", "(L" + worldClassName + ";L" + blockPosClassName + ";L" + blockClassName + ";L" + iBlockStateClassName + ";)Z", false));
+                        nodesList.add(new JumpInsnNode(Opcodes.IFEQ, ((JumpInsnNode) currentInsn).label));
+                        methodNode.instructions.insertBefore(currentInsn.getPrevious().getPrevious().getPrevious().getPrevious().getPrevious(), nodesList); 
+                        isSuccessful = true;                        
+                        break;
+                    }
+                }    
+                break;
+            }
+        }
         return isSuccessful;
     }
 

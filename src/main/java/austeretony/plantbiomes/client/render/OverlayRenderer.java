@@ -91,11 +91,11 @@ public class OverlayRenderer {
                     if (special != null) {
                         this.tilePos.setPosition(this.blockPos);
                         this.meta = EnumSpecialPlants.SPECIALS_META;
-                        if (!this.TILES.containsKey(this.tilePos)) {
+                        if (!TILES.containsKey(this.tilePos)) {
                             this.blockName = special.createRegistryName(this.tile.serializeNBT());
-                            this.TILES.put(new WorldPosition(this.tilePos), this.blockName);
+                            TILES.put(new WorldPosition(this.tilePos), this.blockName);
                         } else {
-                            this.blockName = this.TILES.get(this.tilePos);
+                            this.blockName = TILES.get(this.tilePos);
                         }
                     }
                 }

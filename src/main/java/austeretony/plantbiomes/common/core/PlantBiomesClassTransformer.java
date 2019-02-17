@@ -117,6 +117,9 @@ public class PlantBiomesClassTransformer implements IClassTransformer {
             //Mystical Agriculture (tested for 1.7.1)
         case "com.blakebr0.mysticalagriculture.blocks.crop.BlockMysticalCrop"://crops
             return patch(basicClass, EnumInputClasses.MA_BLOCK_MYSTICAL_CROP);
+            //Oreberries (tested for 0.5.0)
+        case "josephcsible.oreberries.BlockOreberryBush"://bushes
+            return patch(basicClass, EnumInputClasses.OREBERRIES_BLOCK_OREBERRY_BUSH);
             //Pam's HarvestCraft (tested for 1.12.2zb)
         case "com.pam.harvestcraft.blocks.growables.BlockPamSapling"://saplings
             return patch(basicClass, EnumInputClasses.PHC_BLOCK_SAPLING);

@@ -38,7 +38,9 @@ public enum EnumStandardPlants {
     IC2_SAPLING("ic_block_sapling", "ic2.core.block.Ic2Sapling"),
     //Mystical Agriculture
     MA_CROP("ma_block_crop", "com.blakebr0.mysticalagriculture.blocks.crop.BlockMysticalCrop"),
-    MA_INFERIUM_CROP("ma_block_crop", "com.blakebr0.mysticalagriculture.blocks.crop.BlockInferiumCrop"),
+    MA_INFERIUM_CROP("ma_block_crop", "com.blakebr0.mysticalagriculture.blocks.crop.BlockInferiumCrop"),    
+    //Oreberries
+    OREBERRIES_OREBERRY_BUSH("o_block_oreberry_bush", "josephcsible.oreberries.BlockOreberryBush"),
     //Pam's HarvestCraft
     PHC_SAPLING("phc_block_sapling", "com.pam.harvestcraft.blocks.growables.BlockPamSapling"),
     PHC_CROP("phc_block_crop", "com.pam.harvestcraft.blocks.growables.BlockPamCrop"),
